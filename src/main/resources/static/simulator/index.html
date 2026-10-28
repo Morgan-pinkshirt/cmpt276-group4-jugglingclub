@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TheJestersClub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>The Jesters Club</h1>
+    <!-- Juggling Club -->
+    <svg width="120" height="300" viewBox="0 0 120 300">
+        <!-- Club Body (LED) -->
+        <path
+            id="clubBody"
+            d="M60 20 C20 20 25 100 50 160 L70 160 C95 100 100 20 60 20"
+            fill="grey"/>
+        <!-- Club Handle (white) -->
+        <rect
+            x="50"
+            y="160"
+            width="20"
+            height="110"
+            fill="white"/>
+        <!-- Club Base (black) -->
+        <rect
+            x="47"
+            y="265"
+            width="26"
+            height="15"
+            rx="15"
+            fill="black"/>
+    </svg>
+    <!-- Colour Slider Bar -->
+    <p>Choose a colour</p>
+    <input
+        type="range"
+        id="colourSlider"
+        min="0"
+        max="360"
+        value="0"
+        aria-label="Club colour">
+    <p>Drag Slider or Click</p>
+    <script src="script.js"></script>
+</body>
+</html>
