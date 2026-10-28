@@ -8,10 +8,10 @@
 		<version>4.1.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>cmpt274</groupId>
-	<artifactId>rater</artifactId>
+	<groupId>com.cmpt276</groupId>
+	<artifactId>jugglingclub</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rater</name>
+	<name>jugglingclub</name>
 	<description/>
 	<url/>
 	<licenses>
