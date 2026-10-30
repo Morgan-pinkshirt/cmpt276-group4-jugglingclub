@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="data:," />
+	<link rel="stylesheet" href="style.css"/>
+    <title>Document</title>
+    <style>
+    	canvas {
+        	border: 1px solid black;
+      	}
+    </style>
+</head>
+<body>
+	<h1 id="title">Water</h1>
+	<form>
+		<select id="options">
+			<option value="water">Water</option>
+		</select>
+		<input type="button" id="view-button" value="VIEW">
+	</form>
+  	<div style="display:none;">
+    	<img id="test" src="img/water_4.png"/>
+  	</div>
+
+    <canvas id="club" width="1200" height="1200">
+      <!-- <img href= id="test"> -->
+
+    </canvas>
+    <script src="moving.js">
+
+      	draw();
+    </script>
+</body>
+<footer>
+  	<script scr="moving.js"></script>
+</footer>
+</html>
