@@ -8,9 +8,14 @@
 </head>
 <!-- stinky is a user object. -->
 <body>  
-    <a href="../index.html"><span style="color: red;"   th:text="${message}"></span></a>
+    
     <p>username = <span th:text="${stinky.getName()}"></span> <br>
-       password = <span th:text="${stinky.getPassword()}"> </span> </p>
+       password(encryated) = <span th:text="${stinky.getPassword()}"> </span> </p>
+
+        <form action="/logout" id = "" method="get"> 
+        <input type="submit" value="log out">
+    </form>
+    
 </body>
 
 

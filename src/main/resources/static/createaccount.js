@@ -1,9 +1,17 @@
 var form = document.getElementById("login");
 var nameuser = document.getElementById("username")
+var check = document.getElementById("gotocreation")
+
+// check.addEventListener("submit",function(evt){
+//     evt.preventDefault();
+
+//     this.submit();
+// })
+
+
 form.addEventListener("submit",function(evt){
-    window.alert("it runs  x4");
-    evt.preventDefault();
-    var username = nameuser.value;
-    this.action = "/usermakeaccount/" + username;
+    
+    evt.preventDefault(); // empty for now
+    
     this.submit();
 });
