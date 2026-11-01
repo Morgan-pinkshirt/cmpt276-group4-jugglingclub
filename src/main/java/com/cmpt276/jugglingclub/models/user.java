@@ -1,11 +1,12 @@
 package com.cmpt276.jugglingclub.models;
 
-
+import java.io.Serializable;
 import jakarta.persistence.*;
 
 @Entity 
 @Table(name="users") // this should automaticly make a users table on database
-public class user {
+public class user implements Serializable{
+    private static final long serialVersionUID = 1L;
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int uid;
