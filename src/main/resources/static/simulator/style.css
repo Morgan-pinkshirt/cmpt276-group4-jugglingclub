@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #333333;
+    color: white;
+    padding: 30px;
+}
+
+svg {
+    display: block;
+    margin: 50px auto;
+    max-width: 100%;
+    transform: rotate(45deg);
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 5px
+}
+
+button:hover {
+    background-color: white;
+}
+
+button.active {
+    background-color: #80d8ff;
+}
+
+#colourSlider {
+    width: 450px;
+    max-width: 90%;
+    height: 25px;
+    cursor: pointer;
+    accent-color: black;
+    appearance: none;
+    border-radius: 10px;
+    background: linear-gradient(
+        to right,
+        red,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        magenta,
+        red
+    );
+}
