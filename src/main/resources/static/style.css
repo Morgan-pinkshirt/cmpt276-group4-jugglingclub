@@ -1,0 +1,14 @@
+#test {
+	object-fit:contain;
+    /* clip-path: polygon(
+        "M385, 25 B345, 25, 350, 105, 375, 165 L395, 165 B420, 105, 425, 25, 385, 25 M375, 165 L375, 275 L395, 275 L395, 165"
+    ); */
+
+    /* height: 50%; */
+    /* width: auto; */
+    /* border: solid 1px #CCC" */
+}
+
+canvas {
+    border: 1px solid black;
+}
