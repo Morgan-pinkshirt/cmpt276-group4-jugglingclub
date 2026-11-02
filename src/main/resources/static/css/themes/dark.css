@@ -32,7 +32,7 @@ a {
     color: #60a5fa;
 }
 
-button, slect {
+button, input[type="submit"] {
     background-color: #2563eb;
     color: #ffffff;
     border: 1px solid #2563eb;
@@ -45,4 +45,88 @@ input, select {
     color: #e5e5e5;
     border: 1px solid #555555;
     border-radius: 4px;
+}
+
+.guest-page .guest-sidebar {
+    background-color: #2d2d2d;
+    border: none;
+}
+
+.guest-page .guest-sidebar a {
+    color: #ffffff;
+    background: transparent;
+    border: none;
+}
+
+.guest-page .guest-home svg {
+    display: block;
+    color: #ffffff;
+}
+
+.guest-page .guest-button {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+}
+
+.member-page .member-sidebar {
+    background-color: #2d2d2d;
+    border: none;
+}
+
+.member-page .member-sidebar a {
+    color: #ffffff;
+    background: transparent;
+    border: none;
+}
+
+.member-page .member-home svg, .member-page .member-settings svg {
+    display: block;
+    color: #ffffff;
+}
+
+.member-page .member-button {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+}
+
+.login-page header {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-bottom: 1px solid #333333;
+}
+
+.login-page main {
+    background-color: #121212;
+}
+
+.login-page .login-panel {
+    background-color: #242424;
+    border: 1px solid #3a3a3a;
+    border-radius: 0;
+}
+
+.login-page .login-panel input {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid #555555;
+    border-radius: 4px;
+}
+
+.login-page .login-panel button {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: 1px solid #2563eb;
+    border-radius: 4px;
+}
+
+.login-page .login-links a {
+    color: #60a5fa;
+}
+
+.login-page footer {
+    background-color: #1e1e1e;
+    color: #aaaaaa;
+    border-top: 1px solid #333333;
 }
