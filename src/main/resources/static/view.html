@@ -20,7 +20,8 @@
             width: 100vw; 
             height: 100vh; 
             display: block; 
-            touch-action: none; }
+            touch-action: none; 
+        }
         
         /* 3D control panel styling */
         .ui-panel { 
@@ -36,7 +37,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Top-right user and logout panel styling */
+        /* Top-right user and navigation panel styling */
         .user-panel {
             position: absolute; 
             top: 20px; 
@@ -49,8 +50,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .logout-btn {
-            background-color: #dc3545; 
+        
+        /*go back button*/
+        .home-btn {
+            background-color: #007bff; 
             color: white; 
             border: none;
             padding: 6px 12px; 
@@ -60,7 +63,7 @@
             text-decoration: none; 
             display: inline-block;
         }
-        .logout-btn:hover { background-color: #c82333; }
+        .home-btn:hover { background-color: #0056b3; }
 
         .ui-panel h3 { 
             margin: 0 0 12px 0; 
@@ -79,7 +82,8 @@
         input[type="color"] { 
             height: 35px; 
             width: 60px; 
-            padding: 2px; }
+            padding: 2px; 
+        }
     </style>
 </head>
 <body>
@@ -99,9 +103,9 @@
         <input type="color" id="bodyColor" value="#ffffff" oninput="updateBodyColor()">
     </div>
 
-    <!-- Top-Right Logout Button Panel -->
+    <!-- Top-Right Go Back Home Panel -->
     <div class="user-panel">
-        <a href="/logout" class="logout-btn">Log out</a>
+        <a href="/home" class="home-btn">Go back home</a>
     </div>
 
     <!-- Three.js 3D Render Canvas Container -->
