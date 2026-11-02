@@ -13,6 +13,24 @@ svg {
     transform: rotate(45deg);
 }
 
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 5px
+}
+
+button:hover {
+    background-color: white;
+}
+
+button.active {
+    background-color: #80d8ff;
+}
+
 #colourSlider {
     width: 450px;
     max-width: 90%;
