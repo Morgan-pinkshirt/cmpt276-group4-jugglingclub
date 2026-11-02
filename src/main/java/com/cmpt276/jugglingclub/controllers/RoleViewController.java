@@ -19,8 +19,11 @@ public class RoleViewController {
     }
 
     @GetMapping("/home")
-    public String getRole(HttpSession session) {
+    public String getRole(HttpSession session, Model model) {
         Role role = roleService.getRole(session);
+        user currentUser = (user) session.getAttribute("user");
+
+        model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
 
         if (role == Role.ADMIN) {
             return "roles/admin";
@@ -48,6 +51,15 @@ public class RoleViewController {
         }
         return "roles/warehouse";
     }
+
+    @GetMapping("/simulator")
+    public String simulator(HttpSession session) {
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/userlogin";
+        }
+        return "roles/view";
+    }
+
 
     @GetMapping("/under-construction")
     public String underConstruction() {

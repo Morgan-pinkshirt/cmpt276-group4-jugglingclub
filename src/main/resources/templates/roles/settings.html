@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
 </head>
 <body>
     <header>
@@ -57,11 +59,11 @@
         <section>
             <h2>UI Theme</h2>
             <p>Choose your preferred interface theme.</p>
-            <form action="/under-construction" method="get">
+            <form action="/settings/theme" method="post">
                 <label for="theme">Select Theme:</label>
                 <select id="theme" name="theme" required>
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
+                    <option value="light" th:selected="${user.theme == 'light'}">Light</option>
+                    <option value="dark" th:selected="${user.theme == 'dark'}">Dark</option>
                 </select>
                 <button type="submit">Change Theme</button>
             </form>

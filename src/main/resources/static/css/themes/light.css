@@ -91,3 +91,42 @@ input, select {
     border: 1px solid #7b8490;
 }
 
+.login-page header {
+    background-color: #ffffff;
+    color: #222222;
+    border-bottom: 1px solid #dddddd;
+}
+
+.login-page main {
+    background-color: #f5f5f5;
+}
+
+.login-page .login-panel {
+    background-color: #e8eef2;
+    border: 1px solid #d6dce0;
+    border-radius: 0;
+}
+
+.login-page .login-panel input {
+    background-color: #ffffff;
+    color: #222222;
+    border: 1px solid #bfc8d0;
+    border-radius: 4px;
+}
+
+.login-page .login-panel button {
+    background-color: #7b8490;
+    color: #ffffff;
+    border: 1px solid #7b8490;
+    border-radius: 4px;
+}
+
+.login-page .login-links a {
+    color: #526477;
+}
+
+.login-page footer {
+    background-color: #ffffff;
+    color: #666666;
+    border-top: 1px solid #dddddd;
+}

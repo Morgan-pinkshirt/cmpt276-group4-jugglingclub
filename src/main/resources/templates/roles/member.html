@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Member Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
 </head>
 <body class="member-page">
     <header>
@@ -35,7 +35,7 @@
                 <div class="member-panel-content">
                     <h2>Create New</h2>
                     <div class="member-preview">Image</div>
-                    <a class="member-button" href="/under-construction">Open</a>
+                    <a class="member-button" th:href="@{/simulator}">Open</a>
                 </div>
             </section>
 

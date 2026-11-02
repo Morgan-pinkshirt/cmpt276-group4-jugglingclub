@@ -1,5 +1,6 @@
 package com.cmpt276.jugglingclub.models;
 
+import com.cmpt276.jugglingclub.roles.Role;
 import java.io.Serializable;
 import jakarta.persistence.*;
 
@@ -13,6 +14,8 @@ public class user implements Serializable{
     private String name;
     private String password;
     private String theme = "light";
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.MEMBER;
     
     public user() {
     }
@@ -45,6 +48,14 @@ public class user implements Serializable{
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public Role getRole() {
+    return role == null ? Role.MEMBER : role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     

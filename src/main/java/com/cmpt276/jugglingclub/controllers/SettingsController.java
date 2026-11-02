@@ -72,6 +72,33 @@ public class SettingsController {
 
         return "roles/settings-success";
     }
+
+    @PostMapping("/settings/theme")
+    public String changeTheme(HttpSession session, @RequestParam String theme) {
+        user sessionUser = (user) session.getAttribute("user");
+
+        if (sessionUser == null) {
+            return "redirect:/userlogin";
+        }
+
+        if (!theme.equals("light") && !theme.equals("dark")) {
+            return "redirect:/settings";
+        }
+
+        user currentUser = userRepository.findById(sessionUser.getUid()).orElse(null);
+
+        if (currentUser == null) {
+            session.invalidate();
+            return "redirect:/userlogin";
+        }
+
+        currentUser.setTheme(theme);
+        userRepository.save(currentUser);
+        session.setAttribute("user", currentUser);
+
+        return "redirect:/settings";
+    }
+
 }
 
 

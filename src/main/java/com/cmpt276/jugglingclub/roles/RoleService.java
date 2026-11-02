@@ -18,7 +18,7 @@ public class RoleService {
             return Role.GUEST;
         }
 
-        return Role.MEMBER;
+        return currentUser.getRole();
 
 
     }
