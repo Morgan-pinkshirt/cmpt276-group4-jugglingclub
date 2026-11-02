@@ -67,7 +67,7 @@ public class usercontroller{
             response.setHeader("Expires", "0");
             
             model.addAttribute("stinky",user);
-            return "redirect:/home";
+            return "redirect:/view.html";
         }
     }
     
@@ -93,7 +93,7 @@ public class usercontroller{
 
         model.addAttribute("stinky", session.getAttribute("user")); 
        
-        return "redirect:/home";
+        return "redirect:/view.html";
     }
     
     
