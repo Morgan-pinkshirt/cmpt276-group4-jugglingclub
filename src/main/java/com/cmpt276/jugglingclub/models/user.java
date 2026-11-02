@@ -12,6 +12,7 @@ public class user implements Serializable{
     private int uid;
     private String name;
     private String password;
+    private String theme = "light";
     
     public user() {
     }
@@ -36,6 +37,14 @@ public class user implements Serializable{
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTheme() {
+    return theme == null ? "light" : theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     
