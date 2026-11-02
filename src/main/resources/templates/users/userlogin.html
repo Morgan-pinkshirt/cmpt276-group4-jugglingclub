@@ -3,41 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
-    <script th:src="@{/index.js}" defer></script>
+    <title>login</title>
+     <script src="index.js" defer></script>
 </head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
+<body>
+    <form action="/createaccount" id = "gotocreation" method="get"> 
+        <input type="submit" value="create account">
+    </form>
 
-        <main>
-            <section class="login-panel">
-                <h2>Sign In</h2>
+    <form action="/userlogin" id = "login" method="POST">
+        trying4 <br>
+        username = <input id = "username" type="text" name="username"> <br>
+        password = <input id = "password" type="password" name="password"> <br>
+        <input type="submit" value="login">
 
-                <form action="/userlogin" id="login" method="post">
-                    <label for="username">Username</label>
-                    <input id="username" type="text" name="username" required>
 
-                    <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required>
 
-                    <button type="submit">Login</button>
-                </form>
+    </form>
+    
+    <form action="/logout" method="get">
+        <input type="submit" value="Guest Login">
+    </form>
 
-                <div class="login-links">
-                    <a href="/createaccount">Register</a>
-                    <a href="/logout">Continue as Guest</a>
-                </div>
-            </section>
-        </main>
 
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
-    </div>
 </body>
+
 </html>

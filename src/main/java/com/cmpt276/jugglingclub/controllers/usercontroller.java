@@ -114,7 +114,7 @@ public class usercontroller{
         response.setHeader("Expires", "0");
         session.invalidate();
 
-        return "users/registration-success";
+        return "roles/settings-success";
     }
 
     @GetMapping("/logout")
@@ -127,7 +127,5 @@ public class usercontroller{
         request.getSession().invalidate();
         return "redirect:/home";
     }
-
-    
     
 }

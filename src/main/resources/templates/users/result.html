@@ -3,30 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <title>result</title>
+    
 </head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
-
-        <main>
-            <section class="login-panel">
-                <h2>An Error Occurred. Please Enter the Correct Username and Password.</h2>
-                
-
-                <div class="login-links">
-                    <a href="/userlogin">Back to Login</a>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
-    </div>
+<body>
+    <span style="color: red;"   th:text="${message}"></span>
+    <form action="/userlogin" id = "" method="get"> 
+        <input type="submit" value="go to userlogin">
+    </form>
+    
+            
+    
 </body>
 </html>

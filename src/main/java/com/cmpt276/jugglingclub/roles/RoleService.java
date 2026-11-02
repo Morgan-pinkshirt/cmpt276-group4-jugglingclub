@@ -27,7 +27,9 @@ public class RoleService {
         return getRole(session) != Role.GUEST;
     }
 
-    
+    public boolean isAdmin(HttpSession session) {
+        return getRole(session) == Role.ADMIN;
+    }
 
     
 }
