@@ -1,0 +1,56 @@
+package com.cmpt276.jugglingclub.controllers;
+
+import com.cmpt276.jugglingclub.models.user;
+import com.cmpt276.jugglingclub.roles.Role;
+import com.cmpt276.jugglingclub.roles.RoleService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+
+@Controller
+public class RoleViewController {
+
+    private final RoleService roleService;
+
+    public RoleViewController(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    @GetMapping("/home")
+    public String getRole(HttpSession session) {
+        Role role = roleService.getRole(session);
+
+        if (role == Role.ADMIN) {
+            return "roles/admin";
+        } else if (role == Role.MEMBER) {
+            return "roles/member";
+        } else {
+            return "roles/guest";
+        }
+    }
+
+    @GetMapping("/settings")
+    public String settings(HttpSession session, Model model) {
+    if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }
+
+    model.addAttribute("user", session.getAttribute("user"));
+    return "roles/settings";
+    }
+
+    @GetMapping("/warehouse")
+    public String warehouse(HttpSession session) {
+        if (!roleService.isAdmin(session)) {
+            return "redirect:/home";
+        }
+        return "roles/warehouse";
+    }
+
+    @GetMapping("/under-construction")
+    public String underConstruction() {
+        return "roles/under-construction";
+    }
+}
