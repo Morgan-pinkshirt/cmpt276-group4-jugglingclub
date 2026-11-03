@@ -22,6 +22,7 @@ import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
+import org.springframework.mock.web.MockHttpSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,21 +43,54 @@ public class usercontrollerTest {
     private usersRepository usersRepository;
 
     @Test
-    void testConfrim() throws Exception { //check to see if id leads to a real review then take you to areyousure.html
-        String UID = "1";  // the fake id trust
+    void testlogin() throws Exception { //check to see if id leads to a real review then take you to areyousure.html
         user u1 = new user("billy",passwordEncoder.encode("bob"));
+
         u1.setUid(1);
         when(usersRepository.findByName("billy")).thenReturn(Optional.of(u1));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/userlogin") // this test for login
-        .param("billy","bob")
+        .param("username","billy")
+        .param("password", "bob")
+    )
+    .andExpect(redirectedUrl("/home"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/userlogin") // this test for login
+        .param("username","bob")
+        .param("password", "billy")
     )
     .andExpect(MockMvcResultMatchers.status().isOk())
-    .andExpect(redirectedUrl("/home"))
-    .andExpect(MockMvcResultMatchers.model().attribute("stinky", allOf( // use this to check for the good stuff =D
-                hasProperty("name",Matchers.is("billy")),
-                hasProperty("password",Matchers.is("bob"))
-    ))
-    );
-}}
+    .andExpect(MockMvcResultMatchers.view().name("users/result"))
+    .andExpect(MockMvcResultMatchers.model().attribute("message","username or password dont match, log in failed"));
 
+
+}
+    @Test 
+    void testcreateaccount() throws Exception{
+        user u1 = new user("billy",passwordEncoder.encode("bob"));
+
+        u1.setUid(1);
+        when(usersRepository.findByName("billy")).thenReturn(Optional.of(u1));
+    mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
+        .param("username","billy")
+        .param("password", "bob")
+    ) .andExpect(MockMvcResultMatchers.status().isOk())
+    .andExpect(MockMvcResultMatchers.view().name("users/result"))
+    .andExpect(MockMvcResultMatchers.model().attribute("message","user name taken, try again"));
+
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
+        .param("username","bob")
+        .param("password", "billy")
+    ) .andExpect(MockMvcResultMatchers.status().isOk())
+    .andExpect(MockMvcResultMatchers.view().name("users/registration-success"));
+    }
+
+
+    @Test 
+    void testlogout() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/logout")
+    
+).andExpect(redirectedUrl("/home"));
+    }
+    }
