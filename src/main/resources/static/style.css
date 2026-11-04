@@ -1,7 +1,23 @@
+
+
 #test {
 	object-fit:contain;
 }
 
-canvas {
+/* canvas {
     border: 1px solid black;
+} */
+
+/* https://stackoverflow.com/questions/31966801/setting-rotation-point-and-center-animation-in-css */
+#clubDivision {
+    animation: spin 2s linear infinite;
+    transform-origin: 97px 225px;
+    margin: 5% 40%;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
 }
