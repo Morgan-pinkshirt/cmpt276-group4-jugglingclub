@@ -9,15 +9,29 @@
 </head>
 <body>
 	<h1 id="title">Rotating 2D club</h1>
+	<!-- <h2 id="mode_name">Page 1 - #1 - Rainbow</h2> -->
 	<form>
-		<select id="options">
-			<option value="water">Water</option>
-			<option value="rainbow">Rainbow</option>
-		</select>
-		<input type="button" id="view-button" value="VIEW">
+		<fieldset>
+			<legend> Choose a mode to preview </legend>
+			<select id="options">
+				<optgroup label="Page 1">
+					<option value="p1_1_rainbow">Rainbow</option>
+					<option value="p1_2_rainbow_drops">Rainbow Drops</option>
+					<option value="p1_3_bold">Bold</option>
+					<option value="p1_4_lantern">Lantern</option>
+					<option value="p1_5_fire">Fire</option>
+					<option value="p1_6_water">Water</option>
+					<option value="p1_7_earth">Earth</option>
+					<option value="p1_8_air">Air</option>
+					<option value="p1_9_spirit">Spirit</option>
+					<option value="p1_10_pulse">Pulse</option>
+				</optgroup>
+			</select>
+			<input type="button" id="view-button" value="VIEW">
+		</fieldset>
 	</form>
   	<div style="display:none;">
-    	<img id="img" src="img/rainbow.png"/>
+    	<img id="img" src="img/p1_1_rainbow.png"/>
   	</div>
 
     <canvas id="club" width="1200" height="1200">
