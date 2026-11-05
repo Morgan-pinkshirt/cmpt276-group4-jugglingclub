@@ -54,14 +54,14 @@ draw();
 function numberTen(mode) {
     if (mode[4] != "_") {
         modeName.innerHTML += mode[4];
-        return 5;
+        return 6;
     }
-    return 4
+    return 5
 }
 
 clickedButton.addEventListener('click', function () {
 	const mode = document.getElementById("options").value;
-    let i = 4;
+    let i = 5;
     if (mode[1] == 1 && mode[2] != 3) {
         modeName.innerHTML = `Page 1 - #${mode[3]}`;
         i = numberTen(mode);
@@ -75,15 +75,17 @@ clickedButton.addEventListener('click', function () {
 
         modeName.innerHTML = `Page 13 - #${mode[4]}`;
         if (mode[5] != "_") {
-            i = 5;
-            modeName.innerHTML += mode[5];
             i = 6;
+            modeName.innerHTML += mode[5];
+            i = 7;
         }
     }
-    modeName.innerHTML += " - "
+    modeName.innerHTML += ` - ${mode[i].toUpperCase()}`;
+    i++;
     while (i < mode.length) {
         if (mode[i] == "_") {
-            modeName.innerHTML += " ";
+            modeName.innerHTML += ` ${mode[i+1].toUpperCase()}`;
+            i++;
         } else {
             modeName.innerHTML += mode[i]; 
         }
