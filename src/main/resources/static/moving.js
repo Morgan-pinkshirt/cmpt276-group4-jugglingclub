@@ -5,6 +5,8 @@ const ctx = canvas.getContext('2d');
 
 const clickedButton = document.getElementById("view-button");
 
+const modeName = document.getElementById("mode_name");
+
 let angle = 0;
 
 const centerX = 101.5;
@@ -49,12 +51,45 @@ function draw() {
 // Start animation
 draw();
 
+function numberTen(mode) {
+    if (mode[4] != "_") {
+        modeName.innerHTML += mode[4];
+        return 5;
+    }
+    return 4
+}
 
 clickedButton.addEventListener('click', function () {
-	const mode = document.getElementById("options");
-    const modeName = document.getElementById("mode_name");
-    // modeName.innerHTML = mode.value;
-	img.src=`img/${mode.value}.png`;
+	const mode = document.getElementById("options").value;
+    let i = 4;
+    if (mode[1] == 1 && mode[2] != 3) {
+        modeName.innerHTML = `Page 1 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 2) {
+        modeName.innerHTML = `Page 2 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 3) {
+        modeName.innerHTML = `Page 3 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 1 && mode[2] == 3) {
+
+        modeName.innerHTML = `Page 13 - #${mode[4]}`;
+        if (mode[5] != "_") {
+            i = 5;
+            modeName.innerHTML += mode[5];
+            i = 6;
+        }
+    }
+    modeName.innerHTML += " - "
+    while (i < mode.length) {
+        if (mode[i] == "_") {
+            modeName.innerHTML += " ";
+        } else {
+            modeName.innerHTML += mode[i]; 
+        }
+        i++;
+    }
+	img.src=`img/${mode}.png`;
 	angle = 0;
 
 });
