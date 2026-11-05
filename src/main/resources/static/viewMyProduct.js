@@ -1,6 +1,9 @@
 let scene, camera, renderer, currentMesh;
+const typeElems = document.getElementById('hproductType');
+const colorElems = document.getElementById('hproductColor');
+const bodyColorElems = document.getElementById('hbodyColor');
 
-function init() {
+function init() { //TODO CREATE FIRST MODEL BASED ON HTML DATA DYNAMICLY MADE WITH MODEL: also all values gotten from html is string.
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a1a);
   
@@ -31,7 +34,8 @@ function init() {
     const typeElem = document.getElementById('productType');
     const colorElem = document.getElementById('productColor');
     const bodyColorElem = document.getElementById('bodyColor');
-    
+
+
     const initialType = typeElem ? typeElem.value : 'ball';
     const initialColor = colorElem ? colorElem.value : '#ff5733';
     const initialBodyColor = bodyColorElem ? bodyColorElem.value : '#ffffff';
@@ -125,6 +129,9 @@ function createProduct(type, hexColor, hexBodyColor) {
     scene.add(currentMesh);
 }
 
+//     const typeElems = document.getElementById('hproductType');
+//     const colorElems = document.getElementById('hproductColor');
+//     const bodyColorElems = document.getElementById('hbodyColor');
 function updateProduct() {
     const type = document.getElementById('productType').value;
     const color = document.getElementById('productColor').value;
@@ -134,6 +141,7 @@ function updateProduct() {
 
 // change color of handle
 function updateColor() {
+
     const color = document.getElementById('productColor').value;
     if (currentMesh) {
         currentMesh.traverse((child) => {
@@ -171,4 +179,14 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+
+
+
+
 window.onload = init;
+
+document.getElementById("savingform").addEventListener('submit', function(evt) {
+    typeElems.value = document.getElementById('productType').value;
+    colorElems.value = document.getElementById('productColor').value;
+    bodyColorElems.value = document.getElementById('bodyColor').value;
+});

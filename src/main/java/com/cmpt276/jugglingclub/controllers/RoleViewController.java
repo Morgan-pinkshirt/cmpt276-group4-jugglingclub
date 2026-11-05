@@ -52,12 +52,16 @@ public class RoleViewController {
         return "roles/warehouse";
     }
 
-    @GetMapping("/simulator")
-    public String simulator(HttpSession session) {
+    @GetMapping("/simulator") // model
+    public String simulator(HttpSession session, Model model) { // it is to convert view 
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        return "roles/view";
+        model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
+        model.addAttribute("productType","ball"); // this is the preset default values
+        model.addAttribute("productColor","#9f1ad3");
+        model.addAttribute("bodyColor","#ffffff");
+        return "sim/view";
     }
 
 

@@ -1,0 +1,122 @@
+package com.cmpt276.jugglingclub.controllers;
+
+import com.cmpt276.jugglingclub.models.user;
+import com.cmpt276.jugglingclub.roles.Role;
+import com.cmpt276.jugglingclub.roles.RoleService;
+import jakarta.servlet.http.HttpSession; 
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.cmpt276.jugglingclub.models.save;
+import com.cmpt276.jugglingclub.models.savesRepository;
+
+import java.util.ArrayList;
+@Controller 
+public class savecontroller { // this only deal with ids and stuff
+    @Autowired savesRepository saveREPO;
+    private final RoleService roleService;
+
+    public savecontroller(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    @PostMapping("/customsave")
+    public String loaddata(@RequestParam String UID, Model model,HttpSession session) {
+
+        if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }
+        int id = Integer.parseInt(UID);
+        save currentsave = saveREPO.findByUid(id).orElse(null);
+        model.addAttribute("productType",currentsave.getProductType()); // do this and stuff
+        model.addAttribute("productColor",currentsave.getProductColor());
+        model.addAttribute("bodyColor",currentsave.getBodyColor());
+        model.addAttribute("projectname"," ");
+        model.addAttribute("UID",id);
+        return "sim/view.html";
+    }
+    @PostMapping("/savecustom")
+    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String UID) {
+        if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }   
+        user User = (user) session.getAttribute("user");        
+        if(UID.equals("new")){ // if UID is new, then make new save
+
+
+            save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
+            saveREPO.save(object);
+            model.addAttribute("message","save successful");
+            return "users/result";
+} // UID is not new, so it is from a save
+    save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
+        object.setUid(Integer.parseInt(UID)); // is this for saving
+        saveREPO.save(object);
+        model.addAttribute("message","save updated successfully");
+        return "saves/result";
+
+        }
+    @GetMapping("/viewsavedprojects")
+    public String viewprojects(HttpSession session, Model model) {
+        if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }   
+        user User = (user) session.getAttribute("user");
+        ArrayList<save> savelist = saveREPO.findAllByName(User.getName());
+
+
+        model.addAttribute("projects",savelist);
+
+        return "saves/savedproject";
+    }
+    @PostMapping("/deleteproject")
+    public String deleteprojects(HttpSession session, Model model, @RequestParam String UID){
+         if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }   
+        save project = saveREPO.findById(Integer.parseInt(UID)).orElse(null);
+        if (project != null) {
+            saveREPO.delete(project);
+            model.addAttribute("message","deleted project");
+            return "users/result";
+        }
+        model.addAttribute("message","project not found");
+        return "saves/result";
+    }
+    @GetMapping("/viewallsaves")
+    public String viewallsaves(Model model, HttpSession session) {
+         if (!roleService.isAdmin(session)) {
+        return "redirect:/home";
+    }   
+        ArrayList<save> savelist = saveREPO.findAll();
+        model.addAttribute("projects",savelist);
+
+        return "saves/adminsavedproject";
+    }
+    
+    @PostMapping("/viewproject")
+    public String viewproject(@RequestParam String UID,Model model, HttpSession session) {
+        if (!roleService.isAdmin(session)) {
+        return "redirect:/home";
+    }   
+        int id = Integer.parseInt(UID);
+        save currentsave = saveREPO.findByUid(id).orElse(null);
+        model.addAttribute("productType",currentsave.getProductType()); // do this and stuff
+        model.addAttribute("productColor",currentsave.getProductColor());
+        model.addAttribute("bodyColor",currentsave.getBodyColor());
+        model.addAttribute("projectname"," ");
+        model.addAttribute("UID",id);
+
+        return "sim/adminview";
+    }
+    
+        
+}
