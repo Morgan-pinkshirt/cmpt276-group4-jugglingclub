@@ -448,3 +448,731 @@ button, input, select {
 .view-accounts-panel > .member-button {
     margin-top: 24px;
 }
+
+/* Updated UI
+   Kept all original code made all changes below and overwrote as needed rather than removing anything.
+   - Kabir
+*/
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) {
+    --ns-bg: #0b1020;
+    --ns-panel: #191e33;
+    --ns-border: #38415e;
+    --ns-purple: #8257e6;
+    --ns-hover: #986df0;
+    --ns-text: #f4f2ff;
+    --ns-muted: #a9b3d0;
+
+    background: var(--ns-bg);
+    color: var(--ns-text);
+    font-family: "Segoe UI", Arial, sans-serif;
+    color-scheme: dark;
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) * {
+    box-sizing: border-box;
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) a {
+    color: #c8b5ff;
+}
+
+body:is(.guest-page, .member-page) header {
+    background: #161b30;
+    color: #fff;
+    border: 1px solid var(--ns-border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    box-shadow: 0 5px 25px #0003;
+}
+
+body:is(.guest-page, .member-page) header h1 {
+    width: auto;
+    max-width: calc(100% - 310px);
+    margin: 0;
+    color: #fff;
+    text-align: left;
+    font-size: clamp(20px, 2.2vw, 29px);
+}
+
+body.guest-page header::after {
+    content: "GUEST VIEW";
+    position: absolute;
+    top: 50%;
+    right: 125px;
+    transform: translateY(-50%);
+    padding: 8px 13px;
+    background: #30264e;
+    color: #dac8ff;
+    border: 1px solid #7052b4;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+}
+
+body.member-page header::after {
+    content: none;
+}
+
+body.member-page header .account-identity {
+    position: absolute;
+    top: 50%;
+    right: 130px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    text-align: right;
+}
+
+body.member-page .account-role {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #30264e;
+    color: #dac8ff;
+    border: 1px solid #7052b4;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+body.admin-page .account-role {
+    background: #493823;
+    color: #ffdc96;
+    border-color: #a27c40;
+}
+
+body.member-page .account-id,
+body.member-page .account-username {
+    color: var(--ns-muted);
+    font-size: 12px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+body.guest-page .guest-sidebar,
+body.member-page .member-sidebar {
+    background: #151a2e;
+    border-right: 1px solid var(--ns-border);
+}
+
+body.guest-page .guest-sidebar a,
+body.member-page .member-sidebar a {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: transparent;
+    color: #c6b0ff;
+    transition: background .2s, transform .2s;
+}
+
+body.guest-page .guest-sidebar a:hover,
+body.member-page .member-sidebar a:hover {
+    background: #342953;
+    transform: translateY(-2px);
+}
+
+body.guest-page .guest-home svg,
+body.member-page .member-home svg,
+body.member-page .member-settings svg {
+    color: #c6b0ff;
+}
+
+body.guest-page .guest-main,
+body.member-page .member-main {
+    height: auto;
+    min-height: 0;
+    align-content: start;
+    gap: 22px;
+    padding: 103px 18px 90px;
+}
+
+body.member-page .member-main.admin-main {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.guest-page .guest-main section,
+body.member-page .member-main section {
+    height: auto;
+    min-height: 400px;
+    margin: 0;
+    padding: 36px 24px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #222942, #171c30);
+    border: 1px solid var(--ns-border);
+    border-radius: 20px;
+    box-shadow: 0 12px 32px #0003;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+}
+
+body.guest-page .guest-main section:hover,
+body.member-page .member-main section:hover {
+    transform: translateY(-4px);
+    border-color: #865fdc;
+    box-shadow: 0 15px 38px #0006;
+}
+
+body.guest-page .guest-panel-content,
+body.member-page .member-panel-content,
+body.guest-page .guest-presets .guest-panel-content {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    width: 100%;
+    min-height: 326px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+}
+
+body.guest-page .guest-panel-content h2,
+body.member-page .member-panel-content h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(22px, 2vw, 28px);
+    letter-spacing: -.6px;
+}
+
+body.guest-page .guest-panel-content p,
+body.member-page .member-panel-content p {
+    max-width: 360px;
+    margin: 0;
+    color: var(--ns-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+body.guest-page .guest-preview,
+body.member-page .member-preview {
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    color: inherit;
+}
+
+body.guest-page .guest-preview::before,
+body.guest-page .guest-preview::after,
+body.member-page .member-preview::before,
+body.member-page .member-preview::after {
+    content: none;
+}
+
+body.guest-page .guest-button,
+body.member-page .member-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #8257e6, #6844bf);
+    color: #fff;
+    border: 1px solid #916cf0;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .2s, box-shadow .2s;
+}
+
+body.guest-page .guest-button:hover,
+body.member-page .member-button:hover {
+    background: linear-gradient(135deg, #956cf0, #7850d2);
+    box-shadow: 0 6px 20px #8257e655;
+}
+
+body.guest-page .guest-login-button,
+body.member-page .member-logout-button {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+body.guest-page footer,
+body.member-page footer {
+    background: #151a2e;
+    color: var(--ns-muted);
+    border: 1px solid var(--ns-border);
+    border-radius: 14px 14px 0 0;
+    font-size: 13px;
+}
+
+body.member-page.view-accounts-page .view-accounts-main {
+    grid-column: 2;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: 100vh;
+    margin: 0;
+    padding: 103px 18px 90px;
+}
+
+html body.member-page.view-accounts-page
+section.view-accounts-panel {
+    background: #191e33 !important;
+    background-color: #191e33 !important;
+    background-image: none !important;
+    color: #f4f2ff !important;
+    border: 1px solid #38415e !important;
+    border-radius: 20px;
+    padding: 30px;
+    margin: 0;
+    box-shadow: 0 12px 32px #0003;
+    overflow-x: auto;
+}
+
+html body.view-accounts-page .view-accounts-panel h2 {
+    color: #fff !important;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    text-align: left;
+}
+
+html body.view-accounts-page table.accounts-table {
+    width: 100%;
+    min-width: 540px;
+    border-collapse: collapse;
+    background: transparent !important;
+    color: #f4f2ff !important;
+}
+
+html body.view-accounts-page .accounts-table thead,
+html body.view-accounts-page .accounts-table tbody,
+html body.view-accounts-page .accounts-table tr {
+    background: transparent !important;
+}
+
+html body.view-accounts-page .accounts-table th,
+html body.view-accounts-page .accounts-table td {
+    padding: 15px 18px;
+    text-align: left;
+    border-bottom: 1px solid #38415e;
+    font-size: 14px;
+}
+
+html body.view-accounts-page .accounts-table th {
+    background: #252b45 !important;
+    color: #dac8ff !important;
+    font-weight: 700;
+}
+
+html body.view-accounts-page .accounts-table td {
+    background: transparent !important;
+    color: #e4e7f4 !important;
+}
+
+html body.view-accounts-page
+.accounts-table tbody tr:hover td {
+    background: #252b45 !important;
+}
+
+body.view-accounts-page .accounts-table form {
+    margin: 0;
+}
+
+body.view-accounts-page .accounts-table button,
+body.view-accounts-page .accounts-table .member-button {
+    background: #8257e6;
+    color: #fff;
+    border: 1px solid #916cf0;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+body.view-accounts-page .accounts-table button:hover,
+body.view-accounts-page .accounts-table .member-button:hover {
+    background: #986df0;
+}
+
+body.view-accounts-page .accounts-table td > span {
+    display: inline-block;
+    padding: 7px 12px;
+    background: #253b38;
+    color: #a1e5cd;
+    border: 1px solid #426d60;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+body.view-accounts-page
+.view-accounts-panel > .member-button {
+    margin-top: 24px;
+}
+
+body.login-page {
+    background: radial-gradient(
+        ellipse at 50% 30%,
+        #25204c,
+        #0b1020 65%
+    );
+}
+
+body.login-page .login-layout {
+    width: 100%;
+    max-width: none;
+}
+
+body.login-page header {
+    background: transparent;
+    border: none;
+    padding: 30px 20px;
+}
+
+body.login-page header h1 {
+    color: #eee7ff;
+    font-size: clamp(25px, 4vw, 38px);
+    letter-spacing: -1px;
+}
+
+body.login-page main {
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 30px 18px;
+}
+
+body.login-page .login-panel {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 460px;
+    min-height: 0;
+    padding: 45px 38px;
+    background: var(--ns-panel);
+    border: 1px solid #3d4260;
+    border-radius: 22px;
+    box-shadow: 0 20px 65px #0006;
+}
+
+body.login-page .login-panel h2 {
+    margin-bottom: 30px;
+    color: #fff;
+    font-size: 30px;
+}
+
+body.login-page .login-panel form {
+    width: 100%;
+    max-width: none;
+    gap: 12px;
+}
+
+body.login-page .login-panel label {
+    color: #d2d5e8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+body.login-page .login-panel input {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 14px 15px;
+    background: #101629;
+    color: #fff;
+    border: 1px solid #414866;
+    border-radius: 10px;
+    outline: none;
+}
+
+body.login-page .login-panel input:focus {
+    border-color: #9b76f2;
+    box-shadow: 0 0 0 3px #8257e633;
+}
+
+body.login-page .login-panel button {
+    width: 100%;
+    align-self: stretch;
+    margin-top: 14px;
+    padding: 14px;
+    background: var(--ns-purple);
+    color: #fff;
+    border: 1px solid #916cf0;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+body.login-page .login-panel button:hover {
+    background: var(--ns-hover);
+}
+
+body.login-page .login-links {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    margin-top: 25px;
+}
+
+body.login-page .login-links a {
+    color: #c3adff;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+body.login-page .login-links a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+body.login-page footer {
+    background: transparent;
+    border: none;
+    color: #919cb9;
+    font-size: 13px;
+}
+
+body.settings-page {
+    min-height: 100vh;
+}
+
+body.settings-page > header {
+    background: #161b30;
+    border-bottom: 1px solid var(--ns-border);
+    padding: 25px max(24px, calc((100% - 1050px) / 2));
+}
+
+body.settings-page > header h1 {
+    color: #fff;
+    font-size: 29px;
+}
+
+body.settings-page > header p {
+    color: var(--ns-muted);
+    font-size: 14px;
+}
+
+body.settings-page > nav {
+    display: flex;
+    gap: 12px;
+    padding: 14px max(24px, calc((100% - 1050px) / 2));
+    background: #151a2e;
+    border-bottom: 1px solid var(--ns-border);
+}
+
+body.settings-page > nav a {
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: #cbbaff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+body.settings-page > nav a:hover {
+    background: #30264e;
+    color: #fff;
+}
+
+body.settings-page > main {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 35px 24px 65px;
+}
+
+body.settings-page > main > section {
+    margin-bottom: 20px;
+    padding: 28px 30px;
+    background: var(--ns-panel);
+    color: var(--ns-text);
+    border: 1px solid var(--ns-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 25px #0002;
+}
+
+body.settings-page > main > section h2 {
+    margin: 0 0 16px;
+    color: #fff;
+    font-size: 22px;
+}
+
+body.settings-page > main > section p {
+    color: var(--ns-muted);
+    line-height: 1.6;
+}
+
+body.settings-page .settings-identity {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 30px;
+}
+
+body.settings-page .settings-identity p {
+    margin: 0;
+    color: #d4d8eb;
+    font-size: 14px;
+}
+
+body.settings-page .settings-identity strong {
+    color: #cbbaff;
+    margin-right: 5px;
+}
+
+body.settings-page form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+body.settings-page label {
+    color: #d4d8eb;
+    font-weight: 500;
+}
+
+body.settings-page #currentUsername {
+    color: #cbbaff;
+    font-weight: 700;
+}
+
+body.settings-page input,
+body.settings-page select {
+    max-width: 100%;
+    padding: 11px 14px;
+    background: #101629;
+    color: #fff;
+    border: 1px solid #414866;
+    border-radius: 9px;
+    font: inherit;
+}
+
+body.settings-page input:focus,
+body.settings-page select:focus {
+    outline: 2px solid #9b76f2;
+    outline-offset: 2px;
+}
+
+body.settings-page [hidden] {
+    display: none !important;
+}
+
+body.settings-page button {
+    padding: 11px 18px;
+    background: var(--ns-purple);
+    color: #fff;
+    border: 1px solid #916cf0;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+body.settings-page button:hover {
+    background: var(--ns-hover);
+}
+
+body.settings-page > footer {
+    margin-top: auto;
+    background: #151a2e;
+    color: var(--ns-muted);
+    border-top: 1px solid var(--ns-border);
+}
+
+body.construction-page > header {
+    padding: 28px 24px;
+    background: #161b30;
+    color: #fff;
+    border-bottom: 1px solid var(--ns-border);
+}
+
+body.construction-page > header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+body.construction-page > header p {
+    color: var(--ns-muted);
+}
+
+body.construction-page > nav {
+    padding: 16px 24px;
+    background: #151a2e;
+    border-bottom: 1px solid var(--ns-border);
+}
+
+body.construction-page > nav a {
+    color: #cbbaff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+body.construction-page > main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 50px 24px;
+}
+
+body.construction-page > main > section {
+    width: 100%;
+    max-width: 650px;
+    margin: 0;
+    padding: 55px 35px;
+    background: var(--ns-panel);
+    border: 1px solid var(--ns-border);
+    border-radius: 20px;
+    box-shadow: 0 16px 45px #0004;
+    text-align: center;
+}
+
+body.construction-page > main h2 {
+    color: #fff;
+    font-size: 30px;
+}
+
+body.construction-page > main p {
+    color: var(--ns-muted);
+    line-height: 1.7;
+}
+
+body.construction-page > main a {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 12px 23px;
+    color: #fff;
+    background: var(--ns-purple);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+body.construction-page > main a:hover {
+    background: var(--ns-hover);
+}
+
+body.construction-page > footer {
+    background: #151a2e;
+    color: var(--ns-muted);
+    border-top: 1px solid var(--ns-border);
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page)
+:is(a, button, input, select):focus-visible {
+    outline: 3px solid #c4a4ff;
+    outline-offset: 3px;
+}

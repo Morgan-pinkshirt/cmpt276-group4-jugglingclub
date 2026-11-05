@@ -25,6 +25,11 @@ public class RoleViewController {
 
         model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
 
+        if (currentUser != null) {
+            model.addAttribute("currentUid", currentUser.getUid());
+            model.addAttribute("currentUsername", currentUser.getName());
+        }
+
         if (role == Role.ADMIN) {
             return "roles/admin";
         } else if (role == Role.MEMBER) {

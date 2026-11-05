@@ -43,6 +43,7 @@ public class AdminAccountController {
 
         model.addAttribute("accounts", userRepository.findAll(Sort.by("uid")));
         model.addAttribute("currentUid", currentUser.getUid());
+        model.addAttribute("currentUsername", currentUser.getName());
         model.addAttribute("theme", currentUser.getTheme());
 
         return "roles/view-accounts";
