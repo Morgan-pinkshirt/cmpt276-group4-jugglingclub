@@ -1,7 +1,4 @@
 let scene, camera, renderer, currentMesh;
-const typeElems = document.getElementById('hproductType');
-const colorElems = document.getElementById('hproductColor');
-const bodyColorElems = document.getElementById('hbodyColor');
 
 function init() { //TODO CREATE FIRST MODEL BASED ON HTML DATA DYNAMICLY MADE WITH MODEL: also all values gotten from html is string.
     scene = new THREE.Scene();
@@ -185,8 +182,3 @@ function animate() {
 
 window.onload = init;
 
-document.getElementById("savingform").addEventListener('submit', function(evt) {
-    typeElems.value = document.getElementById('productType').value;
-    colorElems.value = document.getElementById('productColor').value;
-    bodyColorElems.value = document.getElementById('bodyColor').value;
-});

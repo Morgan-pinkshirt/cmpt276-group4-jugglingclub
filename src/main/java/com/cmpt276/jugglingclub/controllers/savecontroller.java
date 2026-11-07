@@ -36,10 +36,8 @@ public class savecontroller { // this only deal with ids and stuff
     }
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
-        model.addAttribute("productType",currentsave.getProductType()); // do this and stuff
-        model.addAttribute("productColor",currentsave.getProductColor());
-        model.addAttribute("bodyColor",currentsave.getBodyColor());
-        model.addAttribute("projectname"," ");
+        model.addAttribute("currentSave", currentsave);
+
         model.addAttribute("UID",id);
         return "sim/view.html";
     }
@@ -55,7 +53,7 @@ public class savecontroller { // this only deal with ids and stuff
             save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
             saveREPO.save(object);
             model.addAttribute("message","save successful");
-            return "users/result";
+            return "saves/result";
 } // UID is not new, so it is from a save
     save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
         object.setUid(Integer.parseInt(UID)); // is this for saving
@@ -86,7 +84,7 @@ public class savecontroller { // this only deal with ids and stuff
         if (project != null) {
             saveREPO.delete(project);
             model.addAttribute("message","deleted project");
-            return "users/result";
+            return "saves/result";
         }
         model.addAttribute("message","project not found");
         return "saves/result";
@@ -109,12 +107,8 @@ public class savecontroller { // this only deal with ids and stuff
     }   
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
-        model.addAttribute("productType",currentsave.getProductType()); // do this and stuff
-        model.addAttribute("productColor",currentsave.getProductColor());
-        model.addAttribute("bodyColor",currentsave.getBodyColor());
-        model.addAttribute("projectname"," ");
-        model.addAttribute("UID",id);
-
+        model.addAttribute("currentSave", currentsave);
+        model.addAttribute("UID",UID);
         return "sim/adminview";
     }
     

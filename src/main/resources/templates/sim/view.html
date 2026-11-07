@@ -94,16 +94,16 @@
         <h3>3D Products</h3>
         <label for="productType">Type of product:</label><br>
         <select id="productType" onchange="updateProduct()">
-            <option value="ball" th:selected="${'ball' == productType}">Ball</option>
-            <option value="club" th:selected="${'club' == productType}">Club</option>
+            <option value="ball" th:selected="${'ball' == currentSave.productType}">Ball</option>
+            <option value="club" th:selected="${'club' == currentSave.productType}">Club</option>
             
         </select>
         <br><br>
         <label for="productColor">Handle Color:</label><br>
-        <input type="color" id="productColor" th:value="${productColor}" oninput="updateColor()">
+        <input type="color" id="productColor" th:value="${currentSave.productColor}" oninput="updateColor()">
         <br><br>
         <label for="bodyColor">Body Color:</label><br>
-        <input type="color" id="bodyColor" th:value="${bodyColor}" oninput="updateBodyColor()">
+        <input type="color" id="bodyColor" th:value="${currentSave.bodyColor}" oninput="updateBodyColor()">
     </div>
 
     <!-- Top-Right Go Back Home Panel -->
@@ -114,11 +114,11 @@
         <form action="/savecustom" method = "POST" id ="savingform">
 <label for="projectname">projectname:</label>
 <input type="submit" value = "save">
-<input type="text" id="projectname" name="projectname" placeholder="enter project name here">
+<input type="text" id="projectname" name="projectname" th:value="${currentSave.projectname}">
 
-<input type="hidden" name="productType" id = "hproductType"th:value="${productType}">
-<input type="hidden" name="productColor" id="hproductColor" th:value="${productColor}">
-<input type="hidden" name="bodyColor" id="hbodyColor" th:value="${bodyColor}">
+<input type="hidden" name="productType" id = "hproductType"th:value="${currentSave.productType}">
+<input type="hidden" name="productColor" id="hproductColor" th:value="${currentSave.productColor}">
+<input type="hidden" name="bodyColor" id="hbodyColor" th:value="${currentSave.bodyColor}">
 <input type="hidden" name="UID" th:value="${UID}">
         </form>
     </div>
@@ -130,7 +130,9 @@
 
     <!-- Three.js Library & Custom Viewer Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    
+    <script scr="savingsim.js" defer></script>
     <script src="viewMyProduct.js" defer></script>
-    <script src="" defer></script>"
+    <script src="savingsim.js" defer></script>"
 </body>
 </html>

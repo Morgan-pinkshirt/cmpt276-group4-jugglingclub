@@ -1,5 +1,6 @@
 package com.cmpt276.jugglingclub.controllers;
 
+import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.roles.Role;
 import com.cmpt276.jugglingclub.roles.RoleService;
@@ -57,10 +58,12 @@ public class RoleViewController {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
+        save currentsave = new save("", "ball", "#9f1ad3", "#ffffff", " ");
         model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
         model.addAttribute("productType","ball"); // this is the preset default values
         model.addAttribute("productColor","#9f1ad3");
         model.addAttribute("bodyColor","#ffffff");
+        model.addAttribute("currentSave", currentsave);
         return "sim/view";
     }
 

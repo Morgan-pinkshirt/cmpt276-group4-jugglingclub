@@ -45,7 +45,7 @@
                         <tr th:each="project : ${projects}">
                             <td th:text="${project.uid}">1</td>
                             <td th:text="${project.projectname}">projectname</td>
-                            <td th:text="${project.projectname}">owner</td>
+                            <td th:text="${project.name}">owner</td>
                             <td>
                                 <form th:action="@{/viewproject}" method="post">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
