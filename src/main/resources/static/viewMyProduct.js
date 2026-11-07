@@ -67,7 +67,7 @@ function createProduct(type, hexColor, hexBodyColor) {
             metalness: 0.2 
         });
         currentMesh = new THREE.Mesh(geometry, material);
-        currentMesh.name = 'handlePart'; // Bóng nhận màu theo ô Handle
+        currentMesh.name = 'handlePart';
     } else {
         // Create Club 
         currentMesh = new THREE.Group();
