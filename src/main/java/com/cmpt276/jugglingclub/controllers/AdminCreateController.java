@@ -36,9 +36,9 @@ public class AdminCreateController {
             return "redirect:/userlogin";
         }
 
-        if (currentUser.getRole() != Role.ADMIN) {
-            return "redirect:/home";
-        }
+        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.SUPER_ADMIN) {
+        return "redirect:/home";
+    }
 
         return "roles/create-admin";
     }
@@ -58,7 +58,7 @@ public class AdminCreateController {
             return "redirect:/userlogin";
         }
 
-        if (currentUser.getRole() != Role.ADMIN) {
+        if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/home";
         }
 
