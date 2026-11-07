@@ -23,20 +23,38 @@
             touch-action: none; 
         }
         
-        /* 3D control panel styling */
+        /*Panel Color & Adjustments*/
         .ui-panel { 
+            color: white; 
             position: absolute; 
             top: 20px; 
             left: 20px; 
             background: rgba(0, 0, 0, 0.75); 
             backdrop-filter: blur(4px);
-            padding: 16px 20px; 
+            padding: 14px 18px; 
             border-radius: 8px; 
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 270px;
         }
         
+        /*Panel Effect Patterns*/
+        .effect-panel {
+            color: white; 
+            position: absolute; 
+            top: 410px; 
+            left: 20px; 
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(4px);
+            padding: 14px 18px; 
+            border-radius: 8px; 
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 270px;
+        }
+
         /* Top-right user and navigation panel styling */
         .user-panel {
             position: absolute; 
@@ -51,7 +69,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /*go back button*/
+        /* Go back button */
         .home-btn {
             background-color: #007bff; 
             color: white; 
@@ -65,24 +83,38 @@
         }
         .home-btn:hover { background-color: #0056b3; }
 
-        .ui-panel h3 { 
-            margin: 0 0 12px 0; 
-            font-size: 1.1rem; 
+        h3 { 
+            margin: 0 0 10px 0; 
+            font-size: 1rem; 
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 4px;
+        }
+
+        label {
+            font-size: 0.9rem;
         }
 
         select, input[type="color"] { 
-            padding: 6px 10px; 
-            margin-top: 4px; 
+            padding: 5px 8px; 
+            margin-top: 3px; 
+            margin-bottom: 8px;
             border-radius: 4px;
             border: 1px solid #444; 
             background: #222; 
             color: #fff; 
             cursor: pointer;
+            width: 100%;
         }
         input[type="color"] { 
-            height: 35px; 
-            width: 60px; 
+            height: 32px; 
             padding: 2px; 
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 3px;
+            margin-bottom: 8px;
+            cursor: pointer;
         }
     </style>
 
@@ -104,6 +136,57 @@
         <br><br>
         <label for="bodyColor">Body Color:</label><br>
         <input type="color" id="bodyColor" th:value="${currentSave.bodyColor}" oninput="updateBodyColor()">
+
+                <label for="brightnessRange">Brightness: <span id="brightnessVal">1.0</span></label>
+        <input type="range" id="brightnessRange" min="0.2" max="3" step="0.05" th:value="${currentSave.brightness}" oninput="updateBrightness()">
+
+        <label for="saturationRange">Saturation: <span id="saturationVal">1.0</span></label>
+        <input type="range" id="saturationRange" min="0" max="3" step="0.05" th:value="${currentSave.saturation}" oninput="updateSaturation()">
+    </div>
+
+    <!-- Effect Patterns Panel -->
+    <div class="effect-panel">
+        <h3>Effect Patterns</h3>
+        <label for="effectSelect">Choose Effect:</label>
+        <select id="effectSelect" onchange="updateEffect()">
+            <option value="none" th:selected="${'none' == currentSave.effect}">-- None (Solid Color) --</option>
+            <optgroup label="Page 1">
+                <option value="p1_1_rainbow" th:selected="${'p1_1_rainbow' == currentSave.effect}">Rainbow</option>
+                <option value="p1_2_rainbow_drops" th:selected="${'p1_2_rainbow_drops' == currentSave.effect}">Rainbow Drops</option>
+                <option value="p1_3_bold" th:selected="${'p1_3_bold' == currentSave.effect}">Bold</option>
+                <option value="p1_4_lantern" th:selected="${'p1_4_lantern' == currentSave.effect}">Lantern</option>
+                <option value="p1_5_fire" th:selected="${'p1_5_fire' == currentSave.effect}">Fire</option>
+                <option value="p1_6_water" th:selected="${'p1_6_water' == currentSave.effect}">Water</option>
+                <option value="p1_7_earth" th:selected="${'p1_7_earth' == currentSave.effect}">Earth</option>
+                <option value="p1_8_air" th:selected="${'p1_8_air' == currentSave.effect}">Air</option>
+                <option value="p1_9_spirit" th:selected="${'p1_9_spirit' == currentSave.effect}">Spirit</option>
+                <option value="p1_10_pulse" th:selected="${'p1_10_pulse' == currentSave.effect}">Pulse</option>
+            </optgroup>
+            <optgroup label="Page 2">
+                <option value="p2_1_candy" th:selected="${'p2_1_candy' == currentSave.effect}">Candy</option>
+                <option value="p2_2_petals" th:selected="${'p2_2_petals' == currentSave.effect}">Petals</option>
+                <option value="p2_3_love" th:selected="${'p2_3_love' == currentSave.effect}">Love</option>
+                <option value="p2_4_watermelon" th:selected="${'p2_4_watermelon' == currentSave.effect}">Watermelon</option>
+                <option value="p2_5_freedom" th:selected="${'p2_5_freedom' == currentSave.effect}">Freedom</option>
+                <option value="p2_6_microdots" th:selected="${'p2_6_microdots' == currentSave.effect}">Microdots</option>
+                <option value="p2_7_unicorn" th:selected="${'p2_7_unicorn' == currentSave.effect}">Unicorn</option>
+                <option value="p2_8_blue_blazer" th:selected="${'p2_8_blue_blazer' == currentSave.effect}">Blue Blazer</option>
+                <option value="p2_9_solar_flare" th:selected="${'p2_9_solar_flare' == currentSave.effect}">Solar Flare</option>
+                <option value="p2_10_strobe" th:selected="${'p2_10_strobe' == currentSave.effect}">Strobe</option>
+            </optgroup>
+            <optgroup label="Page 3">
+                <option value="p3_1_flamebow" th:selected="${'p3_1_flamebow' == currentSave.effect}">Flamebow</option>
+                <option value="p3_3_liquid_sugar" th:selected="${'p3_3_liquid_sugar' == currentSave.effect}">Liquid Sugar</option>
+                <option value="p3_4_rainbow_dash" th:selected="${'p3_4_rainbow_dash' == currentSave.effect}">Rainbow Dash</option>
+                <option value="p3_5_fireball" th:selected="${'p3_5_fireball' == currentSave.effect}">Fireball</option>
+                <option value="p3_6_froth" th:selected="${'p3_6_froth' == currentSave.effect}">Froth</option>
+                <option value="p3_8_bolder" th:selected="${'p3_8_bolder' == currentSave.effect}">Bolder</option>
+                <option value="p3_9_sunset" th:selected="${'p3_9_sunset' == currentSave.effect}">Sunset</option>
+                <option value="p3_10_daybreak" th:selected="${'p3_10_daybreak' == currentSave.effect}">Daybreak</option>
+            </optgroup>
+        </select>
+
+
     </div>
 
     <!-- Top-Right Go Back Home Panel -->
@@ -120,6 +203,10 @@
 <input type="hidden" name="productColor" id="hproductColor" th:value="${currentSave.productColor}">
 <input type="hidden" name="bodyColor" id="hbodyColor" th:value="${currentSave.bodyColor}">
 <input type="hidden" name="UID" th:value="${UID}">
+<input type="hidden" name="brightness" id = "hbright" th:value="${currentSave.brightness}">
+<input type="hidden" name="saturation" id="hsat" th:value="${currentSave.saturation}">
+<input type="hidden" name="effect" id="heffect" th:value="${currentSave.effect}">
+
         </form>
     </div>
 
@@ -130,9 +217,9 @@
 
     <!-- Three.js Library & Custom Viewer Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-    
-    <script scr="savingsim.js" defer></script>
-    <script src="viewMyProduct.js" defer></script>
-    <script src="savingsim.js" defer></script>"
+
+   
+    <script src="savingsim.js" defer></script>
+    <script src="view.js" defer></script>
 </body>
 </html>

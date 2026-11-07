@@ -58,7 +58,7 @@ public class RoleViewController {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        save currentsave = new save("", "ball", "#9f1ad3", "#ffffff", " ");
+        save currentsave = new save("", "", "ball", "#9f1ad3", "#ffffff", "1","1","none" );
         model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
         model.addAttribute("productType","ball"); // this is the preset default values
         model.addAttribute("productColor","#9f1ad3");

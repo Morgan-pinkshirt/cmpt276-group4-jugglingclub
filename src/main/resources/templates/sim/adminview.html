@@ -100,6 +100,9 @@
 <input type="hidden" name="productColor" id="productColor" th:value="${currentSave.productColor}">
 <input type="hidden" name="bodyColor" id="bodyColor" th:value="${currentSave.bodyColor}">
 <input type="hidden" name="UID" th:value="${currentSave.uid}">
+<input type="hidden" name="brightness" id = "brightnessRange" th:value="${currentSave.brightness}">
+<input type="hidden" name="saturation" id="saturationRange" th:value="${currentSave.saturation}">
+<input type="hidden" name="effect" id="effectSelect" th:value="${currentSave.effect}">
         </form>
     </div>
 
@@ -110,7 +113,7 @@
 
     <!-- Three.js Library & Custom Viewer Script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-    <script src="viewMyProduct.js" defer></script>
+    <script src="view.js" defer></script>
     <script src="savingsim.js" defer></script>
     <script src="" defer></script>"
 </body>

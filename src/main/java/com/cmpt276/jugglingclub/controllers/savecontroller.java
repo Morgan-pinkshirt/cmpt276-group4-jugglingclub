@@ -36,13 +36,22 @@ public class savecontroller { // this only deal with ids and stuff
     }
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
+        if(currentsave.getBrightness() == null){
+            currentsave.setBrightness("1");
+        }
+        if(currentsave.getSaturation() == null){
+            currentsave.setSaturation("1");
+        }
+        if(currentsave.getEffect() == null){
+            currentsave.setEffect("none");
+        }
         model.addAttribute("currentSave", currentsave);
 
         model.addAttribute("UID",id);
         return "sim/view.html";
     }
     @PostMapping("/savecustom")
-    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String UID) {
+    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID) {
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
     }   
@@ -50,12 +59,12 @@ public class savecontroller { // this only deal with ids and stuff
         if(UID.equals("new")){ // if UID is new, then make new save
 
 
-            save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
+            save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect );
             saveREPO.save(object);
             model.addAttribute("message","save successful");
             return "saves/result";
 } // UID is not new, so it is from a save
-    save object = new save(User.getName(),productType,productColor,bodyColor,projectname);
+    save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect);
         object.setUid(Integer.parseInt(UID)); // is this for saving
         saveREPO.save(object);
         model.addAttribute("message","save updated successfully");

@@ -16,7 +16,10 @@ public class save{
     private String productType;
     private String productColor;
     private String bodyColor;
-    
+    private String brightness;
+    private String saturation;
+    private String effect;
+
     public String getProjectname() {
         return projectname;
     }
@@ -57,14 +60,39 @@ public class save{
     public void setBodyColor(String bodyColor) {
         this.bodyColor = bodyColor;
     }
-    public save(String name, String productType, String productColor, String bodyColor, String projectname) {
+    
+
+
+    public String getBrightness() {
+        return brightness;
+    }
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+    public String getSaturation() {
+        return saturation;
+    }
+    public void setSaturation(String saturation) {
+        this.saturation = saturation;
+    }
+    public String getEffect() {
+        return effect;
+    }
+    public void setEffect(String effect) {
+        this.effect = effect;
+    }
+    
+    public save(String name, String projectname, String productType, String productColor, String bodyColor,
+            String brightness, String saturation, String effect) {
         this.name = name;
+        this.projectname = projectname;
         this.productType = productType;
         this.productColor = productColor;
         this.bodyColor = bodyColor;
-        this.projectname = projectname;
+        this.brightness = brightness;
+        this.saturation = saturation;
+        this.effect = effect;
     }
-
     public save() {
     }
 
