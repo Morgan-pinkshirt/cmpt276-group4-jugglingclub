@@ -1,8 +1,10 @@
+// Global Three.js variables
 let scene, camera, renderer, currentMesh;
 
 // Variables to track original selected hex colors and slider values
 let originalHandleHex = '#ff5733';
 let originalBodyHex = '#ffffff';
+let originalBallColorHex = '#ff5733';
 
 // Interaction variables for mouse/touch dragging to rotate the object
 let isDragging = false;
@@ -11,7 +13,52 @@ let previousMousePosition = { x: 0, y: 0 };
 // Effect Texture variables
 let currentEffectTexture = null;
 let selectedEffectName = 'none';
+let effectAngle = 0; // <-- ĐÃ THÊM BIẾN NÀY ĐỂ TRÁNH LỖI KHỰNG SCRIPTSS
 const textureLoader = new THREE.TextureLoader();
+
+//Custom Shader Material (Polar Projection)
+const customProjectorMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+        uTexture: { value: null },
+        uAngle: { value: 0.0 }
+    },
+    vertexShader: `
+        varying vec2 vUv;
+        varying vec3 vWorldPosition;
+
+        void main() {
+            vUv = uv;
+            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPosition.xyz;
+            gl_Position = projectionMatrix * viewMatrix * worldPosition;
+        }
+    `,
+    fragmentShader: `
+        uniform sampler2D uTexture;
+        uniform float uAngle;
+        varying vec2 vUv;
+        varying vec3 vWorldPosition;
+
+        void main() {
+            float R_small = 0.18;
+            float R_large = 0.45;
+            float r = R_small + vUv.y * (R_large - R_small);
+
+            float W_offset = (vUv.x - 0.5) * 0.0005; 
+            float theta = uAngle + W_offset;
+
+            pngUV.x = 0.5 + r * cos(theta);
+            pngUV.y = 0.5 + r * sin(theta);
+
+            vec4 texColor = texture2D(uTexture, pngUV);
+            if (pngUV.x < 0.0 || pngUV.x > 1.0 || pngUV.y < 0.0 || pngUV.y > 1.0) {
+                texColor = vec4(0.0, 0.0, 0.0, 1.0);
+            }
+            gl_FragColor = texColor;
+        }
+    `,
+    side: THREE.DoubleSide
+});
 
 // Initialize the 3D scene, camera, renderer, lights, and event listeners
 function init() {
@@ -45,12 +92,15 @@ function init() {
     const typeElem = document.getElementById('productType');
     const colorElem = document.getElementById('productColor');
     const bodyColorElem = document.getElementById('bodyColor');
-    
+    const ballColorElem = document.getElementById('ballColor');
+
     const initialType = typeElem ? typeElem.value : 'ball';
     originalHandleHex = colorElem ? colorElem.value : '#ff5733';
     originalBodyHex = bodyColorElem ? bodyColorElem.value : '#ffffff';
-    
-    createProduct(initialType, originalHandleHex, originalBodyHex);
+    originalBallColorHex = ballColorElem ? ballColorElem.value : '#ff5733';
+
+    toggleProductUI(initialType);
+    createProduct(initialType, originalHandleHex, originalBodyHex, originalBallColorHex);
 
     // Setup mouse and touch interaction for rotation
     setupInteraction(renderer.domElement);
@@ -60,8 +110,7 @@ function init() {
 }
 
 // Create or update the 3D product (Ball or Club)
-function createProduct(type, hexColor, hexBodyColor) {
-    // 1. Safely dispose of old mesh/group completely to free GPU memory
+function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
     if (currentMesh) {
         scene.remove(currentMesh);
         currentMesh.traverse((child) => {
@@ -80,12 +129,12 @@ function createProduct(type, hexColor, hexBodyColor) {
     if (type === 'ball') {
         const geometry = new THREE.SphereGeometry(1.2, 32, 32);
         const material = new THREE.MeshStandardMaterial({ 
-            color: hexColor, 
+            color: hexColor || originalBallColorHex, 
             roughness: 0.3, 
             metalness: 0.2 
         });
         currentMesh = new THREE.Mesh(geometry, material);
-        currentMesh.name = 'handlePart'; // Ball reacts to handle color changes
+        currentMesh.name = 'ballPart'; 
     } else {
         // Create Juggling Club Group
         currentMesh = new THREE.Group();
@@ -136,13 +185,11 @@ function createProduct(type, hexColor, hexBodyColor) {
         const topMesh = new THREE.Mesh(new THREE.LatheGeometry(topPoints, 32), blackMaterial);
         currentMesh.add(topMesh);
 
-        // Rotate at an angle for a dynamic club presentation
         currentMesh.rotation.z = Math.PI / 6;
     }
 
     scene.add(currentMesh);
     
-    // Apply current effect or color & lighting settings
     if (selectedEffectName !== 'none') {
         applyEffectTexture();
     } else {
@@ -150,27 +197,43 @@ function createProduct(type, hexColor, hexBodyColor) {
     }
 }
 
-// Triggered when product type changes in HTML form
 function updateProduct() {
     const type = document.getElementById('productType').value;
+    toggleProductUI(type);
     originalHandleHex = document.getElementById('productColor').value;
     originalBodyHex = document.getElementById('bodyColor').value;
+    originalBallColorHex = document.getElementById('ballColor').value;
     createProduct(type, originalHandleHex, originalBodyHex);
 }
 
-// Triggered when handle color changes
-function updateColor() {
+function toggleProductUI(type) {
+    const clubOptions = document.getElementById('clubColorOptions');
+    const ballOptions = document.getElementById('ballColorOptions');
+
+    if (type === 'ball') {
+        if (ballOptions) ballOptions.classList.remove('hidden');
+        if (clubOptions) clubOptions.classList.add('hidden');
+    } else {
+        if (ballOptions) ballOptions.classList.add('hidden');
+        if (clubOptions) clubOptions.classList.remove('hidden');
+    }
+}
+
+function updateBallColor() {
+    originalBallColorHex = document.getElementById('ballColor').value;
+    if (selectedEffectName === 'none') applyColorAndLighting();
+}
+
+function updateHandleColor() {
     originalHandleHex = document.getElementById('productColor').value;
     if (selectedEffectName === 'none') applyColorAndLighting();
 }
 
-// Triggered when body color changes
 function updateBodyColor() {
     originalBodyHex = document.getElementById('bodyColor').value;
     if (selectedEffectName === 'none') applyColorAndLighting();
 }
 
-// Triggered when brightness slider changes
 function updateBrightness() {
     const brightnessInput = document.getElementById('brightnessRange');
     const brightnessValSpan = document.getElementById('brightnessVal');
@@ -180,7 +243,6 @@ function updateBrightness() {
     if (selectedEffectName === 'none') applyColorAndLighting();
 }
 
-// Triggered when saturation slider changes
 function updateSaturation() {
     const saturationInput = document.getElementById('saturationRange');
     const saturationValSpan = document.getElementById('saturationVal');
@@ -190,13 +252,13 @@ function updateSaturation() {
     if (selectedEffectName === 'none') applyColorAndLighting();
 }
 
-// Triggered when selecting an effect from the effect-panel dropdown
 function updateEffect() {
     const effectSelect = document.getElementById('effectSelect');
     selectedEffectName = effectSelect ? effectSelect.value : 'none';
 
     if (selectedEffectName === 'none') {
         currentEffectTexture = null;
+        resetToStandardMaterial();
         applyColorAndLighting();
     } else {
         const imagePath = `/img/${selectedEffectName}.png`;
@@ -211,24 +273,41 @@ function updateEffect() {
     }
 }
 
-// Apply selected effect texture map onto the 3D meshes
-function applyEffectTexture() {
-    if (!currentMesh || !currentEffectTexture) return;
+function resetToStandardMaterial() {
+    if (!currentMesh) return;
+
+    const handleMaterial = new THREE.MeshStandardMaterial({ color: originalHandleHex, roughness: 0.3, metalness: 0.1 });
+    const bodyMaterial = new THREE.MeshStandardMaterial({ color: originalBodyHex, roughness: 0.3, metalness: 0.1 });
+    const blackMaterial = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5, metalness: 0.2 });
 
     currentMesh.traverse((child) => {
-        if (child.isMesh && child.material) {
-            // Skip black accent parts (knob, ring, top cap) to keep them neutral
-            if (child.material.color && child.material.color.getHex() === 0x111111) return;
-            child.material.map = currentEffectTexture;
-            child.material.color.set(0xffffff); // Reset tint to white so texture colors show correctly
+        if (child.isMesh) {
+            if (child.name === 'handlePart') {
+                child.material = handleMaterial;
+            } else if (child.name === 'bodyPart') {
+                child.material = bodyMaterial;
+            } else {
+                child.material = blackMaterial;
+            }
+        }
+    });
+}
+
+// Apply selected effect texture map onto the 3D meshes using Projection Mapping logic
+function applyEffectTexture() {
+    if (!currentMesh || !currentEffectTexture) return;
+    customProjectorMaterial.uniforms.uTexture.value = currentEffectTexture;
+    currentMesh.traverse((child) => {
+        if (child.isMesh) {
+            if (child.material && child.material.color && child.material.color.getHex() === 0x111111) return;
+            child.material = customProjectorMaterial;
             child.material.needsUpdate = true;
         }
     });
 }
 
-// Core function to calculate and apply color, brightness, and saturation via HSL
 function applyColorAndLighting() {
-    if (selectedEffectName !== 'none') return; // Skip if effect texture is active
+    if (selectedEffectName !== 'none') return;
 
     const brightnessInput = document.getElementById('brightnessRange');
     const saturationInput = document.getElementById('saturationRange');
@@ -236,32 +315,44 @@ function applyColorAndLighting() {
     const brightness = brightnessInput ? parseFloat(brightnessInput.value) : 1.0;
     const saturation = saturationInput ? parseFloat(saturationInput.value) : 1.0;
 
+    const type = document.getElementById('productType').value;
+
     if (currentMesh) {
-        currentMesh.traverse((child) => {
-            if (child.material && child.material.color) {
-                let baseHex = originalHandleHex;
-                if (child.name === 'bodyPart') {
-                    baseHex = originalBodyHex;
-                } else if (child.material.color.getHex() === 0x111111) {
-                    return; 
+        if (type === 'ball') {
+            let color = new THREE.Color(originalBallColorHex);
+            let hsl = {};
+            color.getHSL(hsl);
+            let newS = Math.min(Math.max(hsl.s * saturation, 0), 1);
+            let newL = Math.min(Math.max(hsl.l * brightness, 0), 1);
+            currentMesh.material.color.setHSL(hsl.h, newS, newL);
+            currentMesh.material.map = null;
+            currentMesh.material.needsUpdate = true;
+        } else {
+            currentMesh.traverse((child) => {
+                if (child.material && child.material.color) {
+                    let baseHex = originalHandleHex;
+                    if (child.name === 'bodyPart') {
+                        baseHex = originalBodyHex;
+                    } else if (child.material.color.getHex() === 0x111111) {
+                        return; 
+                    }
+
+                    let color = new THREE.Color(baseHex);
+                    let hsl = {};
+                    color.getHSL(hsl);
+
+                    let newS = Math.min(Math.max(hsl.s * saturation, 0), 1);
+                    let newL = Math.min(Math.max(hsl.l * brightness, 0), 1);
+
+                    child.material.color.setHSL(hsl.h, newS, newL);
+                    child.material.map = null;
+                    child.material.needsUpdate = true;
                 }
-
-                let color = new THREE.Color(baseHex);
-                let hsl = {};
-                color.getHSL(hsl);
-
-                let newS = Math.min(Math.max(hsl.s * saturation, 0), 1);
-                let newL = Math.min(Math.max(hsl.l * brightness, 0), 1);
-
-                child.material.color.setHSL(hsl.h, newS, newL);
-                child.material.map = null; // Clear texture map if returning to normal color mode
-                child.material.needsUpdate = true;
-            }
-        });
+            });
+        }
     }
 }
 
-// Setup mouse and touch listeners for interactive 3D rotation
 function setupInteraction(domElement) {
     domElement.addEventListener('mousedown', (e) => {
         isDragging = true;
@@ -270,21 +361,15 @@ function setupInteraction(domElement) {
 
     window.addEventListener('mousemove', (e) => {
         if (!isDragging || !currentMesh) return;
-
         const deltaX = e.clientX - previousMousePosition.x;
         const deltaY = e.clientY - previousMousePosition.y;
-
         currentMesh.rotation.y += deltaX * 0.01;
         currentMesh.rotation.x += deltaY * 0.01;
-
         previousMousePosition = { x: e.clientX, y: e.clientY };
     });
 
-    window.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
+    window.addEventListener('mouseup', () => { isDragging = false; });
 
-    // Mobile touch support
     domElement.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             isDragging = true;
@@ -294,45 +379,36 @@ function setupInteraction(domElement) {
 
     window.addEventListener('touchmove', (e) => {
         if (!isDragging || !currentMesh || e.touches.length !== 1) return;
-
         const deltaX = e.touches[0].clientX - previousMousePosition.x;
         const deltaY = e.touches[0].clientY - previousMousePosition.y;
-
         currentMesh.rotation.y += deltaX * 0.01;
         currentMesh.rotation.x += deltaY * 0.01;
-
         previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     });
 
-    window.addEventListener('touchend', () => {
-        isDragging = false;
-    });
+    window.addEventListener('touchend', () => { isDragging = false; });
 }
 
-// Handle window resizing to keep proportions correct
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Animation loop (auto-rotate and animate texture offset like the 2D canvas effect)
 function animate() {
     requestAnimationFrame(animate);
     
     if (currentMesh) {
         if (!isDragging) {
-            currentMesh.rotation.y += 0.01; // Auto-rotate 3D object
+            currentMesh.rotation.y += 0.01;
         }
-
-        // If an effect texture is active, scroll its offset to mimic the spinning 2D canvas animation
-        if (currentEffectTexture && selectedEffectName !== 'none') {
-            currentEffectTexture.offset.y -= 0.02; // Speed of the effect animation loop
+        if (selectedEffectName !== 'none') {
+            effectAngle -= 0.005; 
+            customProjectorMaterial.uniforms.uAngle.value = effectAngle;
         }
     }
     
     renderer.render(scene, camera);
 }
 
-// Run initialization when window loads
 window.onload = init;
