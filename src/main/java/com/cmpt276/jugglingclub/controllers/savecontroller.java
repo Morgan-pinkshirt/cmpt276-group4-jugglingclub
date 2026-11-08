@@ -3,6 +3,8 @@ package com.cmpt276.jugglingclub.controllers;
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.roles.Role;
 import com.cmpt276.jugglingclub.roles.RoleService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession; 
 
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.savesRepository;
@@ -51,7 +54,7 @@ public class savecontroller { // this only deal with ids and stuff
         return "sim/view.html";
     }
     @PostMapping("/savecustom")
-    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID) {
+    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID, HttpServletRequest request) {
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
     }   
@@ -61,14 +64,15 @@ public class savecontroller { // this only deal with ids and stuff
 
             save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect );
             saveREPO.save(object);
-            model.addAttribute("message","save successful");
-            return "saves/result";
+            request.getSession(false).setAttribute("message", "Your design has been saved!"); 
+            return "redirect:/home";
 } // UID is not new, so it is from a save
     save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect);
         object.setUid(Integer.parseInt(UID)); // is this for saving
         saveREPO.save(object);
-        model.addAttribute("message","save updated successfully");
-        return "saves/result";
+        request.getSession(false).setAttribute("message", "Your design has been updated!"); 
+        
+        return "redirect:/home";
 
         }
     @GetMapping("/viewsavedprojects")
@@ -85,18 +89,22 @@ public class savecontroller { // this only deal with ids and stuff
         return "saves/savedproject";
     }
     @PostMapping("/deleteproject")
-    public String deleteprojects(HttpSession session, Model model, @RequestParam String UID){
+    public String deleteprojects(HttpSession session, HttpServletRequest request, @RequestParam String UID){
          if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
+        
     }   
         save project = saveREPO.findById(Integer.parseInt(UID)).orElse(null);
         if (project != null) {
             saveREPO.delete(project);
-            model.addAttribute("message","deleted project");
-            return "saves/result";
+
+            
+            request.getSession(false).setAttribute("message", "save deleted successfully"); 
+            return "redirect:/home";
         }
-        model.addAttribute("message","project not found");
-        return "saves/result";
+        
+        request.getSession(false).setAttribute("message", "project not found"); 
+        return "redirect:/home";
     }
     @GetMapping("/viewallsaves")
     public String viewallsaves(Model model, HttpSession session) {

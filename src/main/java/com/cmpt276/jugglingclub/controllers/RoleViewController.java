@@ -4,10 +4,16 @@ import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.roles.Role;
 import com.cmpt276.jugglingclub.roles.RoleService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -20,10 +26,11 @@ public class RoleViewController {
     }
 
     @GetMapping("/home")
-    public String getRole(HttpSession session, Model model) {
+    public String getRole(HttpSession session, Model model, HttpServletRequest request) {
         Role role = roleService.getRole(session);
         user currentUser = (user) session.getAttribute("user");
-
+        model.addAttribute("message", session.getAttribute("message"));
+        session.removeAttribute("message");
         model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
 
         if (role == Role.ADMIN) {

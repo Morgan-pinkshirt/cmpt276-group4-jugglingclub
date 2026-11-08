@@ -6,6 +6,7 @@
     <title>Member Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+
 </head>
 <body class="member-page">
     <header>
@@ -49,8 +50,14 @@
         </main>
     </div>
 
+        
+  
+
     <footer>
-        <p>The Jester Club - CMPT 276 Group 4</p>
+        <p>The Jester Club - CMPT 276 Group 4
+            <br> <span th:text="${message}"></span>
+            
+        </p>
     </footer>
 </body>
 </html>
