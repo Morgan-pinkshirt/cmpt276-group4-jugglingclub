@@ -38,11 +38,6 @@ public class usercontroller{
             return true;
         }
     }
-
-
-
-
-
     @GetMapping("/")
     public String startup() {
         return "redirect:/home";
