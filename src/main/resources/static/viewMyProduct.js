@@ -13,7 +13,7 @@ let previousMousePosition = { x: 0, y: 0 };
 // Effect Texture variables
 let currentEffectTexture = null;
 let selectedEffectName = 'none';
-let effectAngle = 0; // <-- ĐÃ THÊM BIẾN NÀY ĐỂ TRÁNH LỖI KHỰNG SCRIPTSS
+let effectAngle = 0;
 const textureLoader = new THREE.TextureLoader();
 
 //Custom Shader Material (Polar Projection)
