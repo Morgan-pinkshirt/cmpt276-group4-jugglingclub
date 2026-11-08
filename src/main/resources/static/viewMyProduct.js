@@ -13,7 +13,7 @@ let previousMousePosition = { x: 0, y: 0 };
 // Effect Texture variables
 let currentEffectTexture = null;
 let selectedEffectName = 'none';
-let effectAngle = 0;
+let effectAngle = 0; 
 const textureLoader = new THREE.TextureLoader();
 
 //Custom Shader Material (Polar Projection)
@@ -47,6 +47,7 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
             float W_offset = (vUv.x - 0.5) * 0.0005; 
             float theta = uAngle + W_offset;
 
+            vec2 pngUV;
             pngUV.x = 0.5 + r * cos(theta);
             pngUV.y = 0.5 + r * sin(theta);
 
@@ -116,8 +117,13 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         currentMesh.traverse((child) => {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
+                // Do not call dispose() if Shadermaterial are shared
+                if (child.material === customProjectorMaterial) return;
+
                 if (Array.isArray(child.material)) {
-                    child.material.forEach(m => m.dispose());
+                    child.material.forEach(m => {
+                        if (m !== customProjectorMaterial) m.dispose();
+                    });
                 } else {
                     child.material.dispose();
                 }
@@ -129,7 +135,7 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
     if (type === 'ball') {
         const geometry = new THREE.SphereGeometry(1.2, 32, 32);
         const material = new THREE.MeshStandardMaterial({ 
-            color: hexColor || originalBallColorHex, 
+            color: hexBallColor || originalBallColorHex, 
             roughness: 0.3, 
             metalness: 0.2 
         });
@@ -203,7 +209,7 @@ function updateProduct() {
     originalHandleHex = document.getElementById('productColor').value;
     originalBodyHex = document.getElementById('bodyColor').value;
     originalBallColorHex = document.getElementById('ballColor').value;
-    createProduct(type, originalHandleHex, originalBodyHex);
+    createProduct(type, originalHandleHex, originalBodyHex, originalBallColorHex);
 }
 
 function toggleProductUI(type) {
@@ -276,13 +282,16 @@ function updateEffect() {
 function resetToStandardMaterial() {
     if (!currentMesh) return;
 
+    const ballMaterial = new THREE.MeshStandardMaterial({ color: originalBallColorHex, roughness: 0.3, metalness: 0.2 });
     const handleMaterial = new THREE.MeshStandardMaterial({ color: originalHandleHex, roughness: 0.3, metalness: 0.1 });
     const bodyMaterial = new THREE.MeshStandardMaterial({ color: originalBodyHex, roughness: 0.3, metalness: 0.1 });
     const blackMaterial = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5, metalness: 0.2 });
 
     currentMesh.traverse((child) => {
         if (child.isMesh) {
-            if (child.name === 'handlePart') {
+            if (child.name === 'ballPart') {
+                child.material = ballMaterial;
+            } else if (child.name === 'handlePart') {
                 child.material = handleMaterial;
             } else if (child.name === 'bodyPart') {
                 child.material = bodyMaterial;
