@@ -6,6 +6,12 @@ body {
     padding: 30px;
 }
 
+.model {
+    display: inline-block;
+    padding: 1rem 1rem;
+    vertical-align: middle;
+}
+
 svg {
     display: block;
     margin: 50px auto;
@@ -63,4 +69,10 @@ button.active {
         magenta,
         red
     );
+}
+
+#canvas_still {
+    margin: 0% 25%;
+    display: none;
+    transform: rotate(-135deg);
 }

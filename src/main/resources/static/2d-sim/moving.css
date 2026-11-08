@@ -1,0 +1,41 @@
+.center {
+    text-align: center;
+}
+
+form {
+    width: fit-content;
+    margin: auto;
+}
+
+fieldset {
+    padding: 15px;
+}
+
+/*For the spinning: https://stackoverflow.com/questions/31966801/setting-rotation-point-and-center-animation-in-css */
+#clubDivision {
+    animation: spin 2s linear infinite;
+
+    margin: 0% 12%;
+}
+
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+#mode_name {
+    visibility: hidden;
+}
+
+#canvas_moving {
+    display: none;
+    transform-origin: 97px 225px;
+}
+
+#svg_moving {
+    display: block;
+}

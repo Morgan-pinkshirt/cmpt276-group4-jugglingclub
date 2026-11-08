@@ -1,18 +1,22 @@
 // https://zetcode.com/canvas-api/rotate/. 31/10/26
 
-const canvas = document.getElementById('club');
-const ctx = canvas.getContext('2d');
+const canvasMov = document.getElementById('canvas_moving');
+const ctxMov = canvasMov.getContext('2d');
+
+const canvasStill = document.getElementById("canvas_still");
+const ctxStill = canvasStill.getContext('2d');
 
 const clickedButton = document.getElementById("view-button");
 
 const modeName = document.getElementById("mode_name");
 
-let angle = 0;
+let angleMov = 0;
+let angleStill = 0;
 
 const centerX = 101.5;
 const centerY = 443;
 
-function draw() {
+function draw(ctx, angle, type) {
     const img = document.getElementById("img");
     ctx.save();
 
@@ -38,18 +42,26 @@ function draw() {
     ctx.restore();
 
     // Increase angle for next frame
-    angle -= 0.02;
+    if (type == "moving") {
+        angle -= 0.02;
+    } else if (type == "still") {
+        angle -= 0.0075;
+    }
+
     if (angle > Math.PI * 2) {
         angle = 0;
         counter = 0;
     }
     
     // Request next animation frame
-    requestAnimationFrame(draw);
+    
+    // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
+    requestAnimationFrame(() => draw(ctx, angle, type));
 }
 
 // Start animation
-draw();
+draw(ctxMov, angleMov, "moving");
+draw(ctxStill, angleStill, "still");
 
 function numberTen(mode) {
     if (mode[4] != "_") {
@@ -92,6 +104,10 @@ clickedButton.addEventListener('click', function () {
         i++;
     }
 	img.src=`img/${mode}.png`;
-	angle = 0;
-
+    angle = 0;
+    svgMov.style.display = "none";
+    canvasMov.style.display = "block";
+    svgStill.style.display = "none";
+    canvasStill.style.display = "block";
+    modeName.style.visibility = "visible";
 });
