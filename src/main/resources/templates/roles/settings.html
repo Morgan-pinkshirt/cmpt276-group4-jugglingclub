@@ -78,6 +78,7 @@
             <form action="/settings/theme" method="post">
                 <label for="theme">Select Theme:</label>
                 <select id="theme" name="theme" required>
+                    <option value="purple" th:selected="${user.theme == 'purple'}">Purple</option>
                     <option value="light" th:selected="${user.theme == 'light'}">Light</option>
                     <option value="dark" th:selected="${user.theme == 'dark'}">Dark</option>
                 </select>

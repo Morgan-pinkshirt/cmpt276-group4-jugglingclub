@@ -41,10 +41,18 @@ public class AdminInitializer implements CommandLineRunner {
             }
         }
 
+        String superAdminUsername = "joker";
 
-
+        if (userRepository.findByName(superAdminUsername).isEmpty()) {
+            user superAdmin = new user(
+                    superAdminUsername,
+                    passwordEncoder.encode(initialPassword)
+            );
+            superAdmin.setRole(Role.SUPER_ADMIN);
+            userRepository.save(superAdmin);
+            System.out.println("Created super admin: " + superAdminUsername);
+        } else {
+            System.out.println("Account already exists: " + superAdminUsername);
+        }
     }
-
-
-
 }

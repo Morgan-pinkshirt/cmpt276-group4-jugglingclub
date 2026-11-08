@@ -30,7 +30,7 @@ public class RoleViewController {
             model.addAttribute("currentUsername", currentUser.getName());
         }
 
-        if (role == Role.ADMIN) {
+        if (role == Role.ADMIN || role == Role.SUPER_ADMIN) {
             return "roles/admin";
         } else if (role == Role.MEMBER) {
             return "roles/member";

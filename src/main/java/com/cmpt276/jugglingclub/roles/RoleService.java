@@ -28,8 +28,8 @@ public class RoleService {
     }
 
     public boolean isAdmin(HttpSession session) {
-        return getRole(session) == Role.ADMIN;
+        Role role = getRole(session);
+        return role == Role.ADMIN || role == Role.SUPER_ADMIN;
     }
-
     
 }
