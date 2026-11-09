@@ -22,17 +22,23 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
         uTexture: { value: null },
         uAngle: { value: 0.0 },
         uIsClub: { value: false },
-        uOpacity: { value: 1.0 }
+        uOpacity: { value: 1.0 },
+        uMeshOffsetY: { value: 0.0 }
     },
     vertexShader: `
         varying vec2 vUv;
         varying float vHeightRatio;
+        uniform float uMeshOffsetY;
 
         void main() {
             vUv = uv;
-            float minY = -1.5;
-            float maxY = 1.6;
-            vHeightRatio = clamp((position.y - minY) / (maxY - minY), 0.0, 1.0);
+            
+            float clubY = position.y + uMeshOffsetY;
+            
+            float minY = -1.8;
+            float maxY = 1.75;
+            
+            vHeightRatio = clamp((clubY - minY) / (maxY - minY), 0.0, 1.0);
 
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
@@ -131,12 +137,8 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         currentMesh.traverse((child) => {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
-                if (child.material === customProjectorMaterial || child.material === ringProjectorMaterial) return;
-
                 if (Array.isArray(child.material)) {
-                    child.material.forEach(m => {
-                        if (m !== customProjectorMaterial && m !== ringProjectorMaterial) m.dispose();
-                    });
+                    child.material.forEach(m => m.dispose());
                 } else {
                     child.material.dispose();
                 }
@@ -338,20 +340,26 @@ function applyEffectTexture() {
     
     const isClub = (document.getElementById('productType').value === 'club');
 
-    [customProjectorMaterial, ringProjectorMaterial].forEach((m) => {
-        m.uniforms.uTexture.value = currentEffectTexture;
-        m.uniforms.uIsClub.value = isClub;
-        m.needsUpdate = true;
-    });
-
     currentMesh.traverse((child) => {
         if (!child.isMesh) return;
-        
-        if (child.name === 'ringPart') {
-            child.material = ringProjectorMaterial;
-        } else if (child.name === 'handlePart' || child.name === 'bodyPart' || child.name === 'ballPart') {
-            child.material = customProjectorMaterial;
+        const isRing = child.name === 'ringPart';
+        const isTarget = isRing || child.name === 'handlePart' || 
+                         child.name === 'bodyPart' || child.name === 'ballPart';
+        if (!isTarget) return;
+        if (child.material && child.material !== customProjectorMaterial && child.material !== ringProjectorMaterial) {
+            child.material.dispose();
         }
+        const mat = (isRing ? ringProjectorMaterial : customProjectorMaterial).clone();
+        mat.uniforms = THREE.UniformsUtils.clone(mat.uniforms);
+        
+        mat.transparent = isRing;
+        mat.uniforms.uTexture.value = currentEffectTexture;
+        mat.uniforms.uIsClub.value = isClub;
+        mat.uniforms.uOpacity.value = isRing ? 0.7 : 1.0;
+        mat.uniforms.uMeshOffsetY.value = isClub ? child.position.y : 0.0;
+        mat.needsUpdate = true;
+
+        child.material = mat;
     });
 }
 
@@ -453,11 +461,14 @@ function animate() {
         }
         if (selectedEffectName !== 'none') {
             effectAngle -= 0.005; 
-            customProjectorMaterial.uniforms.uAngle.value = effectAngle;
-            ringProjectorMaterial.uniforms.uAngle.value = effectAngle;
+            currentMesh.traverse((child) => {
+                if (child.isMesh && child.material && child.material.uniforms && 
+                    child.material.uniforms.uAngle) {
+                    child.material.uniforms.uAngle.value = effectAngle;
+                }
+            });
         }
     }
-    
     renderer.render(scene, camera);
 }
 
