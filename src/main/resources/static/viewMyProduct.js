@@ -16,7 +16,7 @@ let selectedEffectName = 'none';
 let effectAngle = 0; 
 const textureLoader = new THREE.TextureLoader();
 
-// Custom Shader Material (Polar Projection - Material chính cho Handle, Body, Ball)
+// Custom Shader Material (Polar Projection)
 const customProjectorMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTexture: { value: null },
@@ -30,8 +30,6 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
 
         void main() {
             vUv = uv;
-            
-            // Sử dụng tọa độ cục bộ position.y để chống nghiêng tuyệt đối khi club xoay
             float minY = -1.5;
             float maxY = 1.6;
             vHeightRatio = clamp((position.y - minY) / (maxY - minY), 0.0, 1.0);
@@ -65,8 +63,6 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
             if (pngUV.x < 0.0 || pngUV.x > 1.0 || pngUV.y < 0.0 || pngUV.y > 1.0) {
                 texColor = vec4(0.0, 0.0, 0.0, 1.0);
             }
-
-            // Áp dụng độ trong suốt tùy chỉnh cho ring
             texColor.a *= uOpacity;
 
             gl_FragColor = texColor;
@@ -75,7 +71,6 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
     side: THREE.DoubleSide
 });
 
-// Material thứ hai dùng chung cho Ring (Clone từ material chính, bật trong suốt và chỉnh opacity)
 const ringProjectorMaterial = customProjectorMaterial.clone();
 ringProjectorMaterial.transparent = true;
 ringProjectorMaterial.uniforms.uOpacity.value = 0.7;
@@ -136,7 +131,6 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         currentMesh.traverse((child) => {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
-                // Không dispose nếu là ShaderMaterial dùng chung
                 if (child.material === customProjectorMaterial || child.material === ringProjectorMaterial) return;
 
                 if (Array.isArray(child.material)) {
@@ -177,13 +171,13 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         const knobMesh = new THREE.Mesh(new THREE.LatheGeometry(knobPoints, 32), blackMaterial);
         currentMesh.add(knobMesh);
 
-        // 1. Handle (Bán kính đỉnh handle khớp với đáy Ring = 0.21)
+        // 1. Handle
         const handleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.18, 1.2, 32), handleMaterial);
         handleMesh.position.y = -0.9;
         handleMesh.name = 'handlePart'; 
         currentMesh.add(handleMesh);
 
-        // 2. Ring (Trở về kích cỡ ban đầu dày dặn và nổi bật hơn: bán kính 0.23 - 0.21, chiều cao 0.08)
+        // 2. Ring
         const translucentRingMaterial = new THREE.MeshStandardMaterial({ 
             color: 0x111111, 
             roughness: 0.2, 
@@ -196,10 +190,10 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         ringMesh.name = 'ringPart'; 
         currentMesh.add(ringMesh);
 
-        // 3. Body (Đáy body xuất phát từ bán kính 0.23 để ôm khít đỉnh Ring)
+        // 3. Body
         const bodyPath = new THREE.CubicBezierCurve(
-            new THREE.Vector2(0.23, -0.2), // Khớp với bán kính đỉnh Ring (0.23)
-            new THREE.Vector2(0.65, 0.5),  // Điểm phình to tròn tiêu chuẩn
+            new THREE.Vector2(0.23, -0.2), 
+            new THREE.Vector2(0.65, 0.5),
             new THREE.Vector2(0.55, 1.2),
             new THREE.Vector2(0.3, 1.6)
         );
