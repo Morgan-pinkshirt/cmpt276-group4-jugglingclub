@@ -54,7 +54,7 @@ function draw(ctx, angle, type) {
     }
     
     // Request next animation frame
-    
+
     // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
     requestAnimationFrame(() => draw(ctx, angle, type));
 }
@@ -98,7 +98,10 @@ clickedButton.addEventListener('click', function () {
         if (mode[i] == "_") {
             modeName.innerHTML += ` ${mode[i+1].toUpperCase()}`;
             i++;
-        } else {
+        } else if (mode[i] == "-") {
+            modeName.innerHTML += "/";
+        }
+        else {
             modeName.innerHTML += mode[i]; 
         }
         i++;
