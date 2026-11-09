@@ -1,0 +1,116 @@
+// https://zetcode.com/canvas-api/rotate/. 31/10/26
+
+const canvasMov = document.getElementById('canvas_moving');
+const ctxMov = canvasMov.getContext('2d');
+
+const canvasStill = document.getElementById("canvas_still");
+const ctxStill = canvasStill.getContext('2d');
+
+const clickedButton = document.getElementById("view-button");
+
+const modeName = document.getElementById("mode_name");
+
+let angleMov = 0;
+let angleStill = 0;
+
+const centerX = 101.5;
+const centerY = 443;
+
+function draw(ctx, angle, type) {
+    const img = document.getElementById("img");
+    ctx.save();
+
+    ctx.beginPath();
+	ctx.moveTo(90, 120);
+	ctx.lineTo(90, 233);
+	ctx.lineTo(103, 333);
+	ctx.lineTo(103, 120);
+	ctx.moveTo(90, 220);
+
+	ctx.bezierCurveTo(55, 290, 70, 350, 83, 365);
+	ctx.lineTo(100, 365);
+	ctx.bezierCurveTo(115, 350, 130, 290, 103, 220);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle);
+    ctx.translate(-centerX, -centerY);	
+
+    ctx.drawImage(img, -230, 120);
+    ctx.restore();
+
+    // Increase angle for next frame
+    if (type == "moving") {
+        angle -= 0.02;
+    } else if (type == "still") {
+        angle -= 0.0075;
+    }
+
+    if (angle > Math.PI * 2) {
+        angle = 0;
+        counter = 0;
+    }
+    
+    // Request next animation frame
+
+    // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
+    requestAnimationFrame(() => draw(ctx, angle, type));
+}
+
+// Start animation
+draw(ctxMov, angleMov, "moving");
+draw(ctxStill, angleStill, "still");
+
+function numberTen(mode) {
+    if (mode[4] != "_") {
+        modeName.innerHTML += mode[4];
+        return 6;
+    }
+    return 5
+}
+
+clickedButton.addEventListener('click', function () {
+	const mode = document.getElementById("options").value;
+    let i = 5;
+    if (mode[1] == 1 && mode[2] != 3) {
+        modeName.innerHTML = `Page 1 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 2) {
+        modeName.innerHTML = `Page 2 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 3) {
+        modeName.innerHTML = `Page 3 - #${mode[3]}`;
+        i = numberTen(mode);
+    } else if (mode[1] == 1 && mode[2] == 3) {
+
+        modeName.innerHTML = `Page 13 - #${mode[4]}`;
+        if (mode[5] != "_") {
+            i = 6;
+            modeName.innerHTML += mode[5];
+            i = 7;
+        }
+    }
+    modeName.innerHTML += ` - ${mode[i].toUpperCase()}`;
+    i++;
+    while (i < mode.length) {
+        if (mode[i] == "_") {
+            modeName.innerHTML += ` ${mode[i+1].toUpperCase()}`;
+            i++;
+        } else if (mode[i] == "-") {
+            modeName.innerHTML += "/";
+        }
+        else {
+            modeName.innerHTML += mode[i]; 
+        }
+        i++;
+    }
+	img.src=`img/${mode}.png`;
+    angle = 0;
+    svgMov.style.display = "none";
+    canvasMov.style.display = "block";
+    svgStill.style.display = "none";
+    canvasStill.style.display = "block";
+    modeName.style.visibility = "visible";
+});
