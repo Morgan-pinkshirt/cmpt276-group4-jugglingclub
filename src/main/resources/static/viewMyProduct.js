@@ -16,33 +16,43 @@ let selectedEffectName = 'none';
 let effectAngle = 0; 
 const textureLoader = new THREE.TextureLoader();
 
-//Custom Shader Material (Polar Projection)
+// Custom Shader Material (Polar Projection - Material chính cho Handle, Body, Ball)
 const customProjectorMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTexture: { value: null },
-        uAngle: { value: 0.0 }
+        uAngle: { value: 0.0 },
+        uIsClub: { value: false },
+        uOpacity: { value: 1.0 }
     },
     vertexShader: `
         varying vec2 vUv;
-        varying vec3 vWorldPosition;
+        varying float vHeightRatio;
 
         void main() {
             vUv = uv;
-            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-            vWorldPosition = worldPosition.xyz;
-            gl_Position = projectionMatrix * viewMatrix * worldPosition;
+            
+            // Sử dụng tọa độ cục bộ position.y để chống nghiêng tuyệt đối khi club xoay
+            float minY = -1.5;
+            float maxY = 1.6;
+            vHeightRatio = clamp((position.y - minY) / (maxY - minY), 0.0, 1.0);
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
     `,
     fragmentShader: `
         uniform sampler2D uTexture;
         uniform float uAngle;
+        uniform bool uIsClub;
+        uniform float uOpacity;
         varying vec2 vUv;
-        varying vec3 vWorldPosition;
+        varying float vHeightRatio;
 
         void main() {
             float R_small = 0.18;
             float R_large = 0.45;
-            float r = R_small + vUv.y * (R_large - R_small);
+        
+            float verticalFactor = uIsClub ? vHeightRatio : vUv.y;
+            float r = R_small + verticalFactor * (R_large - R_small);
 
             float W_offset = (vUv.x - 0.5) * 0.0005; 
             float theta = uAngle + W_offset;
@@ -55,11 +65,20 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
             if (pngUV.x < 0.0 || pngUV.x > 1.0 || pngUV.y < 0.0 || pngUV.y > 1.0) {
                 texColor = vec4(0.0, 0.0, 0.0, 1.0);
             }
+
+            // Áp dụng độ trong suốt tùy chỉnh cho ring
+            texColor.a *= uOpacity;
+
             gl_FragColor = texColor;
         }
     `,
     side: THREE.DoubleSide
 });
+
+// Material thứ hai dùng chung cho Ring (Clone từ material chính, bật trong suốt và chỉnh opacity)
+const ringProjectorMaterial = customProjectorMaterial.clone();
+ringProjectorMaterial.transparent = true;
+ringProjectorMaterial.uniforms.uOpacity.value = 0.7;
 
 // Initialize the 3D scene, camera, renderer, lights, and event listeners
 function init() {
@@ -117,12 +136,12 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         currentMesh.traverse((child) => {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
-                // Do not call dispose() if Shadermaterial are shared
-                if (child.material === customProjectorMaterial) return;
+                // Không dispose nếu là ShaderMaterial dùng chung
+                if (child.material === customProjectorMaterial || child.material === ringProjectorMaterial) return;
 
                 if (Array.isArray(child.material)) {
                     child.material.forEach(m => {
-                        if (m !== customProjectorMaterial) m.dispose();
+                        if (m !== customProjectorMaterial && m !== ringProjectorMaterial) m.dispose();
                     });
                 } else {
                     child.material.dispose();
@@ -144,7 +163,6 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
     } else {
         // Create Juggling Club Group
         currentMesh = new THREE.Group();
-
         const handleMaterial = new THREE.MeshStandardMaterial({ color: hexColor, roughness: 0.3, metalness: 0.1 });
         const bodyMaterial = new THREE.MeshStandardMaterial({ color: hexBodyColor, roughness: 0.3, metalness: 0.1 });
         const blackMaterial = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5, metalness: 0.2 });
@@ -159,21 +177,29 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         const knobMesh = new THREE.Mesh(new THREE.LatheGeometry(knobPoints, 32), blackMaterial);
         currentMesh.add(knobMesh);
 
-        // Handle
-        const handleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.18, 1.2, 32), handleMaterial);
+        // 1. Handle (Bán kính đỉnh handle khớp với đáy Ring = 0.21)
+        const handleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.18, 1.2, 32), handleMaterial);
         handleMesh.position.y = -0.9;
         handleMesh.name = 'handlePart'; 
         currentMesh.add(handleMesh);
 
-        // Ring
-        const ringMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.23, 0.1, 32), blackMaterial);
+        // 2. Ring (Trở về kích cỡ ban đầu dày dặn và nổi bật hơn: bán kính 0.23 - 0.21, chiều cao 0.08)
+        const translucentRingMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x111111, 
+            roughness: 0.2, 
+            metalness: 0.3, 
+            transparent: true, 
+            opacity: 0.7 
+        });
+        const ringMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.21, 0.08, 32), translucentRingMaterial);
         ringMesh.position.y = -0.25;
+        ringMesh.name = 'ringPart'; 
         currentMesh.add(ringMesh);
 
-        // Body 
+        // 3. Body (Đáy body xuất phát từ bán kính 0.23 để ôm khít đỉnh Ring)
         const bodyPath = new THREE.CubicBezierCurve(
-            new THREE.Vector2(0.25, -0.2),
-            new THREE.Vector2(0.65, 0.5),
+            new THREE.Vector2(0.23, -0.2), // Khớp với bán kính đỉnh Ring (0.23)
+            new THREE.Vector2(0.65, 0.5),  // Điểm phình to tròn tiêu chuẩn
             new THREE.Vector2(0.55, 1.2),
             new THREE.Vector2(0.3, 1.6)
         );
@@ -282,6 +308,14 @@ function updateEffect() {
 function resetToStandardMaterial() {
     if (!currentMesh) return;
 
+    const translucentBlackMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x111111, 
+        roughness: 0.2, 
+        metalness: 0.3, 
+        transparent: true, 
+        opacity: 0.6 
+    });
+
     const ballMaterial = new THREE.MeshStandardMaterial({ color: originalBallColorHex, roughness: 0.3, metalness: 0.2 });
     const handleMaterial = new THREE.MeshStandardMaterial({ color: originalHandleHex, roughness: 0.3, metalness: 0.1 });
     const bodyMaterial = new THREE.MeshStandardMaterial({ color: originalBodyHex, roughness: 0.3, metalness: 0.1 });
@@ -295,6 +329,8 @@ function resetToStandardMaterial() {
                 child.material = handleMaterial;
             } else if (child.name === 'bodyPart') {
                 child.material = bodyMaterial;
+            } else if (child.name === 'ringPart'){
+                child.material = translucentBlackMaterial;
             } else {
                 child.material = blackMaterial;
             }
@@ -305,12 +341,22 @@ function resetToStandardMaterial() {
 // Apply selected effect texture map onto the 3D meshes using Projection Mapping logic
 function applyEffectTexture() {
     if (!currentMesh || !currentEffectTexture) return;
-    customProjectorMaterial.uniforms.uTexture.value = currentEffectTexture;
+    
+    const isClub = (document.getElementById('productType').value === 'club');
+
+    [customProjectorMaterial, ringProjectorMaterial].forEach((m) => {
+        m.uniforms.uTexture.value = currentEffectTexture;
+        m.uniforms.uIsClub.value = isClub;
+        m.needsUpdate = true;
+    });
+
     currentMesh.traverse((child) => {
-        if (child.isMesh) {
-            if (child.material && child.material.color && child.material.color.getHex() === 0x111111) return;
+        if (!child.isMesh) return;
+        
+        if (child.name === 'ringPart') {
+            child.material = ringProjectorMaterial;
+        } else if (child.name === 'handlePart' || child.name === 'bodyPart' || child.name === 'ballPart') {
             child.material = customProjectorMaterial;
-            child.material.needsUpdate = true;
         }
     });
 }
@@ -414,6 +460,7 @@ function animate() {
         if (selectedEffectName !== 'none') {
             effectAngle -= 0.005; 
             customProjectorMaterial.uniforms.uAngle.value = effectAngle;
+            ringProjectorMaterial.uniforms.uAngle.value = effectAngle;
         }
     }
     
