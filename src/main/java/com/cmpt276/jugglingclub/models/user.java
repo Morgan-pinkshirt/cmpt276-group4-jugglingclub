@@ -13,10 +13,63 @@ public class user implements Serializable{
     private int uid;
     private String name;
     private String password;
+    private String email;
     private String theme = "light";
+
+    private String favcolor;
+    private String mothername;
+    private String favplace;
+    private String favsubject;
+    private String hometown;
+    private String favgame;
+    
     @Enumerated(EnumType.STRING)
+
+    
     private Role role = Role.MEMBER;
     
+    public String getFavcolor() {
+        return favcolor;
+    }
+    public void setFavcolor(String favcolor) {
+        this.favcolor = favcolor;
+    }
+    public String getMothername() {
+        return mothername;
+    }
+    public void setMothername(String mothername) {
+        this.mothername = mothername;
+    }
+    public String getFavplace() {
+        return favplace;
+    }
+    public void setFavplace(String favplace) {
+        this.favplace = favplace;
+    }
+    public String getFavsubject() {
+        return favsubject;
+    }
+    public void setFavsubject(String favsubject) {
+        this.favsubject = favsubject;
+    }
+    public String getHometown() {
+        return hometown;
+    }
+    public void setHometown(String hometown) {
+        this.hometown = hometown;
+    }
+    public String getFavgame() {
+        return favgame;
+    }
+    public void setFavgame(String favgame) {
+        this.favgame = favgame;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
     public user() {
     }
     public user(String name, String password) {

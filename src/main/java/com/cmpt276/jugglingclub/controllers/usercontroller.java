@@ -18,11 +18,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.cmpt276.jugglingclub.roles.RoleService;
 
 
 @Controller
 public class usercontroller{
     @Autowired usersRepository userREPO;
+    private final RoleService roleService;
+
+    public usercontroller(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -38,11 +45,6 @@ public class usercontroller{
             return true;
         }
     }
-
-
-
-
-
     @GetMapping("/")
     public String startup() {
         return "redirect:/home";
@@ -127,4 +129,30 @@ public class usercontroller{
         request.getSession().invalidate();
         return "redirect:/home";
     }
+
+
+    @PostMapping("/checkquestions")
+    public String checkquestions(@RequestParam String question, @RequestParam String answer, @RequestParam String username,HttpSession session, Model model) {
+         if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+
+    }
+        user User = (user) session.getAttribute("user");  
+
+        user vailduser = userREPO.findByName(User.getName()).orElse(null);
+
+        if((vailduser == null)){
+            model.addAttribute("message","ERROR: something went wrong, account not find");
+            session.invalidate();
+            return "users/result";
+        }
+        //TODO make a switch case based on the value of question, then match the answer
+
+        
+        return "redirect:/home";
+    }
+    
+    
+    
+    
 }

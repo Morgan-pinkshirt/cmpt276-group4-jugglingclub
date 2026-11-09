@@ -57,6 +57,17 @@
             </form>
         </section>
 
+          <section>
+            <h2>link email</h2>
+            <form action="/setEmail" method="post">
+                <label for="email">email:</label>
+                <span id="currentemail" th:text="${user.email}">email</span>
+                <input type="email" id="email" name="email" th:value="${user.email}" hidden>
+                <button type="button" id = "emailButton" onclick = "editemail()">Edit</button>
+            </form>
+        </section>
+
+
 
         <section>
             <h2>Change Password</h2>
@@ -86,6 +97,13 @@
             </form>
         </section>
 
+        <section>
+            <h2>Security questions </h2>
+            <form action="/securityquestions">
+                <label for="view security questions">view security questions:</label>
+                <input type="submit" th:value="view">
+            </form>
+        </section>
 
         
     </main>
@@ -101,6 +119,19 @@
             usernameInput.hidden = false;
 
             const button = document.getElementById('usernameButton');
+            button.textContent = 'Save';
+            button.onclick = function() {
+                button.form.requestSubmit();
+            };
+        }
+    </script>
+     <script>
+        function editemail() {
+            const usernameInput = document.getElementById('email');
+            document.getElementById('currentemail').hidden = true;
+            usernameInput.hidden = false;
+
+            const button = document.getElementById('emailButton');
             button.textContent = 'Save';
             button.onclick = function() {
                 button.form.requestSubmit();
