@@ -81,7 +81,9 @@ public class RoleViewController {
 
 
     @GetMapping("/under-construction")
-    public String underConstruction() {
+    public String underConstruction(HttpSession session, Model model) {
+        user currentUser = (user) session.getAttribute("user");
+        model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
         return "roles/under-construction";
     }
 }

@@ -39,7 +39,7 @@ public class AdminCreateController {
         if (currentUser.getRole() != Role.ADMIN && currentUser.getRole() != Role.SUPER_ADMIN) {
         return "redirect:/home";
     }
-
+        model.addAttribute("theme", currentUser.getTheme());
         return "roles/create-admin";
     }
 
@@ -73,7 +73,8 @@ public class AdminCreateController {
             model.addAttribute("message", "Username already exists.");
             return "roles/create-admin";
         }
-
+        
+        model.addAttribute("theme", currentUser.getTheme());
         user newAdmin = new user(username, passwordEncoder.encode(password));
         newAdmin.setRole(Role.ADMIN);
         userRepository.save(newAdmin);
