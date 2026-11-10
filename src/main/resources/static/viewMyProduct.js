@@ -16,7 +16,7 @@ let selectedEffectName = 'none';
 let effectAngle = 0; 
 const textureLoader = new THREE.TextureLoader();
 
-// Custom Shader Material (Polar Projection) - Dùng World-space để tái hiện lỗi lệch độ nghiêng
+// Custom Shader Material (Polar Projection)
 const customProjectorMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTexture: { value: null },
@@ -30,13 +30,9 @@ const customProjectorMaterial = new THREE.ShaderMaterial({
 
         void main() {
             vUv = uv;
-            
-            // Đặt khoảng giá trị Y toàn cục của cả cây gậy (từ đáy handle đến đỉnh body)
             float minY = -1.5;
             float maxY = 1.6;
             
-            // Tính toán chiều cao dựa trên tọa độ thực tế trong không gian 3D (World space)
-            // Khi gậy nghiêng, worldPosition.y không đồng bộ với trục cục bộ của gậy, gây ra lỗi lệch hướng texture
             vec4 worldPosition = modelMatrix * vec4(position, 1.0);
             vHeightRatio = clamp((worldPosition.y - minY) / (maxY - minY), 0.0, 1.0);
 
