@@ -1,14 +1,6 @@
-﻿# cmpt276-group4-simulation
- 
-#Group 4: TheJestersClub
+The application is a maven project designed to be hosted on render.com using dockerfile the url is “https://cmpt276-group4-jugglingclub.onrender.com”.
 
-#Github: https://github.com/Morgan-pinkshirt/cmpt276-group4-jugglingclub.git
+An issue we are running into right now is writing tests for our application and running them, and that the club simulator is not built with all of the features planned. A feature planned to be completed in the next iteration is to build in a save function for users to save their customized clubs settings and load it. It will also let users import/export their custom designs into a file that can be transferred to other users. We will finish to create the simulator for rotating clubs with its various settings such as color saturation, brightness and different color modes.
 
-#Render: https://cmpt276-group4-jugglingclub.onrender.com
-
-#Team members: (Name - Computing ID - Discord - Github)
-1. Johnson Liang - cla572 - heavenly_moose_01148 - 24jjohnsonl0556-byte
-2. Kabir Grewal - kga90 - kabir.grewal - kga90
-3. Long Truong - lnt7 - longlnt7- PascalTruong
-4. Morgan Noblesse - msn17 - morgan.noblesse - Morgan-pinkshirt
-5. Zhuoqun Li - zla315 - Leif - SiaFeather
+Also we do not know how to write tests for the simulator, so we did not write any. 
+Right now, admins can delete other admin, so this is an issue.
