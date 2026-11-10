@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="sidebar(role)"
+         class="lobby-sidebar"
+         aria-label="Lobby navigation">
+        <div class="lobby-nav-links">
+            <a class="lobby-nav-link"
+                th:href="@{/home}">
+                <i data-lucide="house"
+                aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'guest'}"
+                th:href="@{/no-presets.html}">
+                <i data-lucide="layout-grid"
+                aria-hidden="true"></i>
+                <span>Presets</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'guest'}"
+                th:href="@{/userregister}">
+                <i data-lucide="user-plus"
+                aria-hidden="true"></i>
+                <span>Register</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'member'}"
+                th:href="@{/viewsavedprojects}">
+                <i data-lucide="folder-open"
+                aria-hidden="true"></i>
+                <span>Saved Projects</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'admin' or role == 'super_admin'}"
+                th:href="@{/admin/accounts}">
+                <i data-lucide="users"
+                aria-hidden="true"></i>
+                <span>Accounts</span>
+            </a>
+            <div class="lobby-nav-divider"></div>
+            <div class="lobby-theme-control"
+                 th:if="${role == 'guest'}">
+                <label for="guest-theme">
+                    i data-lucide="palette"
+                    aria-hidden="true"></i>
+                    <span>Change Theme</span>
+                </label>
+                <select id="guest-theme" aria-label="Guest UI theme">
+                    <option value="light" th:attr="data-url=@{/css/themes/light.css}">
+                        Light Mode
+                    </option>
+                    <option value="dark" th:attr="data-url=@{/css/themes/dark.css}">
+                        Dark Mode
+                    </option>
+                    <option value="purple" th:attr="data-url=@{/css/themes/purple.css}">
+                        Purple Theme
+                    </option>
+                </select>
+            </div>
+            <a class="lobby-nav-link"
+                th:if="${role != 'guest'}"
+                th:href="@{/settings#theme-settings}">
+                <i data-lucide="palette"
+                aria-hidden="true"></i>
+                <span>Change Theme</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'guest'}"
+                th:href="@{/settings}">
+                <i data-lucide="settings"
+                aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role != 'guest'}"
+                th:href="@{/settings}">
+                <i data-lucide="settings"
+                aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        <div class="lobby-sidebar-bottom">
+            <span th:switch="${role}">
+                <span th:case="'guest'">Guest Mode</span>
+                <span th:case="'member'">Member Mode</span>
+                <span th:case="'admin'">Admin Mode</span>
+                <span th:case="'super_admin'">Super Admin Mode</span>
+            </span>
+        </div>
+    </nav>
+</body>
+</html>
