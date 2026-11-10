@@ -18,11 +18,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.cmpt276.jugglingclub.roles.RoleService;
 
 
 @Controller
 public class usercontroller{
     @Autowired usersRepository userREPO;
+    private final RoleService roleService;
+
+    public usercontroller(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -38,11 +45,6 @@ public class usercontroller{
             return true;
         }
     }
-
-
-
-
-
     @GetMapping("/")
     public String startup() {
         return "redirect:/home";
@@ -73,7 +75,7 @@ public class usercontroller{
     
     
     @PostMapping("/userlogin")// tihs should make username a real vairble trust =D
-    public String login(Model model, @RequestParam String username, @RequestParam String password , HttpServletRequest request, HttpSession session, HttpServletResponse response){
+    public String login(Model model, @RequestParam String username, @RequestParam String password , HttpServletRequest request, HttpSession session, HttpServletResponse response, @RequestParam(required = false) String guestTheme){
         
         user vailduser = userREPO.findByName(username).orElse(null);
         if(vailduser == null){
@@ -89,6 +91,14 @@ public class usercontroller{
        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
+        
+            if ("light".equals(guestTheme)
+                || "dark".equals(guestTheme)
+                || "purple".equals(guestTheme)) {
+        
+            vailduser.setTheme(guestTheme);
+            userREPO.save(vailduser);
+        }
         request.getSession(true).setAttribute("user", vailduser); 
 
         model.addAttribute("stinky", session.getAttribute("user")); 
@@ -127,4 +137,30 @@ public class usercontroller{
         request.getSession().invalidate();
         return "redirect:/home";
     }
+
+
+    @PostMapping("/checkquestions")
+    public String checkquestions(@RequestParam String question, @RequestParam String answer, @RequestParam String username,HttpSession session, Model model) {
+         if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+
+    }
+        user User = (user) session.getAttribute("user");  
+
+        user vailduser = userREPO.findByName(User.getName()).orElse(null);
+
+        if((vailduser == null)){
+            model.addAttribute("message","ERROR: something went wrong, account not find");
+            session.invalidate();
+            return "users/result";
+        }
+        //TODO make a switch case based on the value of question, then match the answer
+
+        
+        return "redirect:/home";
+    }
+    
+    
+    
+    
 }
