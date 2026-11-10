@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="sidebar(role)"
+         class="lobby-sidebar"
+         aria-label="Lobby navigation">
+        <div class="lobby-nav-links">
+            <a class="lobby-nav-link"
+                th:href="@{/home}">
+                <i data-lucide="house"
+                aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role != 'guest'}"
+                th:href="@{/simulator}">
+                <i data-lucide="box"
+                aria-hidden="true"></i>
+                <span>3D Simulator</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role != 'guest'}"
+                th:href="@{/2d-sim/index.html}">
+                <i data-lucide="palette"
+                aria-hidden="true"></i>
+                <span>2D Simulator</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'guest'}"
+                th:href="@{/no-presets.html}">
+                <i data-lucide="layout-grid"
+                aria-hidden="true"></i>
+                <span>Presets</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'guest'}"
+                th:href="@{/userregister}">
+                <i data-lucide="user-plus"
+                aria-hidden="true"></i>
+                <span>Register</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'member'}"
+                th:href="@{/viewsavedprojects}">
+                <i data-lucide="folder-open"
+                aria-hidden="true"></i>
+                <span>Saved Projects</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'admin' or role == 'super_admin'}"
+                th:href="@{/admin/accounts}">
+                <i data-lucide="users"
+                aria-hidden="true"></i>
+                <span>Accounts</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'admin' or role == 'super_admin'}"
+                th:href="@{/viewallsaves}">
+                <i data-lucide="folder-open"
+                aria-hidden="true"></i>
+                <span>All Projects</span>
+            </a>
+            <div class="lobby-theme-control"
+                th:attr="data-theme-mode=${role == 'guest' ? 'guest' : 'account'}">
+                <label for="lobby-theme">
+                    <i data-lucide="palette"
+                        aria-hidden="true">
+                    </i>
+                    <span>Change Theme</span>
+                </label>
+                <select id="lobby-theme"
+                aria-label="Change UI theme">
+                
+                    <option value="light"
+                        th:selected="${theme == 'light'}"
+                        th:attr="data-url=@{/css/themes/light.css}">
+                    Light
+                    </option>
+                    <option value="dark"
+                        th:selected="${theme == 'dark'}"
+                        th:attr="data-url=@{/css/themes/dark.css}">
+                    Dark
+                    </option>
+                    <option value="purple"
+                        th:selected="${theme == 'purple'}"
+                        th:attr="data-url=@{/css/themes/purple.css}">
+                    Purple
+                    </option>
+                </select>
+            </div>
+        <div class="lobby-nav-divider"></div>
+            <a class="lobby-nav-link"
+                th:if="${role != 'guest'}"
+                th:href="@{/settings}">
+                <i data-lucide="settings"
+                aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+        <div class="lobby-sidebar-bottom">
+            <span th:switch="${role}">
+                <span th:case="'guest'">Guest Mode</span>
+                <span th:case="'member'">Member Mode</span>
+                <span th:case="'admin'">Admin Mode</span>
+                <span th:case="'super_admin'">Super Admin Mode</span>
+            </span>
+        </div>
+    </nav>
+</body>
+</html>

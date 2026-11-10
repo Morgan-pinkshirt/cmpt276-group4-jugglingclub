@@ -86,7 +86,7 @@ public class SettingsController {
             return "redirect:/userlogin";
         }
 
-        if (!theme.equals("light") && !theme.equals("dark")) {
+        if (!theme.equals("light") && !theme.equals("dark") && !theme.equals("purple")) {
             return "redirect:/settings";
         }
 

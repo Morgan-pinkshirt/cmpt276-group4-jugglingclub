@@ -3,70 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Home</title>
+    <title>Admin Dashboard | The Jester Club</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+    <link rel="stylesheet" th:href="@{/css/lobby-layout.css}">
 </head>
-<body class="member-page admin-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <a class="member-button member-logout-button" href="/logout">Logout</a>
+<body class="member-page admin-page lobby-page">
+    <header class="lobby-header">
+        <div class="lobby-brand">
+            <i data-lucide="sparkles"
+                aria-hidden="true">
+            </i>
+            <h1>The Jester Club</h1>
+        </div>
+        <div class="lobby-header-actions">
+            <div class="lobby-member-identity">
+                <span class="lobby-role"
+                    th:text="${currentRole != null
+                        and currentRole.name() == 'SUPER_ADMIN'
+                        ? 'SUPER ADMIN VIEW'
+                        : 'ADMIN VIEW'}">
+                    ADMIN VIEW
+                </span>
+                <div class="lobby-member-details">
+                    <span class="account-id">
+                        User ID:
+                        <span th:text="${currentUid}"></span>
+                    </span>
+                    <span class="account-username"
+                        th:text="${'@' + currentUsername}">
+                    </span>
+
+                </div>
+            </div>
+
+            <a class="member-button lobby-login"
+                th:href="@{/logout}">
+                <i data-lucide="log-out"
+                    aria-hidden="true">
+                </i>
+                <span>Logout</span>
+            </a>
+        </div>
     </header>
 
-    <div class="member-layout">
-        <nav class="member-sidebar">
-            <a class="member-home" href="/home" aria-label="Home">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
-                </svg>
-            </a>
-
-            <a class="member-settings" href="/settings" aria-label="Settings">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 20.3 L3.7 17.7 L5.1 15.6 L4.5 14.3 L2.1 13.8 L2.1 10.2 L4.5 9.7 L5.1 8.4 L3.7 6.3 L6.3 3.7 L8.4 5.1Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
-                </svg>
-            </a>
+    <div class="lobby-layout">
+        <nav th:replace="~{fragments/lobby ::
+            sidebar(${currentRole != null
+                and currentRole.name() == 'SUPER_ADMIN'
+                ? 'super_admin'
+                : 'admin'})}">
         </nav>
-
-        <main class="member-main admin-main">
-            <section class="admin-accounts">
-                <div class="member-panel-content">
-                    <h2>Account Management</h2>
-                    <div class="member-preview">Image</div>
-                    <a class="member-button" href="/admin/accounts">Manage</a>
+        <main class="lobby-main">
+        <div class="lobby-welcome">
+            <p class="lobby-eyebrow">
+                ADMINISTRATION
+            </p>
+            <h2 th:text="${currentRole != null
+                and currentRole.name() == 'SUPER_ADMIN'
+                ? 'Super Admin Dashboard'
+                : 'Admin Dashboard'}">
+                Admin Dashboard
+            </h2>
+            <p>
+                Manage accounts, review saved projects,
+                and access the juggling simulators.
+            </p>
+        </div>
+        <div class="lobby-card-grid lobby-card-grid--three">
+            <section class="lobby-card">
+                <div class="lobby-card-content">
+                    <div class="lobby-card-image-slot">
+                        <img
+                            th:src="@{/img/admin/account-manage.jpg}"
+                            alt="Account management"
+                            loading="lazy">
+                    </div>
+                    <h2>
+                        <i data-lucide="users"
+                            class="lobby-card-icon"
+                            aria-hidden="true"></i>
+                        Account Management
+                    </h2>
+                    <p>
+                        View and manage registered accounts.
+                    </p>
+                    <a class="lobby-button member-button"
+                        th:href="@{/admin/accounts}">
+                        Manage Accounts
+                    </a>
                 </div>
             </section>
-
-            <section class="admin-projects">
-                <div class="member-panel-content">
-                    <h2>All Projects</h2>
-                    <div class="member-preview">Image</div>
-                    <a class="member-button" th:href="@{/viewallsaves}">View</a>
+            <section class="lobby-card">
+                <div class="lobby-card-content">
+                    <div class="lobby-card-image-slot">
+                        <img
+                            th:src="@{/img/admin/view-project.jpg}"
+                            alt="View Projects"
+                            loading="lazy">
+                    </div>
+                    <h2>
+                        <i data-lucide="folder-open"
+                            class="lobby-card-icon"
+                            aria-hidden="true"></i>
+                        All Projects
+                    </h2>
+                    <p>
+                        Review saved juggling projects.
+                    </p>
+                    <a class="lobby-button member-button"
+                        th:href="@{/viewallsaves}">
+                        View Projects
+                    </a>
                 </div>
             </section>
-
-            <section class="admin-create">
-                <div class="member-panel-content">
-                    <h2>Create Admin</h2>
-                    <div class="member-preview">Image</div>
-                    <a class="member-button" href="/admin/create">Create</a>
+            <section class="lobby-card">
+                <div class="lobby-card-content">
+                    <div class="lobby-card-image-slot">
+                        <img
+                            th:src="@{/img/admin/create-admin.webp}"
+                            alt="Create Admin"
+                            loading="lazy">
+                    </div>
+                    <h2>
+                        <i data-lucide="user-plus"
+                            class="lobby-card-icon"
+                            aria-hidden="true"></i>
+                        Create Admin
+                    </h2>
+                    <p>
+                        Create an administrator account.
+                    </p>
+                    <a class="lobby-button member-button"
+                        th:href="@{/admin/create}">
+                        Create Admin
+                    </a>
                 </div>
             </section>
+            <section class="lobby-card">
+                <div class="lobby-card-content">
+                    <div class="lobby-card-image-slot">
+                        <img
+                            th:src="@{/img/member/3d-simulator.jpg}"
+                            alt="3D juggling club simulator"
+                            loading="lazy">
+                    </div>
+                    <h2>
+                        <i data-lucide="box"
+                            class="lobby-card-icon"
+                            aria-hidden="true"></i>
+                        3D Simulator
+                    </h2>
+                    <p>
+                        Customize and build your
+                        juggling club projects in 3D.
+                    </p>
+                    <a class="lobby-button member-button"
+                        th:href="@{/simulator}">
+                        Open 3D Simulator
+                    </a>
+                </div>
+            </section>
+            <section class="lobby-card">
+                <div class="lobby-card-content">
+                    <div class="lobby-card-image-slot">
+                        <img
+                            th:src="@{/img/member/2d-simulation.webp}"
+                            alt="2D juggling club simulator"
+                            loading="lazy">
+                    </div>
+                    <h2>
+                        <i data-lucide="palette"
+                            class="lobby-card-icon"
+                            aria-hidden="true"></i>
+                        2D Simulator
+                    </h2>
+                    <p>
+                        Explore colour combinations
+                        and effects for your juggling club.
+                    </p>
+                    <a class="lobby-button member-button"
+                        th:href="@{/2d-sim/index.html}">
+                        Open 2D Simulator
+                    </a>
+                </div>
+            </section>
+        </div>
         </main>
     </div>
     
-   
-
-    <h1>My Spring Boot Application
-        
-    </h1>
-</div>
-
     <footer>
         <p>The Jester Club - CMPT 276 Group 4
             <br>
             <span th:text="${message}"></span>
         </p>
     </footer>
+    <script defer
+            th:src="@{/js/lobby-theme.js}">
+    </script>
+
+    <script
+        src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js">
+    </script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+
 </body>
 </html>

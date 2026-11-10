@@ -28,12 +28,18 @@ public class RoleViewController {
     @GetMapping("/home")
     public String getRole(HttpSession session, Model model, HttpServletRequest request) {
         Role role = roleService.getRole(session);
+        model.addAttribute("currentRole", role);
         user currentUser = (user) session.getAttribute("user");
         model.addAttribute("message", session.getAttribute("message"));
         session.removeAttribute("message");
         model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
 
-        if (role == Role.ADMIN) {
+        if (currentUser != null) {
+            model.addAttribute("currentUid", currentUser.getUid());
+            model.addAttribute("currentUsername", currentUser.getName());
+        }
+
+        if (role == Role.ADMIN || role == Role.SUPER_ADMIN) {
             return "roles/admin";
         } else if (role == Role.MEMBER) {
             return "roles/member";
@@ -76,7 +82,9 @@ public class RoleViewController {
 
 
     @GetMapping("/under-construction")
-    public String underConstruction() {
+    public String underConstruction(HttpSession session, Model model) {
+        user currentUser = (user) session.getAttribute("user");
+        model.addAttribute("theme", currentUser == null ? "light" : currentUser.getTheme());
         return "roles/under-construction";
     }
 }

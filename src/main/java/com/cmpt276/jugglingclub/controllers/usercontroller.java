@@ -75,7 +75,7 @@ public class usercontroller{
     
     
     @PostMapping("/userlogin")// tihs should make username a real vairble trust =D
-    public String login(Model model, @RequestParam String username, @RequestParam String password , HttpServletRequest request, HttpSession session, HttpServletResponse response){
+    public String login(Model model, @RequestParam String username, @RequestParam String password , HttpServletRequest request, HttpSession session, HttpServletResponse response, @RequestParam(required = false) String guestTheme){
         
         user vailduser = userREPO.findByName(username).orElse(null);
         if(vailduser == null){
@@ -91,6 +91,14 @@ public class usercontroller{
        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
+        
+            if ("light".equals(guestTheme)
+                || "dark".equals(guestTheme)
+                || "purple".equals(guestTheme)) {
+        
+            vailduser.setTheme(guestTheme);
+            userREPO.save(vailduser);
+        }
         request.getSession(true).setAttribute("user", vailduser); 
 
         model.addAttribute("stinky", session.getAttribute("user")); 

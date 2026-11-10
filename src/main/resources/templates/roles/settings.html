@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
 </head>
-<body>
+<body class="settings-page">
     <header>
         <h1>The Jester Club</h1>
         <p>Jester Club Simulator</p>
@@ -15,14 +15,29 @@
 
     <nav>
         <a href="/home">Home</a>
-        <a href="/settings">Settings</a>
         <a href="/logout">Logout</a>
     </nav>
 
     <main>
 
-        <section>
+        <section class="settings-account-info">
             <h2>Account Settings</h2>
+            <div class="settings-identity">
+                <p>
+                    <strong>Current View:</strong>
+                    <span th:text="${user.role}">MEMBER</span>
+                </p>
+                
+                <p>
+                    <strong>User ID:</strong>
+                    <span th:text="${user.uid}">—</span>
+                </p>
+
+                <p>
+                    <strong>Username:</strong>
+                    <span th:text="${user.name}">—</span>
+                    </p>
+            </div>
         </section>
 
 
@@ -42,9 +57,9 @@
         </section>
 
           <section>
-            <h2>link email</h2>
+            <h2>Link Email</h2>
             <form action="/setEmail" method="post">
-                <label for="email">email:</label>
+                <label for="email">Email:</label>
                 <span id="currentemail" th:text="${user.email}">email</span>
                 <input type="email" id="email" name="email" th:value="${user.email}" hidden>
                 <button type="button" id = "emailButton" onclick = "editemail()">Edit</button>
@@ -67,7 +82,7 @@
         </section>
 
         
-        <section>
+        <section id="theme-settings">
             <h2>UI Theme</h2>
             <p>Choose your preferred interface theme.</p>
             <form action="/settings/theme" method="post">
@@ -75,16 +90,19 @@
                 <select id="theme" name="theme" required>
                     <option value="light" th:selected="${user.theme == 'light'}">Light</option>
                     <option value="dark" th:selected="${user.theme == 'dark'}">Dark</option>
+                    <option value="purple" th:selected="${user.theme == 'purple'}">Purple</option>
                 </select>
                 <button type="submit">Change Theme</button>
             </form>
         </section>
 
         <section>
-            <h2>Security questions </h2>
-            <form action="/securityquestions">
-                <label for="view security questions">view security questions:</label>
-                <input type="submit" th:value="view">
+            <h2>Security Questions </h2>
+            <p>Used for lost password account retrieval.</p>
+            <form th:action="@{/securityquestions}" method="get">
+                <button type="submit" class="settings-button">
+                    View
+                </button>
             </form>
         </section>
 

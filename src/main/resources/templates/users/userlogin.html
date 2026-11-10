@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <link id="login-theme-stylesheet" rel="stylesheet" th:href="@{/css/themes/light.css}">
     <script th:src="@{/index.js}" defer></script>
 </head>
 <body class="login-page">
@@ -26,6 +26,10 @@
                     <input id="password" type="password" name="password" required>
 
                     <button type="submit">Login</button>
+                    <input type="hidden"
+                        id="login-theme"
+                        name="guestTheme"
+                        value="light">
                 </form>
 
                 <div class="login-links">
@@ -39,5 +43,31 @@
             <p>The Jester Club - CMPT 276 Group 4</p>
         </footer>
     </div>
+    <script th:inline="javascript">
+        (() => {
+            const stylesheet = document.getElementById("login-theme-stylesheet");
+            const input = document.getElementById("login-theme");
+    
+            const themeUrls = {
+                light: "/css/themes/light.css",
+                dark:  "/css/themes/dark.css",
+                purple: "/css/themes/purple.css"
+            };
+            let theme = "light";
+    
+            try {
+                const saved =
+                    localStorage.getItem("jester-guest-theme");
+    
+                if (Object.hasOwn(themeUrls, saved)) {
+                    theme = saved;
+                }
+            } catch (error) {
+            }
+    
+            stylesheet.href = themeUrls[theme];
+            input.value = theme;
+        })();
+    </script>
 </body>
 </html>
