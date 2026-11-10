@@ -22,34 +22,21 @@
             display: block; 
             touch-action: none; 
         }
-        /*Panel Color & Adjustments*/
+        
+        /* 3D control panel styling */
         .ui-panel { 
             position: absolute; 
             top: 20px; 
             left: 20px; 
             background: rgba(0, 0, 0, 0.75); 
             backdrop-filter: blur(4px);
-            padding: 14px 18px; 
+            padding: 16px 20px; 
             border-radius: 8px; 
             z-index: 10;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 270px;
         }
-        /*Panel Effect Patterns*/
-        .effect-panel {
-            position: absolute; 
-            top: 410px; 
-            left: 20px; 
-            background: rgba(0, 0, 0, 0.75); 
-            backdrop-filter: blur(4px);
-            padding: 14px 18px; 
-            border-radius: 8px; 
-            z-index: 10;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 270px;
-        }
+        
         /* Top-right user and navigation panel styling */
         .user-panel {
             position: absolute; 
@@ -63,7 +50,8 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        /* Go back button */
+        
+        /*go back button*/
         .home-btn {
             background-color: #007bff; 
             color: white; 
@@ -76,115 +64,43 @@
             display: inline-block;
         }
         .home-btn:hover { background-color: #0056b3; }
-        h3 { 
-            margin: 0 0 10px 0; 
-            font-size: 1rem; 
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 4px;
+
+        .ui-panel h3 { 
+            margin: 0 0 12px 0; 
+            font-size: 1.1rem; 
         }
-        label {
-            font-size: 0.9rem;
-        }
+
         select, input[type="color"] { 
-            padding: 5px 8px; 
-            margin-top: 3px; 
-            margin-bottom: 8px;
+            padding: 6px 10px; 
+            margin-top: 4px; 
             border-radius: 4px;
             border: 1px solid #444; 
             background: #222; 
             color: #fff; 
             cursor: pointer;
-            width: 100%;
         }
         input[type="color"] { 
-            height: 32px; 
+            height: 35px; 
+            width: 60px; 
             padding: 2px; 
         }
-        input[type="range"] {
-            width: 100%;
-            margin-top: 3px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        
-        .hidden {
-            display: none !important;
-        }   
     </style>
 </head>
 <body>
-    <!-- Color & Brightness/Saturation Panel -->
+    <!-- 3D Product Customization Panel -->
     <div class="ui-panel">
-        <h3>Color & Adjustments</h3>
-        <label for="productType">Type of product:</label>
+        <h3>3D Products</h3>
+        <label for="productType">Type of product:</label><br>
         <select id="productType" onchange="updateProduct()">
             <option value="ball">Ball</option>
             <option value="club" selected>Club</option>
         </select>
-
-    <!--Club options -->
-    <div id="clubColorOptions">
-        <label for="productColor">Handle Color:</label>
-        <input type="color" id="productColor" value="#ff5733" oninput="updateHandleColor()">
-
-        <label for="bodyColor">Body Color:</label>
+        <br><br>
+        <label for="productColor">Handle Color:</label><br>
+        <input type="color" id="productColor" value="#ff5733" oninput="updateColor()">
+        <br><br>
+        <label for="bodyColor">Body Color:</label><br>
         <input type="color" id="bodyColor" value="#ffffff" oninput="updateBodyColor()">
-    </div>
-
-    <!--Ball options -->
-    <div id="ballColorOptions" class="hidden">
-        <label for="ballColor">Ball Color:</label>
-        <input type="color" id="ballColor" value="#ff5733" oninput="updateBallColor()">
-    </div>
-
-        <label for="brightnessRange">Brightness: <span id="brightnessVal">1.0</span></label>
-        <input type="range" id="brightnessRange" min="0.2" max="3" step="0.05" value="1" oninput="updateBrightness()">
-
-        <label for="saturationRange">Saturation: <span id="saturationVal">1.0</span></label>
-        <input type="range" id="saturationRange" min="0" max="3" step="0.05" value="1" oninput="updateSaturation()">
-    </div>
-
-    <!-- Effect Patterns Panel -->
-    <div class="effect-panel">
-        <h3>Effect Patterns</h3>
-        <label for="effectSelect">Choose Effect:</label>
-        <select id="effectSelect" onchange="updateEffect()">
-            <option value="none">-- None (Solid Color) --</option>
-            <optgroup label="Page 1">
-                <option value="p1_1_rainbow">Rainbow</option>
-                <option value="p1_2_rainbow_drops">Rainbow Drops</option>
-                <option value="p1_3_bold">Bold</option>
-                <option value="p1_4_lantern">Lantern</option>
-                <option value="p1_5_fire">Fire</option>
-                <option value="p1_6_water">Water</option>
-                <option value="p1_7_earth">Earth</option>
-                <option value="p1_8_air">Air</option>
-                <option value="p1_9_spirit">Spirit</option>
-                <option value="p1_10_pulse">Pulse</option>
-            </optgroup>
-            <optgroup label="Page 2">
-                <option value="p2_1_candy">Candy</option>
-                <option value="p2_2_petals">Petals</option>
-                <option value="p2_3_love">Love</option>
-                <option value="p2_4_watermelon">Watermelon</option>
-                <option value="p2_5_freedom">Freedom</option>
-                <option value="p2_6_microdots">Microdots</option>
-                <option value="p2_7_unicorn">Unicorn</option>
-                <option value="p2_8_blue_blazer">Blue Blazer</option>
-                <option value="p2_9_solar_flare">Solar Flare</option>
-                <option value="p2_10_strobe">Strobe</option>
-            </optgroup>
-            <optgroup label="Page 3">
-                <option value="p3_1_flamebow">Flamebow</option>
-                <option value="p3_3_liquid_sugar">Liquid Sugar</option>
-                <option value="p3_4_rainbow_dash">Rainbow Dash</option>
-                <option value="p3_5_fireball">Fireball</option>
-                <option value="p3_6_froth">Froth</option>
-                <option value="p3_8_bolder">Bolder</option>
-                <option value="p3_9_sunset">Sunset</option>
-                <option value="p3_10_daybreak">Daybreak</option>
-            </optgroup>
-        </select>
     </div>
 
     <!-- Top-Right Go Back Home Panel -->

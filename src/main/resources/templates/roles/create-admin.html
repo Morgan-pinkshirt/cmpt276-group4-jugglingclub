@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <script th:src="@{/createaccount.js}" defer></script>
+</head>
+<body class="login-page">
+    <div class="login-layout">
+        <header>
+            <h1>The Jester Club</h1>
+        </header>
+
+        <main>
+            <section class="login-panel">
+                <h2>Create Admin Account</h2>
+
+                <form action="/admin/create" id="login" method="post">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" name="username" required>
+
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" required>
+
+                    <button type="submit">Create Admin</button>
+                </form>
+
+                <p th:if="${message}" th:text="${message}"></p>
+
+                <div class="login-links">
+                    <a href="/home">Back to Home</a>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>The Jester Club - CMPT 276 Group 4</p>
+        </footer>
+    </div>
+</body>
+</html>
