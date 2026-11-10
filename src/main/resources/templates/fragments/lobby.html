@@ -12,6 +12,20 @@
                 <span>Home</span>
             </a>
             <a class="lobby-nav-link"
+                th:if="${role == 'member'}"
+                th:href="@{/simulator}">
+                <i data-lucide="box"
+                aria-hidden="true"></i>
+                <span>3D Simulator</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'member'}"
+                th:href="@{/2d-sim/index.html}">
+                <i data-lucide="palette"
+                aria-hidden="true"></i>
+                <span>2D Simulator</span>
+            </a>
+            <a class="lobby-nav-link"
                 th:if="${role == 'guest'}"
                 th:href="@{/no-presets.html}">
                 <i data-lucide="layout-grid"
@@ -39,40 +53,35 @@
                 aria-hidden="true"></i>
                 <span>Accounts</span>
             </a>
-            <div class="lobby-nav-divider"></div>
             <div class="lobby-theme-control"
-                 th:if="${role == 'guest'}">
-                <label for="guest-theme">
+                th:attr="data-theme-mode=${role == 'guest' ? 'guest' : 'account'}">
+                <label for="lobby-theme">
                     <i data-lucide="palette"
-                    aria-hidden="true"></i>
+                        aria-hidden="true">
+                    </i>
                     <span>Change Theme</span>
                 </label>
-                <select id="guest-theme" aria-label="Guest UI theme">
-                    <option value="light" th:attr="data-url=@{/css/themes/light.css}">
-                        Light Mode
+                <select id="lobby-theme"
+                aria-label="Change UI theme">
+                
+                    <option value="light"
+                        th:selected="${theme == 'light'}"
+                        th:attr="data-url=@{/css/themes/light.css}">
+                    Light
                     </option>
-                    <option value="dark" th:attr="data-url=@{/css/themes/dark.css}">
-                        Dark Mode
+                    <option value="dark"
+                        th:selected="${theme == 'dark'}"
+                        th:attr="data-url=@{/css/themes/dark.css}">
+                    Dark
                     </option>
-                    <option value="purple" th:attr="data-url=@{/css/themes/purple.css}">
-                        Purple Theme
+                    <option value="purple"
+                        th:selected="${theme == 'purple'}"
+                        th:attr="data-url=@{/css/themes/purple.css}">
+                    Purple
                     </option>
                 </select>
             </div>
-            <a class="lobby-nav-link"
-                th:if="${role != 'guest'}"
-                th:href="@{/settings#theme-settings}">
-                <i data-lucide="palette"
-                aria-hidden="true"></i>
-                <span>Change Theme</span>
-            </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'guest'}"
-                th:href="@{/settings}">
-                <i data-lucide="settings"
-                aria-hidden="true"></i>
-                <span>Settings</span>
-            </a>
+        <div class="lobby-nav-divider"></div>
             <a class="lobby-nav-link"
                 th:if="${role != 'guest'}"
                 th:href="@{/settings}">

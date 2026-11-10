@@ -15,7 +15,6 @@
 
     <nav>
         <a href="/home">Home</a>
-        <a href="/settings">Settings</a>
         <a href="/logout">Logout</a>
     </nav>
 
@@ -58,9 +57,9 @@
         </section>
 
           <section>
-            <h2>link email</h2>
+            <h2>Link Email</h2>
             <form action="/setEmail" method="post">
-                <label for="email">email:</label>
+                <label for="email">Email:</label>
                 <span id="currentemail" th:text="${user.email}">email</span>
                 <input type="email" id="email" name="email" th:value="${user.email}" hidden>
                 <button type="button" id = "emailButton" onclick = "editemail()">Edit</button>
@@ -98,10 +97,12 @@
         </section>
 
         <section>
-            <h2>Security questions </h2>
-            <form action="/securityquestions">
-                <label for="view security questions">view security questions:</label>
-                <input type="submit" th:value="view">
+            <h2>Security Questions </h2>
+            <p>Used for lost password account retrieval.</p>
+            <form th:action="@{/securityquestions}" method="get">
+                <button type="submit" class="settings-button">
+                    View
+                </button>
             </form>
         </section>
 

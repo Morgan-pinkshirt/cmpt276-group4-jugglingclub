@@ -120,7 +120,7 @@ body.lobby-page .lobby-sidebar {
 body.lobby-page .lobby-nav-links {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-around;
     flex: 1 1 auto;
     gap: 12px;
     width: 100%;
@@ -459,6 +459,60 @@ body.lobby-page .lobby-card h2 {
     gap: 10px;
 }
 
+body.lobby-page .lobby-member-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+body.lobby-page .lobby-member-details {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 12px;
+}
+
+/* Keep logout beside the account details */
+body.lobby-page .lobby-header-actions {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+}
+
+body.lobby-page .lobby-header-actions .lobby-login {
+    position: static;
+    transform: none;
+}
+
+body.lobby-page .lobby-card h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+body.lobby-page .lobby-card .lobby-card-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+
+@media (min-width: 1101px) {
+    body.lobby-page .lobby-card-grid--three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 1450px;
+        gap: 20px;
+    }
+}
 
 @media (max-height: 800px) and (min-width: 681px) {
 
