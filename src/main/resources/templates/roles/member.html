@@ -7,9 +7,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
     <link rel="stylesheet" th:href="@{/css/lobby-layout.css}">
-
+    
 </head>
+
+
 <body class="member-page lobby-page">
+    
+    
+
     <header class="lobby-header">
         <div class="lobby-brand">
             <i data-lucide="sparkles" aria-hidden="true"></i>
@@ -132,7 +137,6 @@
             </div>
         </main>
     </div>
-    
     <footer>
         <p>The Jester Club - CMPT 276 Group 4
             <span th:if="${message != NULL}" th:text="${message}"></span>
