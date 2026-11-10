@@ -457,10 +457,10 @@ function animate() {
     
     if (currentMesh) {
         if (!isDragging) {
-            currentMesh.rotation.y += 0.01;
+            currentMesh.rotation.y += 0.008;
         }
         if (selectedEffectName !== 'none') {
-            effectAngle -= 0.005; 
+            effectAngle -= 0.001; 
             currentMesh.traverse((child) => {
                 if (child.isMesh && child.material && child.material.uniforms && 
                     child.material.uniforms.uAngle) {
