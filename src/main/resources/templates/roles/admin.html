@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+</head>
+<body class="member-page admin-page">
+    <header>
+        <h1>The Jester Club</h1>
+        <a class="member-button member-logout-button" href="/logout">Logout</a>
+    </header>
+
+    <div class="member-layout">
+        <nav class="member-sidebar">
+            <a class="member-home" href="/home" aria-label="Home">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
+                </svg>
+            </a>
+
+            <a class="member-settings" href="/settings" aria-label="Settings">
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 20.3 L3.7 17.7 L5.1 15.6 L4.5 14.3 L2.1 13.8 L2.1 10.2 L4.5 9.7 L5.1 8.4 L3.7 6.3 L6.3 3.7 L8.4 5.1Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
+                </svg>
+            </a>
+        </nav>
+
+        <main class="member-main admin-main">
+            <section class="admin-accounts">
+                <div class="member-panel-content">
+                    <h2>Account Management</h2>
+                    <div class="member-preview">Image</div>
+                    <a class="member-button" href="/admin/accounts">Manage</a>
+                </div>
+            </section>
+
+            <section class="admin-projects">
+                <div class="member-panel-content">
+                    <h2>All Projects</h2>
+                    <div class="member-preview">Image</div>
+                    <a class="member-button" th:href="@{/simulator}">View</a>
+                </div>
+            </section>
+
+            <section class="admin-create">
+                <div class="member-panel-content">
+                    <h2>Create Admin</h2>
+                    <div class="member-preview">Image</div>
+                    <a class="member-button" href="/admin/create">Create</a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>The Jester Club - CMPT 276 Group 4</p>
+    </footer>
+</body>
+</html>

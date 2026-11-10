@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
+</head>
+<body>
+    <header>
+        <h1>The Jester Club</h1>
+        <p>Jester Club Simulator</p>
+    </header>
+
+    <nav>
+        <a href="/home">Home</a>
+        <a href="/settings">Settings</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <main>
+
+        <section>
+            <h2>Account Settings</h2>
+        </section>
+
+
+        <section>
+            <h2>Profile Picture</h2>
+            <p>Sorry, profile picture customization will be available in a future update.</p>
+        </section>
+
+        <section>
+            <h2>Change Username</h2>
+            <form action="/settings/username" method="post">
+                <label for="username">Username:</label>
+                <span id="currentUsername" th:text="${user.name}">Username</span>
+                <input type="text" id="username" name="username" th:value="${user.name}" required hidden>
+                <button type="button" id = "usernameButton" onclick = "editUsername()">Edit</button>
+            </form>
+        </section>
+
+
+        <section>
+            <h2>Change Password</h2>
+            <form action="/settings/password" method="post">
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" id="currentPassword" name="currentPassword" required>
+
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+
+                <button type="submit">Save Password</button>
+            </form>
+        </section>
+
+        
+        <section>
+            <h2>UI Theme</h2>
+            <p>Choose your preferred interface theme.</p>
+            <form action="/settings/theme" method="post">
+                <label for="theme">Select Theme:</label>
+                <select id="theme" name="theme" required>
+                    <option value="light" th:selected="${user.theme == 'light'}">Light</option>
+                    <option value="dark" th:selected="${user.theme == 'dark'}">Dark</option>
+                </select>
+                <button type="submit">Change Theme</button>
+            </form>
+        </section>
+
+
+        
+    </main>
+
+    <footer>
+        <p>The Jester Club - CMPT 276 Group 4</p>
+    </footer>
+
+    <script>
+        function editUsername() {
+            const usernameInput = document.getElementById('username');
+            document.getElementById('currentUsername').hidden = true;
+            usernameInput.hidden = false;
+
+            const button = document.getElementById('usernameButton');
+            button.textContent = 'Save';
+            button.onclick = function() {
+                button.form.requestSubmit();
+            };
+        }
+    </script>
+</body>
+</html>
