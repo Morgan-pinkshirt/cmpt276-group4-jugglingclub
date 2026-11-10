@@ -12,14 +12,14 @@
                 <span>Home</span>
             </a>
             <a class="lobby-nav-link"
-                th:if="${role == 'member'}"
+                th:if="${role != 'guest'}"
                 th:href="@{/simulator}">
                 <i data-lucide="box"
                 aria-hidden="true"></i>
                 <span>3D Simulator</span>
             </a>
             <a class="lobby-nav-link"
-                th:if="${role == 'member'}"
+                th:if="${role != 'guest'}"
                 th:href="@{/2d-sim/index.html}">
                 <i data-lucide="palette"
                 aria-hidden="true"></i>
@@ -52,6 +52,13 @@
                 <i data-lucide="users"
                 aria-hidden="true"></i>
                 <span>Accounts</span>
+            </a>
+            <a class="lobby-nav-link"
+                th:if="${role == 'admin' or role == 'super_admin'}"
+                th:href="@{/viewallsaves}">
+                <i data-lucide="folder-open"
+                aria-hidden="true"></i>
+                <span>All Projects</span>
             </a>
             <div class="lobby-theme-control"
                 th:attr="data-theme-mode=${role == 'guest' ? 'guest' : 'account'}">

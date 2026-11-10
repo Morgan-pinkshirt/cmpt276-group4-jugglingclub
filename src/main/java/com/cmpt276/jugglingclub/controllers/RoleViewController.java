@@ -28,6 +28,7 @@ public class RoleViewController {
     @GetMapping("/home")
     public String getRole(HttpSession session, Model model, HttpServletRequest request) {
         Role role = roleService.getRole(session);
+        model.addAttribute("currentRole", role);
         user currentUser = (user) session.getAttribute("user");
         model.addAttribute("message", session.getAttribute("message"));
         session.removeAttribute("message");
