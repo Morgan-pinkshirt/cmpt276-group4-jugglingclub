@@ -20,15 +20,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.cmpt276.jugglingclub.roles.RoleService;
+import com.cmpt276.jugglingclub.services.AccountTokenService;
+import com.cmpt276.jugglingclub.models.AccountToken.TokenType;
 
 import java.util.Random;
 @Controller
 public class usercontroller{
     @Autowired usersRepository userREPO;
     private final RoleService roleService;
+    private final AccountTokenService tokenService;
 
-    public usercontroller(RoleService roleService) {
+    public usercontroller(RoleService roleService, AccountTokenService tokenService) {
         this.roleService = roleService;
+        this.tokenService = tokenService;
     }
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -147,19 +151,32 @@ public class usercontroller{
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
         session.invalidate();
+        HttpSession recoverySession = request.getSession(true);
         user vailduser = userREPO.findByName(username).orElse(null);
         String chosen;
         String message;
         Random rand = new Random();
-        int random = rand.nextInt(5);
         if(vailduser == null){
             model.addAttribute("message","account dont exist");
             return "users/result";
         }
-        if(vailduser.getFavcolor() == null){
-            model.addAttribute("message","account did not set up questions");
+
+        String[] answers = {
+            vailduser.getFavcolor(), vailduser.getMothername(),
+            vailduser.getFavplace(), vailduser.getFavsubject(),
+            vailduser.getHometown(), vailduser.getFavgame()
+        };
+        List<Integer> availableQuestions = new java.util.ArrayList<>();
+        for (int i = 0; i < answers.length; i++) {
+            if (answers[i] != null && !answers[i].isBlank()) {
+                availableQuestions.add(i);
+            }
+        }
+        if (availableQuestions.isEmpty()) {
+            model.addAttribute("message", "account did not set up questions");
             return "users/result";
         }
+        int random = availableQuestions.get(rand.nextInt(availableQuestions.size()));
         switch(random){
             case 0:
                 chosen = "favcolor";
@@ -189,6 +206,8 @@ public class usercontroller{
                 model.addAttribute("message","ERROR OCCURED!!!!!!");
                 return "users/result";
         }
+        recoverySession.setAttribute("recoveryUid", vailduser.getUid());
+        recoverySession.setAttribute("recoveryQuestion", chosen);
         model.addAttribute("message", message);        
         model.addAttribute("username", vailduser.getName());
         model.addAttribute("question", chosen);
@@ -202,6 +221,17 @@ public class usercontroller{
         Boolean correct = false;
         if(vailduser == null){
             model.addAttribute("message","account dont exist");
+            return "users/result";
+        }
+
+        Object recoveryUid = session.getAttribute("recoveryUid");
+        String recoveryQuestion = (String) session.getAttribute("recoveryQuestion");
+        session.removeAttribute("recoveryUid");
+        session.removeAttribute("recoveryQuestion");
+        if (!(recoveryUid instanceof Integer)
+                || ((Integer) recoveryUid) != vailduser.getUid()
+                || !question.equals(recoveryQuestion)) {
+            model.addAttribute("message", "Security question session expired or invalid.");
             return "users/result";
         }
         
@@ -220,14 +250,17 @@ public class usercontroller{
                 if(answer.equalsIgnoreCase(vailduser.getFavplace())){
                     correct = true;
                 }
+                break;
             case "favsubject":
                 if(answer.equalsIgnoreCase(vailduser.getFavsubject())){
                     correct = true;
                 }
+                break;
             case "mothername":
                 if(answer.equalsIgnoreCase(vailduser.getMothername())){
                     correct = true;
                 }
+                break;
             case "hometown":
                 if(answer.equalsIgnoreCase(vailduser.getHometown())){
                     correct = true;
@@ -247,12 +280,8 @@ public class usercontroller{
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        vailduser.setPassword(passwordEncoder.encode("12345"));
-        userREPO.save(vailduser);
-        request.getSession(true).setAttribute("user", vailduser); 
-        model.addAttribute("stinky", session.getAttribute("user")); 
-        request.getSession(false).setAttribute("message", "your password is now 12345, please change it in settings"); 
-        return "redirect:/home";
+        String token = tokenService.createToken(vailduser, TokenType.PASSWORD_RESET, null);
+        return "redirect:/reset-password?token=" + token;
     }
 
 }

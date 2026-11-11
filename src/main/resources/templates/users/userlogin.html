@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Login</title>
+
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link id="login-theme-stylesheet" rel="stylesheet" th:href="@{/css/themes/light.css}">
+
+    <link id="login-theme-stylesheet"
+          rel="stylesheet"
+          th:href="@{/css/themes/light.css}">
+
     <script th:src="@{/index.js}" defer></script>
 </head>
+
 <body class="login-page">
     <div class="login-layout">
+
         <header>
             <h1>The Jester Club</h1>
         </header>
@@ -18,56 +27,81 @@
             <section class="login-panel">
                 <h2>Sign In</h2>
 
-                <form action="/userlogin" id="login" method="post">
+                <form action="/userlogin"
+                      id="login"
+                      method="post">
+
                     <label for="username">Username</label>
-                    <input id="username" type="text" name="username" required>
+
+                    <input id="username"
+                           type="text"
+                           name="username"
+                           required>
 
                     <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required>
+
+                    <input id="password"
+                           type="password"
+                           name="password"
+                           required>
 
                     <button type="submit">Login</button>
+
                     <input type="hidden"
-                        id="login-theme"
-                        name="guestTheme"
-                        value="light">
+                           id="login-theme"
+                           name="guestTheme"
+                           value="light">
                 </form>
 
                 <div class="login-links">
                     <a href="/createaccount">Register</a>
                     <a href="/logout">Continue as Guest</a>
                 </div>
+
+                <form action="/forgot-password" method="get">
+                    <button type="submit">Forgot Password?</button>
+                </form>
             </section>
         </main>
 
         <footer>
             <p>The Jester Club - CMPT 276 Group 4</p>
         </footer>
+
     </div>
+
     <script th:inline="javascript">
         (() => {
-            const stylesheet = document.getElementById("login-theme-stylesheet");
-            const input = document.getElementById("login-theme");
-    
+            const stylesheet =
+                document.getElementById(
+                    "login-theme-stylesheet");
+
+            const input =
+                document.getElementById("login-theme");
+
             const themeUrls = {
                 light: "/css/themes/light.css",
-                dark:  "/css/themes/dark.css",
+                dark: "/css/themes/dark.css",
                 purple: "/css/themes/purple.css"
             };
+
             let theme = "light";
-    
+
             try {
                 const saved =
                     localStorage.getItem("jester-guest-theme");
-    
+
                 if (Object.hasOwn(themeUrls, saved)) {
                     theme = saved;
                 }
             } catch (error) {
             }
-    
+
             stylesheet.href = themeUrls[theme];
             input.value = theme;
         })();
     </script>
+
 </body>
 </html>
+
