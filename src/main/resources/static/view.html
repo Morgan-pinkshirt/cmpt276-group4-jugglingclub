@@ -185,12 +185,46 @@
                 <option value="p3_10_daybreak">Daybreak</option>
             </optgroup>
         </select>
+        <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;">
+            <label style="display: block; margin-bottom: 4px;">(Speed):</label>
+            <div style="display: flex; gap: 5px;">
+                <button onclick="setSpeed(1)" class="control-btn active" id="btn-speed-1">1x</button>
+                <button onclick="setSpeed(2)" class="control-btn" id="btn-speed-2">2x</button>
+                <button onclick="setSpeed(4)" class="control-btn" id="btn-speed-4">4x</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Top-Right Go Back Home Panel -->
-    <div class="user-panel">
+        <!-- Top-Right: Panel contains Go Home và Rotation -->
+    <div class="user-panel" style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end;">
         <a href="/home" class="home-btn">Go back home</a>
+        <div style="display: flex; gap: 5px;">
+            <button onclick="setDefaultRotation('pi_2')" class="control-btn" title="pi/2">standing view</button>
+            <button onclick="setDefaultRotation('pi_6')" class="control-btn" title="pi/6">side view</button>
+        </div>
     </div>
+    <style>
+    /* CSS for new control buttons */
+    .control-btn {
+        background: #333;
+        color: white;
+        border: 1px solid #555;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background 0.2s;
+        flex: 1;
+        text-align: center;
+    }
+    .control-btn:hover {
+        background: #444;
+    }
+    .control-btn.active {
+        background: #007bff;
+        border-color: #0056b3;
+    }
+    </style>
 
     <!-- Three.js 3D Render Canvas Container -->
     <div id="canvas-container"></div>

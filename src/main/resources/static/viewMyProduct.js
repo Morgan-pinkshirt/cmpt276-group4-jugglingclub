@@ -16,25 +16,33 @@ let selectedEffectName = 'none';
 let effectAngle = 0; 
 const textureLoader = new THREE.TextureLoader();
 
+//Speed variables for rotation and effect animation
+let rotationSpeed = 0.01; 
+let effectSpeed = -0.005;
+
 // Custom Shader Material (Polar Projection)
 const customProjectorMaterial = new THREE.ShaderMaterial({
     uniforms: {
         uTexture: { value: null },
         uAngle: { value: 0.0 },
         uIsClub: { value: false },
-        uOpacity: { value: 1.0 }
+        uOpacity: { value: 1.0 },
+        uMeshOffsetY: { value: 0.0 }
     },
     vertexShader: `
         varying vec2 vUv;
         varying float vHeightRatio;
+        uniform float uMeshOffsetY;
 
         void main() {
             vUv = uv;
-            float minY = -1.5;
-            float maxY = 1.6;
             
-            vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-            vHeightRatio = clamp((worldPosition.y - minY) / (maxY - minY), 0.0, 1.0);
+            float clubY = position.y + uMeshOffsetY;
+            
+            float minY = -1.8;
+            float maxY = 1.75;
+            
+            vHeightRatio = clamp((clubY - minY) / (maxY - minY), 0.0, 1.0);
 
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
@@ -81,7 +89,7 @@ ringProjectorMaterial.uniforms.uOpacity.value = 0.7;
 function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a1a);
- 
+  
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
@@ -330,25 +338,30 @@ function resetToStandardMaterial() {
     });
 }
 
+// Apply selected effect texture map onto the 3D meshes using Projection Mapping logic
 function applyEffectTexture() {
     if (!currentMesh || !currentEffectTexture) return;
-    
     const isClub = (document.getElementById('productType').value === 'club');
-
-    [customProjectorMaterial, ringProjectorMaterial].forEach((m) => {
-        m.uniforms.uTexture.value = currentEffectTexture;
-        m.uniforms.uIsClub.value = isClub;
-        m.needsUpdate = true;
-    });
-
     currentMesh.traverse((child) => {
         if (!child.isMesh) return;
-        
-        if (child.name === 'ringPart') {
-            child.material = ringProjectorMaterial;
-        } else if (child.name === 'handlePart' || child.name === 'bodyPart' || child.name === 'ballPart') {
-            child.material = customProjectorMaterial;
+        const isRing = child.name === 'ringPart';
+        const isTarget = isRing || child.name === 'handlePart' || 
+                         child.name === 'bodyPart' || child.name === 'ballPart';
+        if (!isTarget) return;
+        if (child.material && child.material !== customProjectorMaterial && child.material !== ringProjectorMaterial) {
+            child.material.dispose();
         }
+        const mat = (isRing ? ringProjectorMaterial : customProjectorMaterial).clone();
+        mat.uniforms = THREE.UniformsUtils.clone(mat.uniforms);
+        
+        mat.transparent = isRing;
+        mat.uniforms.uTexture.value = currentEffectTexture;
+        mat.uniforms.uIsClub.value = isClub;
+        mat.uniforms.uOpacity.value = isRing ? 0.7 : 1.0;
+        mat.uniforms.uMeshOffsetY.value = isClub ? child.position.y : 0.0;
+        mat.needsUpdate = true;
+
+        child.material = mat;
     });
 }
 
@@ -441,21 +454,57 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+// function to set the speed of rotation and effect animation based on user selection
+function setSpeed(multiplier) {
+    effectSpeed = -0.005 * multiplier;
+
+    //Speed button UI update
+    [1, 2, 4].forEach(m => {
+        const btn = document.getElementById(`btn-speed-${m}`);
+        if (btn) {
+            if (m === multiplier) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    });
+}
+
+// function to set the default rotation of the product based on user selection
+function setDefaultRotation(type) {
+    if (!currentMesh) return;
+
+    isDragging = false; // stop any ongoing dragging rotation
+
+    if (type === 'pi_2') {
+        //Standing view
+        currentMesh.rotation.y = Math.PI / 2;
+        currentMesh.rotation.z = 0; 
+    } else if (type === 'pi_6') {
+        //Side view
+        currentMesh.rotation.y = Math.PI / 6;
+        currentMesh.rotation.z = Math.PI / 6;
+    }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     
     if (currentMesh) {
         if (!isDragging) {
-            currentMesh.rotation.y += 0.01;
+            currentMesh.rotation.y += rotationSpeed;
         }
         if (selectedEffectName !== 'none') {
-            effectAngle -= 0.005; 
+            effectAngle += effectSpeed;
             customProjectorMaterial.uniforms.uAngle.value = effectAngle;
             ringProjectorMaterial.uniforms.uAngle.value = effectAngle;
+            currentMesh.traverse((child) => {
+                if (child.isMesh && child.material && child.material.uniforms && 
+                    child.material.uniforms.uAngle) {
+                    child.material.uniforms.uAngle.value = effectAngle;
+                }
+            });
         }
     }
-    
     renderer.render(scene, camera);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+window.onload = init;
