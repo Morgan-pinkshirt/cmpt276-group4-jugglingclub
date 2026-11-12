@@ -1,49 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guest Home</title>
+    <title>Guest Dashboard | The Jester Club</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <link id="lobby-theme-stylesheet" rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <link rel="stylesheet" th:href="@{/css/lobby-layout.css}">
 </head>
-<body class="guest-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <a class="guest-button guest-login-button" href="/userlogin">Login</a>
+<body class="guest-page lobby-page">
+    <header class="lobby-header">
+        <div class="lobby-brand">
+            <i data-lucide="sparkles" aria-hidden="true"></i>
+            <h1>The Jester Club</h1>
+        </div>
+        <div class="lobby-header-actions">
+            <span class="lobby-role">GUEST VIEW</span>
+            <a class="guest-button lobby-login" th:href="@{/userlogin}">
+                <i data-lucide="log-in"
+                aria-hidden="true">
+                </i>
+                <span>Login</span>
+            </a>
+        </div>
     </header>
 
-    <div class="guest-layout">
-        <nav class="guest-sidebar">
-            <a class="guest-home" href="/home" aria-label="Home">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
-                </svg>
-            </a>
-        </nav>
-
-        <main class="guest-main">
-            <section class="guest-member">
-                <div class="guest-panel-content">
-                    <h2>Become a Member</h2>
-                    <p>Create an account to save your customized settings.</p>
-                    <a class="guest-button" href="/userregister">Register</a>
-                </div>
-            </section>
-
-            <section class="guest-presets">
-                <div class="guest-panel-content">
-                    <h2>Browse Presets</h2>
-                    <div class="guest-preview">Preview Image</div>
-                    <a class="guest-button" href="/no-presets.html">Browse Presets</a>
-                </div>
-            </section>
+    <div class="lobby-layout guest-layout">
+        <nav th:replace="~{fragments/lobby :: sidebar('guest')}"></nav>
+        <main class="lobby-main guest-main">
+            <div class="lobby-welcome">
+                <p class="lobby-eyebrow">GUEST DASHBOARD</p>
+                <h2>Welcome to The Jester Club</h2>
+                <p>
+                    Explore LED juggling designs,
+                    discover colour combinations,
+                    and get inspired for your
+                    next performance.
+                </p>
+            </div>
+            <div class="lobby-card-grid">
+                <section class="lobby-card">
+                    <div class="lobby-card-content">
+                        <div class="lobby-card-image-slot">
+                            <img
+                                th:src="@{/img/guest/juggling-performance.jpg}"
+                                alt="Colourful LED juggling performance"
+                                loading="lazy">
+                        </div>
+                        <h2>
+                            <i data-lucide="user-plus"
+                                class="lobby-card-icon"
+                                aria-hidden="true"></i>
+                            Become a Jester
+                        </h2>
+                        <p>
+                            Create an account to customize,
+                            save and manage your designs.
+                        </p>
+                        <a class="lobby-button guest-button" th:href="@{/userregister}">
+                            Join Now
+                        </a>
+                    </div>
+                </section>
+                <section class="lobby-card">
+                    <div class="lobby-card-content">
+                        <div class="lobby-card-image-slot">
+                            <img
+                                th:src="@{/img/guest/led-clubs.jpg}"
+                                alt="Colourful LED juggling clubs"
+                                loading="lazy">
+                        </div>
+                        <h2>
+                            <i data-lucide="palette"
+                                class="lobby-card-icon"
+                                aria-hidden="true"></i>
+                            Browse Presets
+                        </h2>
+                        <p>
+                            Explore colour combinations and
+                            discover inspiration for your next design.
+                        </p>
+                        <a class="lobby-button guest-button" th:href="@{/no-presets.html}">
+                            View Presets
+                        </a>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
-    <footer>
+    <footer class="lobby-footer">
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
+    <script defer
+            th:src="@{/js/lobby-theme.js}">
+    </script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
-

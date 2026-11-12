@@ -1,0 +1,401 @@
+.accounts-table th,
+.accounts-table td {
+    border-bottom-color: rgba(128, 128, 128, 0.35);
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) {
+    --ns-bg: #0b1020;
+    --ns-panel: #191e33;
+    --ns-border: #38415e;
+    --ns-purple: #8257e6;
+    --ns-hover: #986df0;
+    --ns-text: #f4f2ff;
+    --ns-muted: #a9b3d0;
+    background: var(--ns-bg);
+    color: var(--ns-text);
+    color-scheme: dark;
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) a {
+    color: #c8b5ff;
+}
+
+body:is(.guest-page, .member-page) header {
+    background: #161b30;
+    color: #fff;
+    border-color: var(--ns-border);
+    box-shadow: 0 5px 25px #0003;
+}
+
+body:is(.guest-page, .member-page) header h1 {
+    color: #fff;
+}
+
+body.guest-page header::after {
+    background: #30264e;
+    color: #dac8ff;
+    border-color: #7052b4;
+}
+
+body.member-page .account-role {
+    background: #30264e;
+    color: #dac8ff;
+    border-color: #7052b4;
+}
+
+body.admin-page .account-role {
+    background: #493823;
+    color: #ffdc96;
+    border-color: #a27c40;
+}
+
+body.member-page .account-id,
+body.member-page .account-username {
+    color: var(--ns-muted);
+}
+
+body.guest-page .guest-sidebar,
+body.member-page .member-sidebar {
+    background: #151a2e;
+    border-right-color: var(--ns-border);
+}
+
+body.guest-page .guest-sidebar a,
+body.member-page .member-sidebar a {
+    background: transparent;
+    color: #c6b0ff;
+}
+
+body.guest-page .guest-sidebar a:hover,
+body.member-page .member-sidebar a:hover {
+    background: #342953;
+}
+
+body.guest-page .guest-home svg,
+body.member-page .member-home svg,
+body.member-page .member-settings svg {
+    color: #c6b0ff;
+}
+
+body.guest-page .guest-main section,
+body.member-page .member-main section {
+    background: linear-gradient(145deg, #222942, #171c30);
+    border-color: var(--ns-border);
+    box-shadow: 0 12px 32px #0003;
+}
+
+body.guest-page .guest-main section:hover,
+body.member-page .member-main section:hover {
+    border-color: #865fdc;
+    box-shadow: 0 15px 38px #0006;
+}
+
+body.guest-page .guest-panel-content h2,
+body.member-page .member-panel-content h2 {
+    color: #fff;
+}
+
+body.guest-page .guest-panel-content p,
+body.member-page .member-panel-content p {
+    color: var(--ns-muted);
+}
+
+body.guest-page .guest-preview,
+body.member-page .member-preview {
+    background: none;
+    box-shadow: none;
+    color: inherit;
+}
+
+body.guest-page .guest-button,
+body.member-page .member-button {
+    background: linear-gradient(135deg, #8257e6, #6844bf);
+    color: #fff;
+    border-color: #916cf0;
+}
+
+body.guest-page .guest-button:hover,
+body.member-page .member-button:hover {
+    background: linear-gradient(135deg, #956cf0, #7850d2);
+    box-shadow: 0 6px 20px #8257e655;
+}
+
+body.guest-page footer,
+body.member-page footer {
+    background: #151a2e;
+    color: var(--ns-muted);
+    border-color: var(--ns-border);
+}
+
+html body.member-page.view-accounts-page
+section.view-accounts-panel {
+    background: #191e33 !important;
+    background-color: #191e33 !important;
+    background-image: none !important;
+    color: #f4f2ff !important;
+    border-color: #38415e !important;
+    box-shadow: 0 12px 32px #0003;
+}
+
+html body.view-accounts-page .view-accounts-panel h2 {
+    color: #fff !important;
+}
+
+html body.view-accounts-page table.accounts-table {
+    background: transparent !important;
+    color: #f4f2ff !important;
+}
+
+html body.view-accounts-page .accounts-table thead,
+html body.view-accounts-page .accounts-table tbody,
+html body.view-accounts-page .accounts-table tr {
+    background: transparent !important;
+}
+
+html body.view-accounts-page .accounts-table th,
+html body.view-accounts-page .accounts-table td {
+    border-bottom-color: #38415e;
+}
+
+html body.view-accounts-page .accounts-table th {
+    background: #252b45 !important;
+    color: #dac8ff !important;
+}
+
+html body.view-accounts-page .accounts-table td {
+    background: transparent !important;
+    color: #e4e7f4 !important;
+}
+
+html body.view-accounts-page
+.accounts-table tbody tr:hover td {
+    background: #252b45 !important;
+}
+
+body.view-accounts-page .accounts-table button,
+body.view-accounts-page .accounts-table .member-button {
+    background: #8257e6;
+    color: #fff;
+    border-color: #916cf0;
+}
+
+body.view-accounts-page .accounts-table button:hover,
+body.view-accounts-page .accounts-table .member-button:hover {
+    background: #986df0;
+}
+
+body.view-accounts-page .accounts-table td > span {
+    background: #253b38;
+    color: #a1e5cd;
+    border-color: #426d60;
+}
+
+body.login-page {
+    background: radial-gradient(
+        ellipse at 50% 30%,
+        #25204c,
+        #0b1020 65%
+    );
+}
+
+body.login-page header {
+    background: transparent;
+}
+
+body.login-page header h1 {
+    color: #eee7ff;
+}
+
+body.login-page main {
+    background: transparent;
+}
+
+body.login-page .login-panel {
+    background: var(--ns-panel);
+    border-color: #3d4260;
+    box-shadow: 0 20px 65px #0006;
+}
+
+body.login-page .login-panel h2 {
+    color: #fff;
+}
+
+body.login-page .login-panel label {
+    color: #d2d5e8;
+}
+
+body.login-page .login-panel input {
+    background: #101629;
+    color: #fff;
+    border-color: #414866;
+}
+
+body.login-page .login-panel input:focus {
+    border-color: #9b76f2;
+    box-shadow: 0 0 0 3px #8257e633;
+}
+
+body.login-page .login-panel button {
+    background: var(--ns-purple);
+    color: #fff;
+    border-color: #916cf0;
+}
+
+body.login-page .login-panel button:hover {
+    background: var(--ns-hover);
+}
+
+body.login-page .login-links a {
+    color: #c3adff;
+}
+
+body.login-page .login-links a:hover {
+    color: #fff;
+}
+
+body.login-page footer {
+    background: transparent;
+    color: #919cb9;
+}
+
+body.settings-page > header {
+    background: #161b30;
+    border-bottom-color: var(--ns-border);
+}
+
+body.settings-page > header h1 {
+    color: #fff;
+}
+
+body.settings-page > header p {
+    color: var(--ns-muted);
+}
+
+body.settings-page > nav {
+    background: #151a2e;
+    border-bottom-color: var(--ns-border);
+}
+
+body.settings-page > nav a {
+    color: #cbbaff;
+}
+
+body.settings-page > nav a:hover {
+    background: #30264e;
+    color: #fff;
+}
+
+body.settings-page > main > section {
+    background: var(--ns-panel);
+    color: var(--ns-text);
+    border-color: var(--ns-border);
+    box-shadow: 0 8px 25px #0002;
+}
+
+body.settings-page > main > section h2 {
+    color: #fff;
+}
+
+body.settings-page > main > section p {
+    color: var(--ns-muted);
+}
+
+body.settings-page .settings-identity p {
+    color: #d4d8eb;
+}
+
+body.settings-page .settings-identity strong {
+    color: #cbbaff;
+}
+
+body.settings-page label {
+    color: #d4d8eb;
+}
+
+body.settings-page #currentUsername {
+    color: #cbbaff;
+}
+
+body.settings-page input,
+body.settings-page select {
+    background: #101629;
+    color: #fff;
+    border-color: #414866;
+}
+
+body.settings-page input:focus,
+body.settings-page select:focus {
+    outline-color: #9b76f2;
+}
+
+body.settings-page button {
+    background: var(--ns-purple);
+    color: #fff;
+    border-color: #916cf0;
+}
+
+body.settings-page button:hover {
+    background: var(--ns-hover);
+}
+
+body.settings-page > footer {
+    background: #151a2e;
+    color: var(--ns-muted);
+    border-top-color: var(--ns-border);
+}
+
+body.construction-page > header {
+    background: #161b30;
+    color: #fff;
+    border-bottom-color: var(--ns-border);
+}
+
+body.construction-page > header p {
+    color: var(--ns-muted);
+}
+
+body.construction-page > nav {
+    background: #151a2e;
+    border-bottom-color: var(--ns-border);
+}
+
+body.construction-page > nav a {
+    color: #cbbaff;
+}
+
+body.construction-page > main > section {
+    background: var(--ns-panel);
+    border-color: var(--ns-border);
+    box-shadow: 0 16px 45px #0004;
+}
+
+body.construction-page > main h2 {
+    color: #fff;
+}
+
+body.construction-page > main p {
+    color: var(--ns-muted);
+}
+
+body.construction-page > main a {
+    color: #fff;
+    background: var(--ns-purple);
+}
+
+body.construction-page > main a:hover {
+    background: var(--ns-hover);
+}
+
+body.construction-page > footer {
+    background: #151a2e;
+    color: var(--ns-muted);
+    border-top-color: var(--ns-border);
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page)
+:is(a, button, input, select):focus-visible {
+    outline-color: #c4a4ff;
+}
