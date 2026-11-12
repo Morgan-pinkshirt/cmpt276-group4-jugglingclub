@@ -30,15 +30,16 @@
 
         <main class="view-accounts-main">
             <section class="view-accounts-panel">
-                <h2>Account Management</h2>
+                <h2>Saved Projects</h2>
 
                 <table class="accounts-table">
                     <thead>
                         <tr>
                             <th>UID</th>
-                            <th>projectname</th>
-                            <th>edit</th>
-                            <th>delete</th>
+                            <th>Project Name</th>
+                            <th>Edit</th>
+                            <th>Export</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,22 +49,45 @@
                             <td>
                                 <form th:action="@{/customsave}" method="post">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
-                                    <button class="member-button" type="submit">edit</button>
-                                </form>                                
+                                    <button class="member-button" type="submit">Edit</button>
+                                </form>
+                            </td>
+                            <td>
+                                <a class="member-button"
+                                   th:href="@{/exportproject(UID=${project.uid})}">Export</a>
                             </td>
                             <td>
                                 <form th:action="@{/deleteproject}" method="post" onsubmit="return confirm('Are you sure you want to delete this project?');">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
                                     <button class="member-button" type="submit">Delete</button>
                                 </form>
-                
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="4">No projects found.</td>
+                            <td colspan="5">No projects found.</td>
                         </tr>
                     </tbody>
                 </table>
+
+                <h3>Import Project</h3>
+
+                <form th:action="@{/importproject}" method="post" enctype="multipart/form-data">
+                    <input type="file"
+                           id="importFile"
+                           name="file"
+                           accept=".json,application/json"
+                           style="display: none;">
+
+                    <button class="member-button"
+                            type="button"
+                            id="chooseFileButton">Choose File</button>
+
+                    <span id="selectedFileName" style="margin: 0 12px;">No file selected</span>
+
+                    <button class="member-button" type="submit">Import</button>
+                </form>
+
+                <p th:if="${importMessage}" th:text="${importMessage}"></p>
 
                 <a class="member-button" href="/home">Back to Home</a>
             </section>
@@ -73,5 +97,24 @@
     <footer>
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
+
+    <script>
+        const importFile = document.getElementById("importFile");
+        const chooseFileButton = document.getElementById("chooseFileButton");
+        const selectedFileName = document.getElementById("selectedFileName");
+
+        chooseFileButton.addEventListener("click", function() {
+            importFile.click();
+        });
+
+        importFile.addEventListener("change", function() {
+            if (importFile.files.length > 0) {
+                selectedFileName.textContent = importFile.files[0].name;
+            } else {
+                selectedFileName.textContent = "No file selected";
+            }
+        });
+    </script>
 </body>
 </html>
+
