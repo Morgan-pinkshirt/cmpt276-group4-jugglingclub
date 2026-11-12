@@ -476,10 +476,12 @@ function setDefaultRotation(type) {
 
     if (type === 'pi_2') {
         //Standing view
+        currentMesh.rotation.x = 0;
         currentMesh.rotation.y = Math.PI / 2;
         currentMesh.rotation.z = 0; 
     } else if (type === 'pi_6') {
         //Side view
+        currentMesh.rotation.x = 0;
         currentMesh.rotation.y = Math.PI / 6;
         currentMesh.rotation.z = Math.PI / 6;
     }
@@ -487,7 +489,6 @@ function setDefaultRotation(type) {
 
 function animate() {
     requestAnimationFrame(animate);
-    
     if (currentMesh) {
         if (!isDragging) {
             currentMesh.rotation.y += rotationSpeed;
