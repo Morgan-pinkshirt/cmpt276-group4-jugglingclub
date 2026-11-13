@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Simulation | TheJestersClub</title>
+    <base th:href="@{/2d-sim/}" href="/2d-sim/">
+    <link rel="stylesheet" th:href="@{/2d-sim/style.css}">
+    <link rel="stylesheet" th:href="@{/2d-sim/moving.css}">
+    <link rel="stylesheet" th:href="@{/2d-sim/sim.css}">
+    <script
+        src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"defer>
+    </script>
+</head>
+<body>
+<div class="studio-shell">
+    <header class="studio-header">
+        <div class="brand">
+            <i data-lucide="drama"></i>
+            <span>The Jesters Club</span>
+        </div>
+        <a th:href="@{/home}"
+            href="/home"
+            class="back-button">
+            <i data-lucide="arrow-left"></i>
+            <span>Back to Home</span>
+        </a>
+    </header>
+    <main>
+        <section class="page-intro">
+            <h1>2D Simulation</h1>
+            <p>
+                Design, customize, and preview your
+                LED juggling club in real time.
+            </p>
+        </section>
+        <section class="universal-controls">
+            <div class="universal-intro">
+                <i data-lucide="settings"></i>
+                <div>
+                    <h2 id="universal-heading">
+                        Design Controls
+                    </h2>
+                    <p>
+                        Test and explore colours and lighting effects on a rotating club preview.
+                    </p>
+                </div>
+            </div>
+            <div class="universal-section">
+                <span class="control-title">
+                    <i data-lucide="mouse-pointer-2"></i>
+                    Club Part
+                </span>
+                <div class="part-switch">
+                    <button type="button"
+                            id="bodyButton"
+                            class="active">
+                            Juggling Club Body
+                    </button>
+                    <button type="button"
+                            id="handleButton">
+                            Juggling Club Handle
+                    </button>
+                </div>
+            </div>
+            <div class="universal-section">
+                <label for="colourSlider" class="control-title">
+                    <i data-lucide="palette"></i>
+                    Color Slider
+                </label>
+                <input
+                    type="range"
+                    id="colourSlider"
+                    min="0"
+                    max="360"
+                    value="0">
+            </div>
+            <div class="universal-section">
+                <label for="options" class="control-title">
+                    <i data-lucide="sliders-horizontal"></i>
+                    Lighting Effect (Cannot be separated by Juggling Club Part)
+                </label>
+                <form class="mode-form" onsubmit="return false">
+                    <fieldset>
+                        <legend class="sr-only">
+                            Preview a lighting effect
+                        </legend>
+                        <div class="effect-row">
+                            <select id="options">
+                                <optgroup label="Page 1">
+                                    <option class="page-1" value="p1_1_rainbow">Rainbow</option>
+                                    <option value="p1_2_rainbow_drops">Rainbow Drops</option>
+                                    <option value="p1_3_bold">Bold</option>
+                                    <option value="p1_4_lantern">Lantern</option>
+                                    <option value="p1_5_fire">Fire</option>
+                                    <option value="p1_6_water">Water</option>
+                                    <option value="p1_7_earth">Earth</option>
+                                    <option value="p1_8_air">Air</option>
+                                    <option value="p1_9_spirit">Spirit</option>
+                                    <option value="p1_10_pulse">Pulse</option>
+                                </optgroup>
+                                <optgroup label="Page 2">
+                                    <option value="p2_1_candy">Candy</option>
+                                    <option value="p2_2_petals">Petals</option>
+                                    <option value="p2_3_love">Love</option>
+                                    <option value="p2_4_watermelon">Watermelon</option>
+                                    <option value="p2_5_freedom">Freedom</option>
+                                    <option value="p2_6_microdots">Microdots</option>
+                                    <option value="p2_7_unicorn">Unicorn</option>
+                                    <option value="p2_8_blue_blazer">Blue Blazer</option>
+                                    <option value="p2_9_solar_flare">Solar Flare</option>
+                                    <option value="p2_10_strobe">Strobe</option>
+                                </optgroup>
+                                <optgroup label="Page 3">
+                                    <option value="p3_1_flamebow">Flamebow</option>
+                                    <option value="p3_2_alicorn">Alicorn</option>
+                                    <option value="p3_3_liquid_sugar">Liquid Sugar</option>
+                                    <option value="p3_4_rainbow_dash">Rainbow Dash</option>
+                                    <option value="p3_5_fireball">Fireball</option>
+                                    <option value="p3_6_froth">Froth</option>
+                                    <option value="p3_7_jammin">Jammin</option>
+                                    <option value="p3_8_bolder">Bolder</option>
+                                    <option value="p3_9_sunset">Sunset</option>
+                                    <option value="p3_10_daybreak">Daybreak</option>
+                                </optgroup>
+                                <optgroup label="Page 13">
+                                    <option value="p13_1_flames">Flames</option>
+                                    <option value="p13_2_skittles">Skittles</option>
+                                    <option value="p13_3_rainbow_brite">Rainbow Brite</option>
+                                    <option value="p13_4_party_fish">Party Fish</option>
+                                    <option value="p13_5_candle">Candle</option>
+                                    <option value="p13_6_rainbow_fade">Rainbow Fade</option>
+                                    <option value="p13_7_OG_candy">OG Candy</option>
+                                    <option value="p13_8_bouncer">Bouncer</option>
+                                    <option value="p13_9_kinetic_colors">Kinetic Colors</option>
+                                    <option value="p13_10_rave9000">Rave9000</option>
+                                    <option value="p13_11_balance_point">Balance Point</option>
+                                    <option value="p13_12_expandoblob">Expandoblob</option>
+                                    <option value="p13_13_baby_spice">Baby Spice</option>
+                                    <option value="p13_14_responsive_rainbow_fade">Responsive Rainbow Fade</option>
+                                    <option value="p13_15_poke_bowl">Poke Bowl</option>
+                                    <option value="p13_16_mr._bones">Mr. Bones</option>
+                                    <option value="p13_17_bonus_bonanza">Bonus Bonanza</option>
+                                    <option value="p13_18_OG_strobe">OG Strobe</option>
+                                    <option value="p13_19_lightning_bug">Lightning Bug</option>
+                                    <option value="p13_20_day_club">Day Club</option>
+                                    <option value="p13_21_rainbizzle">Rainbizzle</option>
+                                    <option value="p13_22_fruit_basket">Fruit Basket</option>
+                                    <option value="p13_23_marvin's_mode">Marvin's Mode</option>
+                                    <option value="p13_24_hidden_rainbow">Hidden Rainbow</option>
+                                    <option value="p13_25_rainbow_bridge">Rainbow Bridge</option>
+                                    <option value="p13_26_OG_sparkles">OG Sparkles</option>
+                                    <option value="p13_27_day_club_II">Day Club II</option>
+                                    <option value="p13_28_ghost">Ghost</option>
+                                    <option value="p13_29_sega_genesis">Sega Genesis</option>
+                                    <option value="p13_30_sean's_bane">Sean's Bane</option>
+                                    <option value="p13_31_gulp_chug">Gulp Chug</option>
+                                    <option value="p13_32_OG_watermelon">OG Watermelon</option>
+                                    <option value="p13_33_rainbow_dashish">Rainbow Dashish</option>
+                                    <option value="p13_34_OG_rainbow_dash">OG Rainbow Dash</option>
+                                    <option value="p13_35_thumb_light">Thumb Light</option>
+                                    <option value="p13_36_euro_2">Euro 2</option>
+                                    <option value="p13_37_OG_rainbow_drops">OG Rainbow Drops</option>
+                                    <option value="p13_38_alt_pulse">Alt Pulse</option>
+                                    <option value="p13_39_lightning_storm">Lightning Storm</option>
+                                    <option value="p13_40_sparkle_pony">Sparkle Pony</option>
+                                    <option value="p13_41_thing2_-_nebula">Thing2 - Nebula</option>
+                                    <option value="p13_42_OG_lantern">OG Lantern</option>
+                                    <option value="p13_43_sorcerer">Sorcerer</option>
+                                    <option value="p13_44_ice_cream_soda">Ice Cream Soda</option>
+                                    <option value="p13_45_adventure_time">Adventure Time</option>
+                                    <option value="p13_46_flintstones_-_candy_corn">Flintstones - Candy Corn</option>
+                                    <option value="p13_47_indiana_jones">Indiana Jones</option>
+                                    <option value="p13_48_zen">Zen</option>
+                                    <option value="p13_49_candy_crush">Candy Crush</option>
+                                    <option value="p13_50_5-O">5-O</option>
+                                </optgroup>
+                            </select>
+                            <input
+                                type="button"
+                                id="view-button"
+                                value="View">
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="reset-section">
+                <button
+                    type="button"
+                    id="reset-simulator"
+                    class="reset-button">
+                    <i data-lucide="rotate-ccw"></i>
+                    Reset to Default
+                </button>
+            </div>
+        </section>
+        <div class="simulations-grid">
+            <section id="moving" class="model simulator-card">
+                <div class="card-content">
+                    <div class="preview-stage moving-preview">
+                        <div class="club-visual" id="moving-visual">
+                            <div id="clubDivision">
+                                <div style="display:none">
+                                    <img
+                                        id="img"
+                                        th:src="@{/2d-sim/img/p1_1_rainbow.png}"
+                                        src="/2d-sim/img/p1_1_rainbow.png"
+                                        alt="">
+                                </div>
+                                <svg
+                                    id="svg_moving"
+                                    width="120"
+                                    height="300"
+                                    viewBox="0 0 120 300">
+                                    <path
+                                        id="BodyMov"
+                                        d="M60 20 C20 20 25 100 50 160 L70 160 C95 100 100 20 60 20"
+                                        fill="grey">
+                                    </path>
+                                    <rect
+                                        id="HandleMov"
+                                        x="50"
+                                        y="160"
+                                        width="20"
+                                        height="110"
+                                        fill="white">
+                                    </rect>
+                                    <rect
+                                        x="47"
+                                        y="265"
+                                        width="26"
+                                        height="15"
+                                        rx="15"
+                                        fill="black">
+                                    </rect>
+                                </svg>
+                                <canvas
+                                    id="canvas_moving"
+                                    width="200"
+                                    height="400">
+                                </canvas>
+                            </div>
+                        </div>
+                        <div class="preview-toolbar">
+                            <button
+                                type="button"
+                                id="moving-zoom-out"
+                                class="tool-button"
+                                title="Zoom out">
+                                <i data-lucide="minus"></i>
+                            </button>
+                            <output
+                                id="moving-zoom-value"
+                                class="zoom-value">
+                                100%
+                            </output>
+                            <button
+                                type="button"
+                                id="moving-zoom-in"
+                                class="tool-button"
+                                title="Zoom in">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="details-column">
+                        <div class="card-heading">
+                            <i data-lucide="refresh-cw"
+                                class="heading-icon"></i>
+                            <div>
+                                <h2 id="moving-heading">
+                                    Rotating Club Preview
+                                </h2>
+                                <p>
+                                    Test and explore colours and lighting effects on a static club preview.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="adjustment-panel">
+                            <h3>Lighting Adjustments</h3>
+                            <div class="adjustment-divider"></div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-brightness">
+                                        <i data-lucide="sun"></i>
+                                        Brightness Level
+                                    </label>
+                                    <output
+                                        id="moving-brightness-value"
+                                        for="moving-brightness">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="moving-brightness"
+                                    min="0"
+                                    max="100"
+                                    value="100">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-saturation">
+                                        <i data-lucide="droplet"></i>
+                                        Saturation Level
+                                    </label>
+                                    <output
+                                        id="moving-saturation-value"
+                                        for="moving-saturation">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="moving-saturation"
+                                    min="0"
+                                    max="100"
+                                    value="100">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-speed">
+                                        <i data-lucide="gauge"></i>
+                                        Rotation Speed
+                                    </label>
+                                    <output
+                                        id="moving-speed-value"
+                                        for="moving-speed">
+                                        1.0×
+                                    </output>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="moving-speed"
+                                    min="0"
+                                    max="400"
+                                    step="10"
+                                    value="100">
+                            </div>
+                            <h4 id="mode_name"
+                                aria-live="polite">
+                                Page 1 - #1 - Rainbow
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                id="static"
+                class="model simulator-card">
+                <div class="card-content">
+                    <div class="preview-stage static-preview">
+                        <div class="club-visual" id="static-visual">
+                            <div id="static-transform">
+                                <svg
+                                    id="svg_still"
+                                    width="120"
+                                    height="300"
+                                    viewBox="0 0 120 300">
+                                    <path
+                                        id="clubBody"
+                                        d="M60 20 C20 20 25 100 50 160 L70 160 C95 100 100 20 60 20"
+                                        fill="grey">
+                                    </path>
+                                    <rect
+                                        id="clubHandle"
+                                        x="50"
+                                        y="160"
+                                        width="20"
+                                        height="110"
+                                        fill="white">
+                                    </rect>
+                                    <rect
+                                        x="47"
+                                        y="265"
+                                        width="26"
+                                        height="15"
+                                        rx="15"
+                                        fill="black">
+                                    </rect>
+                                </svg>
+                                <canvas
+                                    id="canvas_still"
+                                    width="200"
+                                    height="400">
+                                </canvas>
+                            </div>
+                        </div>
+                        <div class="orientation-toolbar">
+                            <button
+                                type="button"
+                                id="static-rotate-left"
+                                class="tool-button"
+                                title="Rotate left 90 degrees">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button
+                                type="button"
+                                id="static-rotate-right"
+                                class="tool-button"
+                                title="Rotate right 90 degrees">
+                                <i data-lucide="rotate-cw"></i>
+                            </button>
+                            <button
+                                type="button"
+                                id="static-reset-orientation"
+                                class="tool-button"
+                                title="Reset orientation">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>
+                        </div>
+                        <div class="preview-toolbar">
+                            <button
+                                type="button"
+                                id="static-zoom-out"
+                                class="tool-button"
+                                title="Zoom out">
+                                <i data-lucide="minus"></i>
+                            </button>
+                            <output
+                                id="static-zoom-value"
+                                class="zoom-value">
+                                100%
+                            </output>
+                            <button
+                                type="button"
+                                id="static-zoom-in"
+                                class="tool-button"
+                                title="Zoom in">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="details-column">
+                        <div class="card-heading">
+                            <i data-lucide="layers"
+                                class="heading-icon"></i>
+                            <div>
+                                <h2 id="static-heading">
+                                    Static Club Preview
+                                </h2>
+                                <p>
+                                    Test and explore colours and lighting effects on a static club preview.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="adjustment-panel">
+                            <h3>Lighting Settings & Adjustments</h3>
+                            <div class="adjustment-divider"></div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="static-brightness">
+                                        <i data-lucide="sun"></i>
+                                        Brightness Level
+                                    </label>
+                                    <output
+                                        id="static-brightness-value"
+                                        for="static-brightness">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="static-brightness"
+                                    min="0"
+                                    max="100"
+                                    value="100">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="static-saturation">
+                                        <i data-lucide="droplet"></i>
+                                        Saturation Level
+                                    </label>
+                                    <output
+                                        id="static-saturation-value"
+                                        for="static-saturation">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="static-saturation"
+                                    min="0"
+                                    max="100"
+                                    value="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="studio-footer">
+        <p>The Jester Club - CMPT 276 Group 4</p>
+    </footer>
+</div>
+<script th:src="@{/2d-sim/moving.js}"></script>
+<script th:src="@{/2d-sim/script.js}"></script>
+<script th:src="@{/2d-sim/sim.js}"></script>
+<script th:src="@{/2d-sim/speed.js}"></script>
+<script th:src="@{/2d-sim/controls.js}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
+</body>
+</html>
