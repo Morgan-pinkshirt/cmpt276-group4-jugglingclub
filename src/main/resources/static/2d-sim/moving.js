@@ -21,15 +21,17 @@ function draw(ctx, angle, type) {
     ctx.save();
 
     ctx.beginPath();
+    ctx.fillStyle = "rgb(231, 231, 250)";
+    ctx.fillRect(87, 113, 20, 7);
 	ctx.moveTo(90, 120);
-	ctx.lineTo(90, 233);
-	ctx.lineTo(103, 333);
+	ctx.lineTo(90, 223);
+	ctx.lineTo(103, 323);
 	ctx.lineTo(103, 120);
-	ctx.moveTo(90, 220);
+	ctx.moveTo(90, 230);
 
 	ctx.bezierCurveTo(55, 290, 70, 350, 83, 365);
 	ctx.lineTo(100, 365);
-	ctx.bezierCurveTo(115, 350, 130, 290, 103, 220);
+	ctx.bezierCurveTo(115, 350, 130, 290, 103, 230);
     ctx.closePath();
     ctx.clip();
 
@@ -43,9 +45,9 @@ function draw(ctx, angle, type) {
 
     // Increase angle for next frame
     if (type == "moving") {
-        angle -= 0.02;
+        angle += 0.02 * (window.jestersSpeed ?? 1);
     } else if (type == "still") {
-        angle -= 0.0075;
+        angle += 0.0075;
     }
 
     if (angle > Math.PI * 2) {
@@ -98,10 +100,9 @@ clickedButton.addEventListener('click', function () {
         if (mode[i] == "_") {
             modeName.innerHTML += ` ${mode[i+1].toUpperCase()}`;
             i++;
-        } else if (mode[i] == "-") {
-            modeName.innerHTML += "/";
-        }
-        else {
+        // } else if (mode[i] == "-") {
+        //     modeName.innerHTML += "/";
+        } else {
             modeName.innerHTML += mode[i]; 
         }
         i++;
