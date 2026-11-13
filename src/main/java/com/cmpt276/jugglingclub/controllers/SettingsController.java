@@ -106,7 +106,6 @@ public class SettingsController {
         
     @PostMapping("/setEmail")
     public String setemail(@RequestParam String email, HttpSession session, HttpServletRequest request, Model model) {
-        //TODO: process POST request
          if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
 

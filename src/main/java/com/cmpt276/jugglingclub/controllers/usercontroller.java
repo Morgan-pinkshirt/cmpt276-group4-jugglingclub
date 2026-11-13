@@ -1,11 +1,9 @@
 package com.cmpt276.jugglingclub.controllers;
-import java.util.List; // probability needs this lol
 import com.cmpt276.jugglingclub.models.usersRepository;
 
 
 import com.cmpt276.jugglingclub.models.user;
 import org.springframework.ui.Model;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,33 +16,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
 import com.cmpt276.jugglingclub.roles.RoleService;
 
 import java.util.Random;
 @Controller
 public class usercontroller{
+
     @Autowired usersRepository userREPO;
-    private final RoleService roleService;
 
-    public usercontroller(RoleService roleService) {
-        this.roleService = roleService;
-    }
 
+    private final Random rand = new Random();
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 // use this to check for session's existence:
-    public boolean vaildator(HttpServletRequest request, HttpSession session, HttpServletResponse response){ // USE THIS TO CHECK FOR session is logged in or not
-        if(session == null){
-            return false;
-        }
-        user user = (user) session.getAttribute("user");
-        if(user == null){
-            return  false;
-        }else{
-            return true;
-        }
-    }
+
     @GetMapping("/")
     public String startup() {
         return "redirect:/home";
@@ -68,7 +53,7 @@ public class usercontroller{
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
             
-            model.addAttribute("stinky",user);
+
             return "redirect:/home";
         }
     }
@@ -80,11 +65,13 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
         if(vailduser == null){
             model.addAttribute("message","username or password dont match, log in failed");
+            session.invalidate();
             return "users/result";
         }
         if(!passwordEncoder.matches(password, vailduser.getPassword())){
 
             model.addAttribute("message","username or password dont match, log in failed");
+            session.invalidate();
             return "users/result";
         }
         
@@ -101,8 +88,6 @@ public class usercontroller{
         }
 
         request.getSession(true).setAttribute("user", vailduser); 
-
-        model.addAttribute("stinky", session.getAttribute("user")); 
        
         return "redirect:/home";
     }
@@ -115,6 +100,10 @@ public class usercontroller{
 
         if(!(vailduser == null)){
             model.addAttribute("message","user name taken, try again");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        session.invalidate();
             return "users/result";
         }
         final String hashedPassword = passwordEncoder.encode(password);
@@ -129,7 +118,7 @@ public class usercontroller{
     }
 
     @GetMapping("/logout")
-    public String getMethodName(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
@@ -150,8 +139,8 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
         String chosen;
         String message;
-        Random rand = new Random();
-        int random = rand.nextInt(5);
+        
+        int random = this.rand.nextInt(6);
         if(vailduser == null){
             model.addAttribute("message","account dont exist");
             return "users/result";
@@ -201,6 +190,7 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
         Boolean correct = false;
         if(vailduser == null){
+            session.invalidate();
             model.addAttribute("message","account dont exist");
             return "users/result";
         }
@@ -220,14 +210,17 @@ public class usercontroller{
                 if(answer.equalsIgnoreCase(vailduser.getFavplace())){
                     correct = true;
                 }
+                break;
             case "favsubject":
                 if(answer.equalsIgnoreCase(vailduser.getFavsubject())){
                     correct = true;
                 }
+                break;
             case "mothername":
                 if(answer.equalsIgnoreCase(vailduser.getMothername())){
                     correct = true;
                 }
+                break;
             case "hometown":
                 if(answer.equalsIgnoreCase(vailduser.getHometown())){
                     correct = true;
@@ -240,6 +233,7 @@ public class usercontroller{
 
         }
         if(!correct){
+            session.invalidate();
             model.addAttribute("message","WRONG ANswer");
             return "users/result";
         }
@@ -250,9 +244,7 @@ public class usercontroller{
         vailduser.setPassword(passwordEncoder.encode("12345"));
         userREPO.save(vailduser);
         request.getSession(true).setAttribute("user", vailduser); 
-        model.addAttribute("stinky", session.getAttribute("user")); 
         request.getSession(false).setAttribute("message", "your password is now 12345, please change it in settings"); 
         return "redirect:/home";
     }
-
 }
