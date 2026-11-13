@@ -45,7 +45,7 @@ function draw(ctx, angle, type) {
 
     // Increase angle for next frame
     if (type == "moving") {
-        angle += 0.02 * (window.jestersSpeed ?? 1);
+        angle += 0.01 * (window.jestersSpeed ?? 1);
     } else if (type == "still") {
         angle += 0.0075;
     }
