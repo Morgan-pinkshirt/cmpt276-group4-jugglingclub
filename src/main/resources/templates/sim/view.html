@@ -249,7 +249,7 @@
         <form action="/savecustom" method = "POST" id ="savingform">
 <label for="projectname">projectname:</label>
 <input type="submit" value = "save">
-<input type="text" id="projectname" name="projectname" th:value="${currentSave.projectname}">
+<input type="text" id="projectname" name="projectname" th:value="${currentSave.projectname}" required>
 
 <input type="hidden" name="productType" id = "hproductType"th:value="${currentSave.productType}">
 <input type="hidden" name="productColor" id="hproductColor" th:value="${currentSave.productColor}">

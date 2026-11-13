@@ -1,7 +1,7 @@
 package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.user;
-import com.cmpt276.jugglingclub.roles.Role;
+
 import com.cmpt276.jugglingclub.roles.RoleService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,9 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.savesRepository;
@@ -36,9 +34,10 @@ public class savecontroller { // this only deal with ids and stuff
 
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
-    }
+    }   
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
+
         if(currentsave.getBrightness() == null){
             currentsave.setBrightness("1");
         }
@@ -54,7 +53,9 @@ public class savecontroller { // this only deal with ids and stuff
         return "sim/view.html";
     }
     @PostMapping("/savecustom")
-    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor, @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID, HttpServletRequest request) {
+    public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor,
+         @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, 
+         @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID, HttpServletRequest request) {
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
     }   
@@ -106,6 +107,7 @@ public class savecontroller { // this only deal with ids and stuff
         request.getSession(false).setAttribute("message", "project not found"); 
         return "redirect:/home";
     }
+    
     @GetMapping("/viewallsaves")
     public String viewallsaves(Model model, HttpSession session) {
          if (!roleService.isAdmin(session)) {
