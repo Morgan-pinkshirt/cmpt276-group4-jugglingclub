@@ -10,6 +10,10 @@ const clickedButton = document.getElementById("view-button");
 
 const modeName = document.getElementById("mode_name");
 
+const svgStill = document.getElementById("svg_still");
+const svgMov = document.getElementById("svg_moving");
+const savedvalue = document.getElementById("savingform");
+
 let angleMov = 0;
 let angleStill = 0;
 
@@ -74,8 +78,27 @@ function numberTen(mode) {
 }
 
 clickedButton.addEventListener('click', function () {
+    
 	const mode = document.getElementById("options").value;
     let i = 5;
+    document.getElementById("heffect").value = mode;
+    if (mode == "none"){
+        modeName.textContent =
+            "Page 1 - #1 - Rainbow";
+        modeName.style.visibility = "hidden";
+
+        document.getElementById("svg_moving")
+            .style.display = "block";
+        document.getElementById("svg_still")
+            .style.display = "block";
+        document.getElementById("canvas_moving")
+            .style.display = "none";
+        document.getElementById("canvas_still")
+            .style.display = "none";
+
+    return;
+
+    }
     if (mode[1] == 1 && mode[2] != 3) {
         modeName.innerHTML = `Page 1 - #${mode[3]}`;
         i = numberTen(mode);
@@ -107,7 +130,7 @@ clickedButton.addEventListener('click', function () {
         }
         i++;
     }
-	img.src=`img/${mode}.png`;
+    img.src=`img/${mode}.png`;
     angle = 0;
     svgMov.style.display = "none";
     canvasMov.style.display = "block";

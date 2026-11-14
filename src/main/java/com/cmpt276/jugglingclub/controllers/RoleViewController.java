@@ -82,7 +82,7 @@ public class RoleViewController {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        save currentsave = new save("", "", "club", "#9f1ad3", "#ffffff", "1.5","1.75","none" );
+        save currentsave = new save("", "", "club", "#9f1ad3", "#ffffff", "1","1","none" );
         model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
         currentsave.setSpin("3");
         model.addAttribute("currentSave", currentsave);

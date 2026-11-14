@@ -7,9 +7,6 @@ const slider = document.getElementById("colorSlider");
 const bodyButton = document.getElementById("bodyButton");
 const handleButton = document.getElementById("handleButton");
 
-const svgStill = document.getElementById("svg_still");
-const svgMov = document.getElementById("svg_moving");
-const savedvalue = document.getElementById("savingform");
 
 let selectedPart = "body";
 let bodyColour = document.getElementById("hbodyColor").value;
@@ -61,4 +58,37 @@ function changeColor(body, handle) {
 }
 
 
+savedvalue.addEventListener("submit", function(){
+// document.getElementById("hproductType").value = this would be used to keep save model type, but since that is not installed yet, this is commented out.
+
+document.getElementById("hproductColor").value = handleColour;
+document.getElementById("hbodyColor").value = bodyColour;
+document.getElementById("hbright").value = document.getElementById("moving-brightness").value;
+document.getElementById("hsat").value = document.getElementById("moving-saturation").value;
+document.getElementById("hspin").value = document.getElementById("moving-speed").value;
+if(document.getElementById("mode_name").style.visibility == "hidden"){
+    document.getElementById("heffect").value = "none";
+}
+});
+
+selectedPart = "body";
+slider.value = bodyColour;
+changeVisibilityColor();
+changeColor(club, handle);
+changeColor(clubMov, handleMov);
+
+selectedPart = "handle";
+slider.value = handleColour;
+changeVisibilityColor();
+changeVisibilityColor();
+changeColor(club, handle);
+changeColor(clubMov, handleMov);
+
+
 bodyButton.classList.add("active");
+
+
+
+clickedButton.click();
+
+

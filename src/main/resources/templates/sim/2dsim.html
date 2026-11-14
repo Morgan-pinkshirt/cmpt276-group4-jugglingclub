@@ -233,7 +233,6 @@
                                     <img
                                         id="img"
                                         th:src="@{/2d-sim/img/p1_1_rainbow.png}"
-                                        src="/2d-sim/img/p1_1_rainbow.png"
                                         alt="">
                                 </div>
                                 <svg
@@ -538,11 +537,11 @@
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
 </div>
-<script th:src="@{/2d-sim/moving.js}"></script>
-<script th:src="@{/2d-sim/script.js}"></script>
-<script th:src="@{/2d-sim/sim.js}"></script>
-<script th:src="@{/2d-sim/speed.js}"></script>
-<script th:src="@{/2d-sim/controls.js}"></script>
+<script th:src="@{/2d-sim/moving.js}" defer></script>
+<script th:src="@{/2d-sim/script.js}" defer></script>
+<script th:src="@{/2d-sim/sim.js}" defer></script>
+<script th:src="@{/2d-sim/speed.js}" defer></script>
+<script th:src="@{/2d-sim/controls.js}" defer></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         if (window.lucide) {

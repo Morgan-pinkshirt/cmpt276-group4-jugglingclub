@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("HandleMov")
             .setAttribute("fill", "white");
 
-        effectSelector.value = "p1_1_rainbow";
+        effectSelector.value = "none";
         const modeName =
             document.getElementById("mode_name");
         modeName.textContent =
@@ -176,10 +176,10 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("canvas_still")
             .style.display = "none";
 
-        resetSlider("moving-brightness", 100);
-        resetSlider("moving-saturation", 100);
-        resetSlider("static-brightness", 100);
-        resetSlider("static-saturation", 100);
+        resetSlider("moving-brightness", 1);
+        resetSlider("moving-saturation", 1);
+        resetSlider("static-brightness", 1);
+        resetSlider("static-saturation", 1);
         resetSlider("moving-speed", 100);
 
         movingZoom = 100;
