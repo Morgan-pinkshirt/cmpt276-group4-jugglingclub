@@ -84,27 +84,44 @@ test('Change the color for the handle and body', () => {
     expect(svgStill).not.toBeNull();
     expect(canvasStill).not.toBeNull();
 
-    // Change the color for the hangle
-    slider.value = "hsl(0, 99%, 32%)";
-    handleButton.click();    
-    slider.click();
-    expect(handle.attributes).toContain("hsl(0, 99%, 32%)");
-    expect(handleMov.attributes).toContain("hsl(0, 99%, 32%)");
-    expect(club.attributes).toContain("white");
-    expect(clubMov.attributes).toContain("white");
+    // Change the color for the handle
+    handleButton.click();
+    // Use of AI (ChatGPT) to check for the classList. There were no information online about it except for a Mock test
+    expect(handleButton.classList.contains("active")).toBe(true);
+    expect(bodyButton.classList.contains("active")).toBe(false);
+    // Use of AI (ChatGPT) to figure out how to call a function that was set from an input rather than a click
+    slider.value = "36";    
+    slider.dispatchEvent(new Event("input"));
+    expect(handle.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
+    expect(handleMov.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
+    expect(club.getAttribute("fill")).toBe('grey');
+    expect(clubMov.getAttribute("fill")).toBe("grey");
 
     // Change the color for the body
-    slider.value = "hsl(187, 100%, 69%)";
-    bodyButton.click();    
-    slider.click();
-    expect(club.attributes).toContain("hsl(187, 100%, 69%)");
-    expect(clubMov.attributes).toContain("hsl(187, 100%, 69%)");
-    expect(handle.attributes).toContain("hsl(0, 99%, 32%)");
-    expect(handleMov.attributes).toContain("hsl(0, 99%, 32%)");
+    bodyButton.click();
+    expect(bodyButton.classList.contains("active")).toBe(true);
+    expect(handleButton.classList.contains("active")).toBe(false);
+    slider.value = "187";    
+    slider.dispatchEvent(new Event("input"));
+    expect(club.getAttribute("fill")).toBe('hsl(187, 100%, 50%)');
+    expect(clubMov.getAttribute("fill")).toBe('hsl(187, 100%, 50%)');
+    expect(handle.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
+    expect(handleMov.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
+
+    // Change the color for the handle
+    handleButton.click();
+    expect(handleButton.classList.contains("active")).toBe(true);
+    expect(bodyButton.classList.contains("active")).toBe(false);
+    slider.value = "329";    
+    slider.dispatchEvent(new Event("input"));
+    expect(handle.getAttribute("fill")).toBe('hsl(329, 100%, 50%)');
+    expect(handleMov.getAttribute("fill")).toBe('hsl(329, 100%, 50%)');
+    expect(club.getAttribute("fill")).toBe('hsl(187, 100%, 50%)');
+    expect(clubMov.getAttribute("fill")).toBe("hsl(187, 100%, 50%)");
     
     // Ensure the SVG club is displayed and the Canvas club is hidden
-    expect(canvasStill.style.display).toBe('block');
-    expect(canvasMov.style.display).toBe('block');
-    expect(svgStill.style.display).toBe('none');
-    expect(svgMov.style.display).toBe('none');
+    expect(canvasStill.style.display).toBe('none');
+    expect(canvasMov.style.display).toBe('none');
+    expect(svgStill.style.display).toBe('block');
+    expect(svgMov.style.display).toBe('block');
 })
