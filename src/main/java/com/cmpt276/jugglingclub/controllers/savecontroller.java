@@ -7,8 +7,6 @@ import com.cmpt276.jugglingclub.roles.RoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession; 
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,6 +53,34 @@ public class savecontroller { // this only deal with ids and stuff
         model.addAttribute("UID",id);
         return "sim/view.html";
     }
+
+    @PostMapping("/2dcustomsave")
+    public String load2d(@RequestParam String UID, Model model,HttpSession session) {
+
+        if (!roleService.isLoggedIn(session)) {
+        return "redirect:/home";
+    }   
+        int id = Integer.parseInt(UID);
+        save currentsave = saveREPO.findByUid(id).orElse(null);
+
+        if(currentsave.getBrightness() == null){
+            currentsave.setBrightness("1");
+        }
+        if(currentsave.getSaturation() == null){
+            currentsave.setSaturation("1");
+        }
+        if(currentsave.getEffect() == null){
+            currentsave.setEffect("none");
+        }
+        if(currentsave.getSpin() == null){
+            currentsave.setSpin("1");
+        }
+        model.addAttribute("currentSave", currentsave);
+
+        model.addAttribute("UID",id);
+        return "sim/2dsim";
+    }
+
     @PostMapping("/savecustom")
     public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor,
          @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String spin,

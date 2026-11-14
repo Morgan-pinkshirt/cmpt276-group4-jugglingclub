@@ -43,13 +43,20 @@
                     </thead>
                     <tbody>
                         <tr th:each="project : ${projects}">
-                            <td th:text="${project.uid}">1</td>
+
                             <td th:text="${project.projectname}">projectname</td>
                             <td>
                                 <form th:action="@{/customsave}" method="post">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
-                                    <button class="member-button" type="submit">edit</button>
+                                    <button class="member-button" type="submit">open 3d</button>
                                 </form>                                
+                            </td>
+                            <td>
+                                <form th:action="@{/2dcustomsave}" method="post">
+                                    <input type="hidden" name="UID" th:value="${project.uid}">
+                                    <button class="member-button" type="submit">open 2d</button>
+                                </form>       
+
                             </td>
                             <td>
                                 <form th:action="@{/deleteproject}" method="post" onsubmit="return confirm('Are you sure you want to delete this project?');">
