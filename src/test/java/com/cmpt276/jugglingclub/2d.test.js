@@ -20,6 +20,7 @@ beforeEach(() => {
 
     require('../../../../../main/resources/static/2d-sim/moving.js');
     require('../../../../../main/resources/static/2d-sim/script.js');
+    require('../../../../../main/resources/static/2d-sim/speed.js')
 })
 
 test('Display mode after user selection', () => {
@@ -37,6 +38,7 @@ test('Display mode after user selection', () => {
     expect(svgStill).not.toBeNull();
     expect(canvasStill).not.toBeNull();
 
+    // Test function draw() from the clickedButton, 3 tests
     // Select 1 mode
     option.value = 'p1_8_air';
     button.click();    
@@ -61,7 +63,6 @@ test('Display mode after user selection', () => {
 })
 
 test('Change the color for the handle and body', () => {
-
     const slider = document.getElementById("colourSlider");
     const bodyButton = document.getElementById("bodyButton");
     const handleButton = document.getElementById("handleButton");
@@ -84,12 +85,13 @@ test('Change the color for the handle and body', () => {
     expect(svgStill).not.toBeNull();
     expect(canvasStill).not.toBeNull();
 
-    // Change the color for the handle
+    // Change the color for the handle - test function for handleButton
     handleButton.click();
     // Use of AI (ChatGPT) to check for the classList. There were no information online about it except for a Mock test
     expect(handleButton.classList.contains("active")).toBe(true);
     expect(bodyButton.classList.contains("active")).toBe(false);
     // Use of AI (ChatGPT) to figure out how to call a function that was set from an input rather than a click
+    // test function from slider input which is calling changeColor()
     slider.value = "36";    
     slider.dispatchEvent(new Event("input"));
     expect(handle.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
@@ -97,10 +99,11 @@ test('Change the color for the handle and body', () => {
     expect(club.getAttribute("fill")).toBe('grey');
     expect(clubMov.getAttribute("fill")).toBe("grey");
 
-    // Change the color for the body
+    // Change the color for the body - test function for bodyButton
     bodyButton.click();
     expect(bodyButton.classList.contains("active")).toBe(true);
     expect(handleButton.classList.contains("active")).toBe(false);
+    // test function from slider input which is calling changeColor()
     slider.value = "187";    
     slider.dispatchEvent(new Event("input"));
     expect(club.getAttribute("fill")).toBe('hsl(187, 100%, 50%)');
@@ -108,10 +111,11 @@ test('Change the color for the handle and body', () => {
     expect(handle.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
     expect(handleMov.getAttribute("fill")).toBe('hsl(36, 100%, 50%)');
 
-    // Change the color for the handle
+    // Change the color for the handle - test function for handleButton
     handleButton.click();
     expect(handleButton.classList.contains("active")).toBe(true);
     expect(bodyButton.classList.contains("active")).toBe(false);
+    // test function from slider input which is calling changeColor()
     slider.value = "329";    
     slider.dispatchEvent(new Event("input"));
     expect(handle.getAttribute("fill")).toBe('hsl(329, 100%, 50%)');
@@ -120,8 +124,59 @@ test('Change the color for the handle and body', () => {
     expect(clubMov.getAttribute("fill")).toBe("hsl(187, 100%, 50%)");
     
     // Ensure the SVG club is displayed and the Canvas club is hidden
+    // Test function changeVisibilityColor()
     expect(canvasStill.style.display).toBe('none');
     expect(canvasMov.style.display).toBe('none');
     expect(svgStill.style.display).toBe('block');
     expect(svgMov.style.display).toBe('block');
+})
+
+test('Change the speed of the moving club', () => {
+    // Test for function update()
+    const control = document.getElementById("moving-speed");
+    const label = document.getElementById("moving-speed-value");
+    const club = document.getElementById("clubDivision");
+
+    expect(control).not.toBeNull();
+    expect(label).not.toBeNull();
+    expect(club).not.toBeNull();
+
+    // Decrease speed of 1.0x to speed of 0.2x
+    control.value = "20";    
+    control.dispatchEvent(new Event("input"));
+    expect(window.jestersSpeed).toBe(0.2);
+    expect(label.innerHTML).toBe('0.2×')
+    expect(club.style.animationPlayState).toBe('running');
+    expect(club.style.animationDuration).toBe('10s');
+
+    // Increase speed of 0.2x to 4.0x - type is range so the slider won't be able to have any value greater than it
+    control.value = "400";    
+    control.dispatchEvent(new Event("input"));
+    expect(window.jestersSpeed).toBe(4);
+    expect(label.innerHTML).toBe('4.0×')
+    expect(club.style.animationPlayState).toBe('running');
+    expect(club.style.animationDuration).toBe('0.5s');
+
+    // Test for speed of 3.9x, the case right before - I wanted to test with the value 399, but from the HTML, the step is by increment of 10
+    control.value = "390";    
+    control.dispatchEvent(new Event("input"));
+    expect(window.jestersSpeed).toBe(3.9);
+    expect(label.innerHTML).toBe('3.9×')
+    expect(club.style.animationPlayState).toBe('running');
+    expect(club.style.animationDuration).toBe('0.5128205128205129s');
+
+    // Test for speed of 0
+    control.value = "0";    
+    control.dispatchEvent(new Event("input"));
+    expect(window.jestersSpeed).toBe(0);
+    expect(label.innerHTML).toBe('0.0×')
+    expect(club.style.animationPlayState).toBe('paused');
+
+    // Test for speed of 0.1x, the case right before
+    control.value = "10";
+    control.dispatchEvent(new Event("input"));
+    expect(window.jestersSpeed).toBe(0.1);
+    expect(label.innerHTML).toBe('0.1×')
+    expect(club.style.animationPlayState).toBe('running');
+    expect(club.style.animationDuration).toBe('20s');
 })
