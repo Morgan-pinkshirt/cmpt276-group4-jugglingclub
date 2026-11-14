@@ -84,7 +84,7 @@ public class RoleViewController {
         }
         save currentsave = new save("", "", "club", "#9f1ad3", "#ffffff", "1","1","none" );
         model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
-        currentsave.setSpin("3");
+        currentsave.setSpin("100");
         model.addAttribute("currentSave", currentsave);
         return "sim/2dsim";
     }

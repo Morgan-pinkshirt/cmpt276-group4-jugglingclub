@@ -62,16 +62,19 @@ public class savecontroller { // this only deal with ids and stuff
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
     }   
-        user User = (user) session.getAttribute("user");        
+
+    user User = (user) session.getAttribute("user");        
         if(UID.equals("new")){ // if UID is new, then make new save
 
 
             save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect );
+            object.setSpin(spin);
             saveREPO.save(object);
             request.getSession(false).setAttribute("message", "Your design has been saved!"); 
             return "redirect:/home";
 } // UID is not new, so it is from a save
     save object = new save(User.getName(),projectname,productType,productColor,bodyColor, brightness, saturation , effect);
+        object.setSpin(spin);
         object.setUid(Integer.parseInt(UID)); // is this for saving
         saveREPO.save(object);
         request.getSession(false).setAttribute("message", "Your design has been updated!"); 

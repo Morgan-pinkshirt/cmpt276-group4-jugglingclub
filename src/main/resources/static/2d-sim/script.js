@@ -60,12 +60,14 @@ function changeColor(body, handle) {
 
 savedvalue.addEventListener("submit", function(){
 // document.getElementById("hproductType").value = this would be used to keep save model type, but since that is not installed yet, this is commented out.
-
+window.alert("moving-speed "+ document.getElementById("moving-speed").value);
+event.preventDefault();
 document.getElementById("hproductColor").value = handleColour;
 document.getElementById("hbodyColor").value = bodyColour;
 document.getElementById("hbright").value = document.getElementById("moving-brightness").value;
 document.getElementById("hsat").value = document.getElementById("moving-saturation").value;
 document.getElementById("hspin").value = document.getElementById("moving-speed").value;
+    window.alert("hspin again would be "+ document.getElementById("hspin").value);
 if(document.getElementById("mode_name").style.visibility == "hidden"){
     document.getElementById("heffect").value = "none";
 }
@@ -90,5 +92,3 @@ bodyButton.classList.add("active");
 
 
 clickedButton.click();
-
-
