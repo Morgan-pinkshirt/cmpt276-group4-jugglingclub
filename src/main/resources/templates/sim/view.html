@@ -128,7 +128,6 @@
         <select id="productType" onchange="updateProduct()">
             <option value="ball" th:selected="${'ball' == currentSave.productType}">Ball</option>
             <option value="club" th:selected="${'club' == currentSave.productType}">Club</option>
-            
         </select>
         <br><br>
         <label for="productColor">Handle Color:</label><br>
@@ -184,7 +183,7 @@
                 <option value="p3_9_sunset" th:selected="${'p3_9_sunset' == currentSave.effect}">Sunset</option>
                 <option value="p3_10_daybreak" th:selected="${'p3_10_daybreak' == currentSave.effect}">Daybreak</option>
             </optgroup>
-            <!-- <optgroup label="Page 13">
+            <optgroup label="Page 13">
                 <option value="p13_1_flames" th:selected="${'p13_1_flames' == currentSave.effect}">Flames</option>
                 <option value="p13_2_skittles" th:selected="${'p13_2_skittles' == currentSave.effect}">Skittles</option>
                 <option value="p13_3_rainbow_brite" th:selected="${'p13_3_rainbow_brite' == currentSave.effect}">Rainbow Brite</option>
@@ -207,14 +206,14 @@
                 <option value="p13_20_day_club" th:selected="${'p13_20_day_club' == currentSave.effect}">Day Club</option>
                 <option value="p13_21_rainbizzle" th:selected="${'p13_21_rainbizzle' == currentSave.effect}">Rainbizzle</option>
                 <option value="p13_22_fruit_basket" th:selected="${'p13_22_fruit_basket' == currentSave.effect}">Fruit Basket</option>
-                <option value="p13_23_marvin's_mode" th:selected="${`p13_23_marvin's_mode` == currentSave.effect}">Marvin's Mode</option>
+                <option value="p13_23_marvin_mode" th:selected="${'p13_23_marvin_mode' == currentSave.effect}">Marvin's Mode</option>
                 <option value="p13_24_hidden_rainbow" th:selected="${'p13_24_hidden_rainbow' == currentSave.effect}">Hidden Rainbow</option>
                 <option value="p13_25_rainbow_bridge" th:selected="${'p13_25_rainbow_bridge' == currentSave.effect}">Rainbow Bridge</option>
                 <option value="p13_26_OG_sparkles" th:selected="${'p13_26_OG_sparkles' == currentSave.effect}">OG Sparkles</option>
                 <option value="p13_27_day_club_II" th:selected="${'p13_27_day_club_II' == currentSave.effect}">Day Club II</option>
                 <option value="p13_28_ghost" th:selected="${'p13_28_ghost' == currentSave.effect}">Ghost</option>
                 <option value="p13_29_sega_genesis" th:selected="${'p13_29_sega_genesis' == currentSave.effect}">Sega Genesis</option>
-                <option value="p13_30_sean's_bane" th:selected="${`p13_30_sean's_bane` == currentSave.effect}">Sean's Bane</option>
+                <option value="p13_30_sean_bane" th:selected="${'p13_30_sean_bane' == currentSave.effect}">Sean's Bane</option>
                 <option value="p13_31_gulp_chug" th:selected="${'p13_31_gulp_chug' == currentSave.effect}">Gulp Chug</option>
                 <option value="p13_32_OG_watermelon" th:selected="${'p13_32_OG_watermelon' == currentSave.effect}">OG Watermelon</option>
                 <option value="p13_33_rainbow_dashish" th:selected="${'p13_33_rainbow_dashish' == currentSave.effect}">Rainbow Dashish</option>
@@ -235,7 +234,7 @@
                 <option value="p13_48_zen" th:selected="${'p13_48_zen' == currentSave.effect}">Zen</option>
                 <option value="p13_49_candy_crush" th:selected="${'p13_49_candy_crush' == currentSave.effect}">Candy Crush</option>
                 <option value="p13_50_5-O" th:selected="${'p13_50_5-O' == currentSave.effect}">5-O</option>
-            </optgroup> -->
+            </optgroup>
         </select>
 
 
@@ -258,6 +257,7 @@
 <input type="hidden" name="brightness" id = "hbright" th:value="${currentSave.brightness}">
 <input type="hidden" name="saturation" id="hsat" th:value="${currentSave.saturation}">
 <input type="hidden" name="effect" id="heffect" th:value="${currentSave.effect}">
+<input type="hidden" name="spin" id="hspin" th:value="${currentSave.spin}">
 
         </form>
     </div>

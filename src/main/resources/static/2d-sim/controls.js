@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const handleButton =
         document.getElementById("handleButton");
     const colourSlider =
-        document.getElementById("colourSlider");
+        document.getElementById("colorSlider");
     const effectSelector =
         document.getElementById("options");
 
@@ -142,14 +142,14 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedPart = "body";
         }
         if (typeof bodyColour !== "undefined") {
-            bodyColour = 0;
+            bodyColour = "#FFFFFF";
         }
         if (typeof handleColour !== "undefined") {
-            handleColour = 0;
+            handleColour = "#FFFFFF";
         }
         bodyButton.classList.add("active");
         handleButton.classList.remove("active");
-        colourSlider.value = 0;
+        colourSlider.value = "#FFFFFF";
 
         document.getElementById("clubBody")
             .setAttribute("fill", "grey");

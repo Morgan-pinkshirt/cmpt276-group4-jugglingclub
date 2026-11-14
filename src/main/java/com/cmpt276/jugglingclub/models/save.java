@@ -11,6 +11,7 @@ public class save{
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int uid;
+    
     private String name;
     private String projectname;
     private String productType;
@@ -19,6 +20,9 @@ public class save{
     private String brightness;
     private String saturation;
     private String effect;
+    private String spin = "1";
+
+
 
     public String getProjectname() {
         return projectname;
@@ -94,6 +98,13 @@ public class save{
         this.effect = effect;
     }
     public save() {
+
+    }
+    public String getSpin() {
+        return spin;
+    }
+    public void setSpin(String spin) {
+        this.spin = spin;
     }
 
 }

@@ -47,6 +47,9 @@ public class savecontroller { // this only deal with ids and stuff
         if(currentsave.getEffect() == null){
             currentsave.setEffect("none");
         }
+        if(currentsave.getSpin() == null){
+            currentsave.setSpin("1");
+        }
         model.addAttribute("currentSave", currentsave);
 
         model.addAttribute("UID",id);
@@ -54,7 +57,7 @@ public class savecontroller { // this only deal with ids and stuff
     }
     @PostMapping("/savecustom")
     public String savedata(HttpSession session, Model model, @RequestParam String productType, @RequestParam String productColor,
-         @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, 
+         @RequestParam String bodyColor,@RequestParam String projectname, @RequestParam String brightness, @RequestParam String spin,
          @RequestParam String saturation, @RequestParam String effect, @RequestParam String UID, HttpServletRequest request) {
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";

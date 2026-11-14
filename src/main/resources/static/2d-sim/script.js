@@ -3,16 +3,18 @@ const handle = document.getElementById("clubHandle");
 const clubMov = document.getElementById("BodyMov");
 const handleMov = document.getElementById("HandleMov");
 
-const slider = document.getElementById("colourSlider");
+const slider = document.getElementById("colorSlider");
 const bodyButton = document.getElementById("bodyButton");
 const handleButton = document.getElementById("handleButton");
 
 const svgStill = document.getElementById("svg_still");
 const svgMov = document.getElementById("svg_moving");
+const savedvalue = document.getElementById("savingform");
 
 let selectedPart = "body";
-let bodyColour = 0;
-let handleColour = 0;
+let bodyColour = document.getElementById("hbodyColor").value;
+let handleColour = document.getElementById("hproductColor").value;
+
 
 function changeVisibilityColor() {
     svgStill.style.display = "block";
@@ -48,7 +50,7 @@ slider.addEventListener("input", function() {
 });
 
 function changeColor(body, handle) {
-    let colour = "hsl(" + slider.value + ", 100%, 50%)";
+    let colour = slider.value;
     if (selectedPart === "body") {
         body.setAttribute("fill", colour);
         bodyColour = slider.value;

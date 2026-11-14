@@ -22,19 +22,30 @@
             continue;
         }
 
+
         const update = () => {
-            visual.style.setProperty(
+            document.getElementById("moving-visual").style.setProperty(
+                "--visual-brightness", Number(brightness.value));
+            
+            document.getElementById("static-visual").style.setProperty(
                 "--visual-brightness",
-                Number(brightness.value) / 100
-            );
-            visual.style.setProperty(
+                Number(brightness.value));
+            
+            document.getElementById("moving-visual").style.setProperty(
+                "--visual-saturation", Number(saturation.value));
+            
+            document.getElementById("static-visual").style.setProperty(
                 "--visual-saturation",
-                Number(saturation.value) / 100
-            );
-            brightOutput.textContent =
-                brightness.value + "%";
-            satOutput.textContent =
-                saturation.value + "%";
+                Number(saturation.value));
+            
+            document.getElementById("static-brightness-value").textContent =
+                brightness.value;
+            document.getElementById("moving-brightness-value").textContent =
+                brightness.value;
+            document.getElementById("static-saturation-value").textContent =
+                saturation.value;
+            document.getElementById("moving-saturation-value").textContent =
+                saturation.value;
         };
         brightness.addEventListener("input", update);
         saturation.addEventListener("input", update);

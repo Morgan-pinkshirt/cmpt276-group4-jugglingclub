@@ -73,19 +73,20 @@ public class RoleViewController {
         }
         save currentsave = new save("", "", "ball", "#9f1ad3", "#ffffff", "1","1","none" );
         model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
-        model.addAttribute("productType","ball"); // this is the preset default values
-        model.addAttribute("productColor","#9f1ad3");
-        model.addAttribute("bodyColor","#ffffff");
         model.addAttribute("currentSave", currentsave);
         return "sim/view";
     }
 
     @GetMapping("/2d-sim")
-    public String twoDSimulator(HttpSession session) {
+    public String twoDSimulator(HttpSession session, Model model) {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        return "2d-sim/2dsim";
+        save currentsave = new save("", "", "club", "#9f1ad3", "#ffffff", "1.5","1.75","none" );
+        model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
+        currentsave.setSpin("3");
+        model.addAttribute("currentSave", currentsave);
+        return "sim/2dsim";
     }
 
     @GetMapping("/under-construction")

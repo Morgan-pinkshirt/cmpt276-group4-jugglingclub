@@ -84,11 +84,11 @@ public class savecontrollerTest {
         when(savesRepository.findById(2)).thenReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.post("/savecustom").param("productType", "ball").param("productColor", "#9f1ad3")
         .param("bodyColor", "#ffffff").param("projectname", "projectname").param("brightness", "1").param("saturation", "1")
-        .param("effect","none").param("UID", "1")).andExpect(redirectedUrl("/home"));
+        .param("effect","none").param("UID", "1").param("spin", "1")).andExpect(redirectedUrl("/home"));
 
         result = mockMvc.perform(MockMvcRequestBuilders.post("/savecustom").param("productType", "club").param("productColor", "#951ad3")
         .param("bodyColor", "#ff9fff").param("projectname", "projectname").param("brightness", "1").param("saturation", "1")
-        .param("effect","none").param("UID", "1").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        .param("effect","none").param("UID", "1").param("spin", "1").session(session)).andExpect(redirectedUrl("/home")).andReturn();
         resultsession = (MockHttpSession) result.getRequest().getSession(false);
         assertTrue(resultsession.getAttribute("user") == u1);
         assertTrue(resultsession.getAttribute("message") == "Your design has been updated!");
@@ -96,7 +96,7 @@ public class savecontrollerTest {
         
         result = mockMvc.perform(MockMvcRequestBuilders.post("/savecustom").param("productType", "club").param("productColor", "#951ad3")
         .param("bodyColor", "#ff9fff").param("projectname", "projectname").param("brightness", "1").param("saturation", "1")
-        .param("effect","none").param("UID", "new").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        .param("effect","none").param("UID", "new").param("spin", "1").session(session)).andExpect(redirectedUrl("/home")).andReturn();
         resultsession = (MockHttpSession) result.getRequest().getSession(false);
         assertTrue(resultsession.getAttribute("user") == u1);
         assertTrue(resultsession.getAttribute("message") == "Your design has been saved!");
