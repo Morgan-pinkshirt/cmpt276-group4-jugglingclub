@@ -1,3 +1,5 @@
+// Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
+
 const club = document.getElementById("clubBody");
 const handle = document.getElementById("clubHandle");
 const clubMov = document.getElementById("BodyMov");
@@ -7,19 +9,19 @@ const slider = document.getElementById("colourSlider");
 const bodyButton = document.getElementById("bodyButton");
 const handleButton = document.getElementById("handleButton");
 
-const svgStill = document.getElementById("svg_still");
-const svgMov = document.getElementById("svg_moving");
+window.svgStill = document.getElementById("svg_still");
+window.svgMov = document.getElementById("svg_moving");
 
 let selectedPart = "body";
 let bodyColour = 0;
 let handleColour = 0;
 
 function changeVisibilityColor() {
-    svgStill.style.display = "block";
-    canvasStill.style.display = "none";
-    svgMov.style.display = "block";
-    canvasMov.style.display = "none";
-    modeName.style.visibility = "hidden";
+    window.svgStill.style.display = "block";
+    window.canvasStill.style.display = "none";
+    window.svgMov.style.display = "block";
+    window.canvasMov.style.display = "none";
+    window.modeName.style.visibility = "hidden";
 }
 
 bodyButton.addEventListener("click", function() {

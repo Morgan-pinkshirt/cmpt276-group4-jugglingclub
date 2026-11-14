@@ -1,17 +1,15 @@
 // https://zetcode.com/canvas-api/rotate/. 31/10/26
+// Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
 
-const canvasMov = document.getElementById('canvas_moving');
+window.canvasMov = document.getElementById('canvas_moving');
 const ctxMov = canvasMov.getContext('2d');
 
-const canvasStill = document.getElementById("canvas_still");
+window.canvasStill = document.getElementById("canvas_still");
 const ctxStill = canvasStill.getContext('2d');
-
-const svgStill = document.getElementById("svg_still");
-const svgMov = document.getElementById("svg_moving");
 
 const clickedButton = document.getElementById("view-button");
 
-const modeName = document.getElementById("mode_name");
+window.modeName = document.getElementById("mode_name");
 
 let angleMov = 0;
 let angleStill = 0;
@@ -115,9 +113,9 @@ clickedButton.addEventListener('click', function () {
     }
 	img.src=`img/${mode}.png`;
     angle = 0;
-    svgMov.style.display = "none";
-    canvasMov.style.display = "block";
-    svgStill.style.display = "none";
-    canvasStill.style.display = "block";
-    modeName.style.visibility = "visible";
+    window.svgMov.style.display = "none";
+    window.canvasMov.style.display = "block";
+    window.svgStill.style.display = "none";
+    window.canvasStill.style.display = "block";
+    window.modeName.style.visibility = "visible";
 });
