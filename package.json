@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest-environment-jsdom": "^30.5.2"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/src/test/java/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/target/"
+    ]
+  },
+  "dependencies": {
+    "canvas": "^3.2.3"
+  }
+}

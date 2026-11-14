@@ -6,6 +6,9 @@ const ctxMov = canvasMov.getContext('2d');
 const canvasStill = document.getElementById("canvas_still");
 const ctxStill = canvasStill.getContext('2d');
 
+const svgStill = document.getElementById("svg_still");
+const svgMov = document.getElementById("svg_moving");
+
 const clickedButton = document.getElementById("view-button");
 
 const modeName = document.getElementById("mode_name");
@@ -40,7 +43,10 @@ function draw(ctx, angle, type) {
     ctx.rotate(angle);
     ctx.translate(-centerX, -centerY);	
 
-    ctx.drawImage(img, -230, 120);
+    // To  wait for the image to load: https://stackoverflow.com/questions/42515769/how-to-wait-for-loading-images-in-canvas
+    if (img.complete) {
+        ctx.drawImage(img, -230, 120);
+    }
     ctx.restore();
 
     // Increase angle for next frame
