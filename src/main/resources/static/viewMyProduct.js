@@ -459,7 +459,7 @@ function setSpeed(multiplier) {
     effectSpeed = -0.005 * multiplier;
 
     //Speed button UI update
-    [1, 2, 4].forEach(m => {
+    [0.1, 0.25, 0.5, 1, 2, 4].forEach(m => {
         const btn = document.getElementById(`btn-speed-${m}`);
         if (btn) {
             if (m === multiplier) btn.classList.add('active');
