@@ -56,7 +56,8 @@ public class savecontrollerTest {
         user u1 = new user("billy","bob");
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("user",u1);
-
+        MvcResult result;
+        MockHttpSession resultsession;
         save s1 = new save("name", "projectname", "ball", "#9f1ad3", "#ffffff",
             "1", "1", "none");
             u1.setUid(1);
@@ -68,9 +69,13 @@ public class savecontrollerTest {
     .andExpect(MockMvcResultMatchers.model().attribute("UID", 1 ));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/customsave").param("UID", "1")).andExpect(redirectedUrl("/home"));
+
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/customsave").param("UID", "2").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        resultsession = (MockHttpSession) result.getRequest().getSession(false);
+        assertTrue(resultsession.getAttribute("message") == "ERROR: can not find save");
     }
     @Test 
-    void savecustom() throws Exception{
+    void Testsavecustom() throws Exception{
         user u1 = new user("billy","bob");
         MockHttpSession session = new MockHttpSession();
         MvcResult result;
@@ -80,6 +85,7 @@ public class savecontrollerTest {
         "1", "1", "none");
         u1.setUid(1);
         s1.setUid(1);
+
         when(savesRepository.findById(1)).thenReturn(Optional.of(s1));
         when(savesRepository.findById(2)).thenReturn(Optional.empty());
         mockMvc.perform(MockMvcRequestBuilders.post("/savecustom").param("productType", "ball").param("productColor", "#9f1ad3")
@@ -102,7 +108,7 @@ public class savecontrollerTest {
         assertTrue(resultsession.getAttribute("message") == "Your design has been saved!");
     }
     @Test
-    void viewprojects() throws Exception{
+    void testviewprojects() throws Exception{
         ArrayList<save> savelist = new ArrayList<save>();
         user u1 = new user("billy","bob");
         MockHttpSession session = new MockHttpSession();
@@ -239,6 +245,83 @@ public class savecontrollerTest {
         .andExpect(MockMvcResultMatchers.model().attribute("currentSave", s1));
 
     }   
+    //TODO write tests for 2dcustomsave and 2dadminview
+    @Test 
+    void Testcustomsave2d() throws Exception{
+        user u1 = new user("billy","bob");
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user",u1);
+        MvcResult result;
+        save s2 = new save("name", "projectname", "ball", "#9f1ad3", "#ffffff",
+            "1", "1", "none");
+            save s1 = new save("name", "projectname", "club", "#9f1ad3", "#ffffff",
+            "1", "1", "none");
+            u1.setUid(1);
+            s1.setUid(1);
+            s2.setUid(3);
+            s1.setSpin("100");
+            s2.setSpin("100");
+        when(savesRepository.findByUid(1)).thenReturn(Optional.of(s1));
+        when(savesRepository.findByUid(3)).thenReturn(Optional.of(s2));
+        when(savesRepository.findByUid(2)).thenReturn(Optional.empty());
+        mockMvc.perform(MockMvcRequestBuilders.post("/2dcustomsave").param("UID", "1").session(session)).andExpect(MockMvcResultMatchers.view().name("sim/2dsim"))
+    .andExpect(MockMvcResultMatchers.model().attribute("currentSave", s1))
+    .andExpect(MockMvcResultMatchers.model().attribute("UID", 1 ));
+        
+        mockMvc.perform(MockMvcRequestBuilders.post("/2dcustomsave").param("UID", "1")).andExpect(redirectedUrl("/home"));
 
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/2dcustomsave").param("UID", "3").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        MockHttpSession resultsession = (MockHttpSession) result.getRequest().getSession(false);
+        assertTrue(resultsession.getAttribute("message") == "balls are not currenty functional on 2d simulator");
+    }
+
+
+    @Test 
+    void testviewproject2d()  throws Exception{
+     
+        user u1 = new user("billy","bob");
+        MockHttpSession session = new MockHttpSession();
+        MvcResult result;
+        session.setAttribute("user",u1);
+        save s1 = new save("billy", "projectname", "club", "#9f1ad3", "#ffffff",
+        "1", "1", "none");
+        save s2 = new save("name", "projectname", "ball", "#9f1ad3", "#ffffff",
+            "1", "1", "none");
+
+            u1.setUid(1);
+            s1.setUid(1);
+            s2.setUid(3);
+            s1.setSpin("100");
+            s2.setSpin("100");
+       
+        
+        when(savesRepository.findByUid(1)).thenReturn(Optional.of(s1));
+        when(savesRepository.findByUid(3)).thenReturn(Optional.of(s2));
+        when(savesRepository.findByUid(2)).thenReturn(Optional.empty());
+
+        
+        mockMvc.perform(MockMvcRequestBuilders.post("/2dviewproject").param("UID", "1")).andExpect(redirectedUrl("/home"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/2dviewproject").param("UID", "1").session(session)).andExpect(redirectedUrl("/home"));
+
+
+        u1.setRole(Role.ADMIN);
+        session.setAttribute("user",u1);
+        mockMvc.perform(MockMvcRequestBuilders.post("/viewproject").param("UID", "1").session(session))
+        .andExpect(MockMvcResultMatchers.view().name("sim/adminview"))
+        .andExpect(MockMvcResultMatchers.model().attribute("UID","1"))
+        .andExpect(MockMvcResultMatchers.model().attribute("currentSave", s1));
+
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/2dcustomsave").param("UID", "3").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        MockHttpSession resultsession = (MockHttpSession) result.getRequest().getSession(false);
+        assertTrue(resultsession.getAttribute("message") == "balls are not currenty functional on 2d simulator");
+
+
+        result = mockMvc.perform(MockMvcRequestBuilders.post("/2dcustomsave").param("UID", "2").session(session)).andExpect(redirectedUrl("/home")).andReturn();
+        resultsession = (MockHttpSession) result.getRequest().getSession(false);
+        assertTrue(resultsession.getAttribute("message") == "ERROR: can not find save");
+
+
+    } 
 
 }

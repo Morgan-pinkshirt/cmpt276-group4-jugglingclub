@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.savesRepository;
 
+
 import java.util.ArrayList;
 @Controller 
 public class savecontroller { // this only deal with ids and stuff
@@ -36,6 +37,11 @@ public class savecontroller { // this only deal with ids and stuff
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
 
+        if(currentsave == null){
+            session.setAttribute("message", "ERROR: can not find save"); 
+            return "redirect:/home";
+        }
+        
         if(currentsave.getBrightness() == null){
             currentsave.setBrightness("1");
         }
@@ -62,6 +68,10 @@ public class savecontroller { // this only deal with ids and stuff
     }   
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
+        if(currentsave == null){
+            session.setAttribute("message", "ERROR: can not find save"); 
+            return "redirect:/home";
+        }
 
         if(currentsave.getBrightness() == null){
             currentsave.setBrightness("1");
@@ -75,6 +85,13 @@ public class savecontroller { // this only deal with ids and stuff
         if(currentsave.getSpin() == null){
             currentsave.setSpin("1");
         }
+        if(currentsave.getProductType() == "ball"){
+        
+            session.setAttribute("message", "balls are not currenty functional on 2d simulator"); 
+        
+            return "redirect:/home";
+        }
+
         model.addAttribute("currentSave", currentsave);
 
         model.addAttribute("UID",id);
@@ -171,6 +188,22 @@ public class savecontroller { // this only deal with ids and stuff
     }   
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
+
+        if(currentsave == null){
+            session.setAttribute("message", "ERROR: can not find save"); 
+        
+            return "redirect:/home";
+
+        }
+
+
+        if(currentsave.getProductType() == "ball"){
+        
+            session.setAttribute("message", "balls are not currenty functional on 2d simulator"); 
+        
+            return "redirect:/home";
+        }
+
         model.addAttribute("currentSave", currentsave);
         model.addAttribute("UID",UID);
         return "sim/2dadminview";
