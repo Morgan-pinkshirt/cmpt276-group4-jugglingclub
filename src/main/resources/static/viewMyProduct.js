@@ -19,6 +19,8 @@ const textureLoader = new THREE.TextureLoader();
 //Speed variables for rotation and effect animation
 let rotationSpeed = 0.01; 
 let effectSpeed = -0.005;
+const speedSteps = [0.1, 0.25, 0.5, 1, 2, 4];
+let currentSpeedIndex = 3;
 
 // Custom Shader Material (Polar Projection)
 const customProjectorMaterial = new THREE.ShaderMaterial({
@@ -127,7 +129,24 @@ function init() {
     toggleProductUI(initialType);
     createProduct(initialType, originalHandleHex, originalBodyHex, originalBallColorHex);
 
-    // Setup mouse and touch interaction for rotation
+    const effectSelect = document.getElementById('effectSelect');
+    if (effectSelect && effectSelect.value !== 'none') {
+        updateEffect();
+    }
+
+    const form = document.getElementById('savingform');
+    if (form) {
+        form.addEventListener('submit', () => {
+            document.getElementById('hproductType').value  = document.getElementById('productType').value;
+            document.getElementById('hproductColor').value = document.getElementById('productType').value === 'ball'
+                ? document.getElementById('ballColor').value
+                : document.getElementById('productColor').value;
+            document.getElementById('hbodyColor').value    = document.getElementById('bodyColor').value;
+            document.getElementById('hbright').value       = document.getElementById('brightnessRange').value;
+            document.getElementById('hsat').value          = document.getElementById('saturationRange').value;
+            document.getElementById('heffect').value       = document.getElementById('effectSelect').value;
+        });
+    }
     setupInteraction(renderer.domElement);
 
     window.addEventListener('resize', onWindowResize, false);
@@ -293,7 +312,7 @@ function updateEffect() {
         resetToStandardMaterial();
         applyColorAndLighting();
     } else {
-        const imagePath = `/img/${selectedEffectName}.png`;
+        const imagePath = `/2d-sim/img/${selectedEffectName}.png`;
         textureLoader.load(imagePath, (texture) => {
             texture.wrapS = THREE.RepeatWrapping;
             texture.wrapT = THREE.RepeatWrapping;
@@ -456,16 +475,24 @@ function onWindowResize() {
 
 // function to set the speed of rotation and effect animation based on user selection
 function setSpeed(multiplier) {
+    const idx = speedSteps.indexOf(multiplier);
+    if (idx !== -1) {
+        currentSpeedIndex = idx;
+    }
     effectSpeed = -0.005 * multiplier;
 
-    //Speed button UI update
-    [0.1, 0.25, 0.5, 1, 2, 4].forEach(m => {
-        const btn = document.getElementById(`btn-speed-${m}`);
-        if (btn) {
-            if (m === multiplier) btn.classList.add('active');
-            else btn.classList.remove('active');
-        }
-    });
+    const display = document.getElementById('speedDisplay');
+    if (display) {
+        display.innerText = multiplier + 'x';
+    }
+}
+
+function adjustSpeed(direction) {
+    currentSpeedIndex += direction;
+    if (currentSpeedIndex < 0) currentSpeedIndex = 0;
+    if (currentSpeedIndex >= speedSteps.length) currentSpeedIndex = speedSteps.length - 1;
+    
+    setSpeed(speedSteps[currentSpeedIndex]);
 }
 
 // function to set the default rotation of the product based on user selection
