@@ -11,13 +11,14 @@ let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
 
 // Effect Texture variables
+let isDropdownInitialized = false;
 let currentEffectTexture = null;
 let selectedEffectName = 'none';
-let effectAngle = 0; 
+let effectAngle = 0;
 const textureLoader = new THREE.TextureLoader();
 
 //Speed variables for rotation and effect animation
-let rotationSpeed = 0.01; 
+let rotationSpeed = 0.01;
 let effectSpeed = -0.005;
 const speedSteps = [0.1, 0.25, 0.5, 1, 2, 4];
 let currentSpeedIndex = 3;
@@ -91,14 +92,14 @@ ringProjectorMaterial.uniforms.uOpacity.value = 0.7;
 function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x1a1a1a);
-  
+
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    
+
     const container = document.getElementById('canvas-container');
     if (container) {
         container.appendChild(renderer.domElement);
@@ -137,14 +138,14 @@ function init() {
     const form = document.getElementById('savingform');
     if (form) {
         form.addEventListener('submit', () => {
-            document.getElementById('hproductType').value  = document.getElementById('productType').value;
+            document.getElementById('hproductType').value = document.getElementById('productType').value;
             document.getElementById('hproductColor').value = document.getElementById('productType').value === 'ball'
                 ? document.getElementById('ballColor').value
                 : document.getElementById('productColor').value;
-            document.getElementById('hbodyColor').value    = document.getElementById('bodyColor').value;
-            document.getElementById('hbright').value       = document.getElementById('brightnessRange').value;
-            document.getElementById('hsat').value          = document.getElementById('saturationRange').value;
-            document.getElementById('heffect').value       = document.getElementById('effectSelect').value;
+            document.getElementById('hbodyColor').value = document.getElementById('bodyColor').value;
+            document.getElementById('hbright').value = document.getElementById('brightnessRange').value;
+            document.getElementById('hsat').value = document.getElementById('saturationRange').value;
+            document.getElementById('heffect').value = document.getElementById('effectSelect').value;
         });
     }
     setupInteraction(renderer.domElement);
@@ -172,13 +173,13 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
 
     if (type === 'ball') {
         const geometry = new THREE.SphereGeometry(1.2, 32, 32);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: hexBallColor || originalBallColorHex, 
-            roughness: 0.3, 
-            metalness: 0.2 
+        const material = new THREE.MeshStandardMaterial({
+            color: hexBallColor || originalBallColorHex,
+            roughness: 0.3,
+            metalness: 0.2
         });
         currentMesh = new THREE.Mesh(geometry, material);
-        currentMesh.name = 'ballPart'; 
+        currentMesh.name = 'ballPart';
     } else {
         // Create Juggling Club Group
         currentMesh = new THREE.Group();
@@ -199,31 +200,31 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
         // 1. Handle
         const handleMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.18, 1.2, 32), handleMaterial);
         handleMesh.position.y = -0.9;
-        handleMesh.name = 'handlePart'; 
+        handleMesh.name = 'handlePart';
         currentMesh.add(handleMesh);
 
         // 2. Ring
-        const translucentRingMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x111111, 
-            roughness: 0.2, 
-            metalness: 0.3, 
-            transparent: true, 
-            opacity: 0.7 
+        const translucentRingMaterial = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.2,
+            metalness: 0.3,
+            transparent: true,
+            opacity: 0.7
         });
         const ringMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.21, 0.08, 32), translucentRingMaterial);
         ringMesh.position.y = -0.25;
-        ringMesh.name = 'ringPart'; 
+        ringMesh.name = 'ringPart';
         currentMesh.add(ringMesh);
 
         // 3. Body
         const bodyPath = new THREE.CubicBezierCurve(
-            new THREE.Vector2(0.23, -0.2), 
+            new THREE.Vector2(0.23, -0.2),
             new THREE.Vector2(0.65, 0.5),
             new THREE.Vector2(0.55, 1.2),
             new THREE.Vector2(0.3, 1.6)
         );
         const bodyMesh = new THREE.Mesh(new THREE.LatheGeometry(bodyPath.getPoints(20), 32), bodyMaterial);
-        bodyMesh.name = 'bodyPart'; 
+        bodyMesh.name = 'bodyPart';
         currentMesh.add(bodyMesh);
 
         // Top Cap
@@ -240,7 +241,7 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor) {
     }
 
     scene.add(currentMesh);
-    
+
     if (selectedEffectName !== 'none') {
         applyEffectTexture();
     } else {
@@ -303,6 +304,126 @@ function updateSaturation() {
     if (selectedEffectName === 'none') applyColorAndLighting();
 }
 
+// Initial setup (very lightweight, only updates the header)
+function initCustomDropdown() {
+    updateCustomHeader();
+}
+
+// Toggle dropdown visibility
+function toggleCustomDropdown() {
+    const listElem = document.getElementById('customDropdownList');
+    if (!listElem) return;
+
+    // First time the user opens it -> render the full list of effects + PNG images
+    if (!isDropdownInitialized) {
+        renderDropdownItems();
+        isDropdownInitialized = true;
+    }
+
+    listElem.style.display = listElem.style.display === 'block' ? 'none' : 'block';
+}
+
+// Actually builds the items inside the dropdown
+function renderDropdownItems() {
+    const selectElem = document.getElementById('effectSelect');
+    const listElem = document.getElementById('customDropdownList');
+    if (!selectElem || !listElem) return;
+
+    listElem.innerHTML = '';
+
+    Array.from(selectElem.children).forEach(child => {
+        if (child.tagName === 'OPTGROUP') {
+            const groupLabel = document.createElement('div');
+            groupLabel.innerText = child.label;
+            groupLabel.style.cssText = ` 
+            padding: 6px 10px; 
+            font-size: 0.75rem; 
+            font-weight: bold; 
+            background: #151515; 
+            color: #888; 
+            border-bottom: 1px solid #333;`;
+
+            listElem.appendChild(groupLabel);
+            Array.from(child.children).forEach(opt => {
+                createDropdownItem(opt, listElem);
+            });
+        } else if (child.tagName === 'OPTION') {
+            createDropdownItem(child, listElem);
+        }
+    });
+}
+
+// Create each item row (original logic kept)
+function createDropdownItem(opt, container) {
+    const item = document.createElement('div');
+    item.style.cssText = `
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    padding: 6px 10px; 
+    cursor: pointer; 
+    border-bottom: 1px solid #2a2a2a; 
+    transition: background 0.2s;`;
+
+    item.onmouseover = () => item.style.background = '#333';
+    item.onmouseout = () => item.style.background = 'transparent';
+
+    const val = opt.value;
+    const text = opt.innerText;
+
+    if (val === 'none') {
+        item.innerHTML = `<span style="font-size: 0.85rem; color: #aaa;">${text}</span>`;
+    } else {
+        const imgPath = `/2d-sim/img/${val}.png`;
+        item.innerHTML = `
+            <img src="${imgPath}" loading="lazy" style="width: 24px; 
+            height: 24px; 
+            object-fit: contain; 
+            background: #111; 
+            border-radius: 2px; 
+            padding: 1px;" 
+            onerror="this.style.display='none'"/>
+            <span style="font-size: 0.85rem; color: #fff;">${text}</span>`;
+    }
+
+    item.onclick = () => {
+        const selectElem = document.getElementById('effectSelect');
+        selectElem.value = val;
+        selectElem.dispatchEvent(new Event('change'));
+        updateCustomHeader();
+        closeCustomDropdown();
+    };
+
+    container.appendChild(item);
+}
+
+function closeCustomDropdown() {
+    const listElem = document.getElementById('customDropdownList');
+    if (listElem) listElem.style.display = 'none';
+}
+
+function updateCustomHeader() {
+    const selectElem = document.getElementById('effectSelect');
+    const headerText = document.getElementById('headerText');
+    const headerImg = document.getElementById('headerImg');
+    if (!selectElem) return;
+
+    const selectedOpt = selectElem.options[selectElem.selectedIndex];
+    if (selectedOpt) {
+        if (headerText) headerText.innerText = selectedOpt.innerText;
+
+        if (selectedOpt.value === 'none') {
+            if (headerImg) headerImg.style.display = 'none';
+        } else {
+            if (headerImg) {
+                headerImg.src = `/2d-sim/img/${selectedOpt.value}.png`;
+                headerImg.style.display = 'block';
+                headerImg.onerror = () => headerImg.style.display = 'none';
+            }
+        }
+    }
+}
+
 function updateEffect() {
     const effectSelect = document.getElementById('effectSelect');
     selectedEffectName = effectSelect ? effectSelect.value : 'none';
@@ -327,12 +448,12 @@ function updateEffect() {
 function resetToStandardMaterial() {
     if (!currentMesh) return;
 
-    const translucentBlackMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0x111111, 
-        roughness: 0.2, 
-        metalness: 0.3, 
-        transparent: true, 
-        opacity: 0.6 
+    const translucentBlackMaterial = new THREE.MeshStandardMaterial({
+        color: 0x111111,
+        roughness: 0.2,
+        metalness: 0.3,
+        transparent: true,
+        opacity: 0.6
     });
 
     const ballMaterial = new THREE.MeshStandardMaterial({ color: originalBallColorHex, roughness: 0.3, metalness: 0.2 });
@@ -348,7 +469,7 @@ function resetToStandardMaterial() {
                 child.material = handleMaterial;
             } else if (child.name === 'bodyPart') {
                 child.material = bodyMaterial;
-            } else if (child.name === 'ringPart'){
+            } else if (child.name === 'ringPart') {
                 child.material = translucentBlackMaterial;
             } else {
                 child.material = blackMaterial;
@@ -364,15 +485,17 @@ function applyEffectTexture() {
     currentMesh.traverse((child) => {
         if (!child.isMesh) return;
         const isRing = child.name === 'ringPart';
-        const isTarget = isRing || child.name === 'handlePart' || 
-                         child.name === 'bodyPart' || child.name === 'ballPart';
+        const isTarget = isRing || child.name === 'handlePart' ||
+            child.name === 'bodyPart' || child.name === 'ballPart';
         if (!isTarget) return;
-        if (child.material && child.material !== customProjectorMaterial && child.material !== ringProjectorMaterial) {
+        if (child.material 
+            && child.material !== customProjectorMaterial 
+            && child.material !== ringProjectorMaterial) {
             child.material.dispose();
         }
         const mat = (isRing ? ringProjectorMaterial : customProjectorMaterial).clone();
         mat.uniforms = THREE.UniformsUtils.clone(mat.uniforms);
-        
+
         mat.transparent = isRing;
         mat.uniforms.uTexture.value = currentEffectTexture;
         mat.uniforms.uIsClub.value = isClub;
@@ -389,7 +512,7 @@ function applyColorAndLighting() {
 
     const brightnessInput = document.getElementById('brightnessRange');
     const saturationInput = document.getElementById('saturationRange');
-    
+
     const brightness = brightnessInput ? parseFloat(brightnessInput.value) : 1.0;
     const saturation = saturationInput ? parseFloat(saturationInput.value) : 1.0;
 
@@ -412,7 +535,7 @@ function applyColorAndLighting() {
                     if (child.name === 'bodyPart') {
                         baseHex = originalBodyHex;
                     } else if (child.material.color.getHex() === 0x111111) {
-                        return; 
+                        return;
                     }
 
                     let color = new THREE.Color(baseHex);
@@ -491,7 +614,7 @@ function adjustSpeed(direction) {
     currentSpeedIndex += direction;
     if (currentSpeedIndex < 0) currentSpeedIndex = 0;
     if (currentSpeedIndex >= speedSteps.length) currentSpeedIndex = speedSteps.length - 1;
-    
+
     setSpeed(speedSteps[currentSpeedIndex]);
 }
 
@@ -505,7 +628,7 @@ function setDefaultRotation(type) {
         //Standing view
         currentMesh.rotation.x = 0;
         currentMesh.rotation.y = Math.PI / 2;
-        currentMesh.rotation.z = 0; 
+        currentMesh.rotation.z = 0;
     } else if (type === 'pi_6') {
         //Side view
         currentMesh.rotation.x = 0;
@@ -525,7 +648,7 @@ function animate() {
             customProjectorMaterial.uniforms.uAngle.value = effectAngle;
             ringProjectorMaterial.uniforms.uAngle.value = effectAngle;
             currentMesh.traverse((child) => {
-                if (child.isMesh && child.material && child.material.uniforms && 
+                if (child.isMesh && child.material && child.material.uniforms &&
                     child.material.uniforms.uAngle) {
                     child.material.uniforms.uAngle.value = effectAngle;
                 }
@@ -535,4 +658,16 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-window.onload = init;
+// Automatically close the dropdown when clicking outside its container
+window.addEventListener('click', (e) => {
+    const container = document.getElementById('customSelectionContainer');
+    if (container && !container.contains(e.target)) {
+        closeCustomDropdown();
+    }
+});
+
+// Build the 3D scene as soon as the DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    init();                 // render the 3D scene right away
+    initCustomDropdown();   // lightweight version: only updates the header
+});

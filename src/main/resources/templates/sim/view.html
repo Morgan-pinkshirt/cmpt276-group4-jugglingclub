@@ -184,117 +184,186 @@
         </div>
 
         <label for="brightnessRange">Brightness: <span id="brightnessVal" th:text="${currentSave.brightness}">1.0</span></label>
-        <input type="range" id="brightnessRange" min="0.2" max="3" step="0.05" th:value="${currentSave.brightness}" value="1" oninput="updateBrightness()">
+        <input type="range" 
+        id="brightnessRange" 
+        min="0.2" 
+        max="2" 
+        step="0.05" 
+        th:value="${currentSave.brightness}" 
+        value="1" 
+        oninput="updateBrightness()">
 
         <label for="saturationRange">Saturation: <span id="saturationVal" th:text="${currentSave.saturation}">1.0</span></label>
-        <input type="range" id="saturationRange" min="0" max="3" step="0.05" th:value="${currentSave.saturation}" value="1" oninput="updateSaturation()">
+        <input type="range" 
+        id="saturationRange" 
+        min="0" 
+        max="2" 
+        step="0.05" 
+        th:value="${currentSave.saturation}" 
+        value="1" 
+        oninput="updateSaturation()">
     </div>
 
     <!-- Effect Patterns Panel -->
     <div class="effect-panel">
         <h3>Effect Patterns</h3>
         <label for="effectSelect">Choose Effect:</label>
-        <select id="effectSelect" onchange="updateEffect()">
+        <select id="effectSelect" 
+        style = "display: none;" 
+        onchange="updateEffect()">
             <option value="none" th:selected="${'none' == currentSave.effect}">-- None (Solid Color) --</option>
             
-            <optgroup label="Page 1">
-                <option class="page-1" value="p1_1_rainbow" th:selected="${'p1_1_rainbow' == currentSave.effect}">Rainbow</option>
-                <option value="p1_2_rainbow_drops" th:selected="${'p1_2_rainbow_drops' == currentSave.effect}">Rainbow Drops</option>
+            <!-- 1. Static Effect -->
+            <optgroup label="Static effect">
+                <option value="p1_1_rainbow" th:selected="${'p1_1_rainbow' == currentSave.effect}">Rainbow</option>
                 <option value="p1_3_bold" th:selected="${'p1_3_bold' == currentSave.effect}">Bold</option>
                 <option value="p1_4_lantern" th:selected="${'p1_4_lantern' == currentSave.effect}">Lantern</option>
-                <option value="p1_5_fire" th:selected="${'p1_5_fire' == currentSave.effect}">Fire</option>
                 <option value="p1_6_water" th:selected="${'p1_6_water' == currentSave.effect}">Water</option>
                 <option value="p1_7_earth" th:selected="${'p1_7_earth' == currentSave.effect}">Earth</option>
-                <option value="p1_8_air" th:selected="${'p1_8_air' == currentSave.effect}">Air</option>
-                <option value="p1_9_spirit" th:selected="${'p1_9_spirit' == currentSave.effect}">Spirit</option>
                 <option value="p1_10_pulse" th:selected="${'p1_10_pulse' == currentSave.effect}">Pulse</option>
-            </optgroup>
-
-            <optgroup label="Page 2">
-                <option value="p2_1_candy" th:selected="${'p2_1_candy' == currentSave.effect}">Candy</option>
-                <option value="p2_2_petals" th:selected="${'p2_2_petals' == currentSave.effect}">Petals</option>
                 <option value="p2_3_love" th:selected="${'p2_3_love' == currentSave.effect}">Love</option>
-                <option value="p2_4_watermelon" th:selected="${'p2_4_watermelon' == currentSave.effect}">Watermelon</option>
-                <option value="p2_5_freedom" th:selected="${'p2_5_freedom' == currentSave.effect}">Freedom</option>
-                <option value="p2_6_microdots" th:selected="${'p2_6_microdots' == currentSave.effect}">Microdots</option>
-                <option value="p2_7_unicorn" th:selected="${'p2_7_unicorn' == currentSave.effect}">Unicorn</option>
-                <option value="p2_8_blue_blazer" th:selected="${'p2_8_blue_blazer' == currentSave.effect}">Blue Blazer</option>
-                <option value="p2_9_solar_flare" th:selected="${'p2_9_solar_flare' == currentSave.effect}">Solar Flare</option>
-                <option value="p2_10_strobe" th:selected="${'p2_10_strobe' == currentSave.effect}">Strobe</option>
-            </optgroup>
-
-            <optgroup label="Page 3">
-                <option value="p3_1_flamebow" th:selected="${'p3_1_flamebow' == currentSave.effect}">Flamebow</option>
-                <option value="p3_2_alicorn" th:selected="${'p3_2_alicorn' == currentSave.effect}">Alicorn</option>
-                <option value="p3_3_liquid_sugar" th:selected="${'p3_3_liquid_sugar' == currentSave.effect}">Liquid Sugar</option>
-                <option value="p3_4_rainbow_dash" th:selected="${'p3_4_rainbow_dash' == currentSave.effect}">Rainbow Dash</option>
-                <option value="p3_5_fireball" th:selected="${'p3_5_fireball' == currentSave.effect}">Fireball</option>
-                <option value="p3_6_froth" th:selected="${'p3_6_froth' == currentSave.effect}">Froth</option>
-                <option value="p3_7_jammin" th:selected="${'p3_7_jammin' == currentSave.effect}">Jammin</option>
                 <option value="p3_8_bolder" th:selected="${'p3_8_bolder' == currentSave.effect}">Bolder</option>
                 <option value="p3_9_sunset" th:selected="${'p3_9_sunset' == currentSave.effect}">Sunset</option>
-                <option value="p3_10_daybreak" th:selected="${'p3_10_daybreak' == currentSave.effect}">Daybreak</option>
-            </optgroup>
-
-            <optgroup label="Page 13">
-                <option value="p13_1_flames" th:selected="${'p13_1_flames' == currentSave.effect}">Flames</option>
-                <option value="p13_2_skittles" th:selected="${'p13_2_skittles' == currentSave.effect}">Skittles</option>
                 <option value="p13_3_rainbow_brite" th:selected="${'p13_3_rainbow_brite' == currentSave.effect}">Rainbow Brite</option>
-                <option value="p13_4_party_fish" th:selected="${'p13_4_party_fish' == currentSave.effect}">Party Fish</option>
                 <option value="p13_5_candle" th:selected="${'p13_5_candle' == currentSave.effect}">Candle</option>
                 <option value="p13_6_rainbow_fade" th:selected="${'p13_6_rainbow_fade' == currentSave.effect}">Rainbow Fade</option>
-                <option value="p13_7_OG_candy" th:selected="${'p13_7_OG_candy' == currentSave.effect}">OG Candy</option>
-                <option value="p13_8_bouncer" th:selected="${'p13_8_bouncer' == currentSave.effect}">Bouncer</option>
                 <option value="p13_9_kinetic_colors" th:selected="${'p13_9_kinetic_colors' == currentSave.effect}">Kinetic Colors</option>
-                <option value="p13_10_rave9000" th:selected="${'p13_10_rave9000' == currentSave.effect}">Rave9000</option>
                 <option value="p13_11_balance_point" th:selected="${'p13_11_balance_point' == currentSave.effect}">Balance Point</option>
                 <option value="p13_12_expandoblob" th:selected="${'p13_12_expandoblob' == currentSave.effect}">Expandoblob</option>
-                <option value="p13_13_baby_spice" th:selected="${'p13_13_baby_spice' == currentSave.effect}">Baby Spice</option>
                 <option value="p13_14_responsive_rainbow_fade" th:selected="${'p13_14_responsive_rainbow_fade' == currentSave.effect}">Responsive Rainbow Fade</option>
-                <option value="p13_15_poke_bowl" th:selected="${'p13_15_poke_bowl' == currentSave.effect}">Poke Bowl</option>
-                <option value="p13_16_mr._bones" th:selected="${'p13_16_mr._bones' == currentSave.effect}">Mr. Bones</option>
-                <option value="p13_17_bonus_bonanza" th:selected="${'p13_17_bonus_bonanza' == currentSave.effect}">Bonus Bonanza</option>
-                <option value="p13_18_OG_strobe" th:selected="${'p13_18_OG_strobe' == currentSave.effect}">OG Strobe</option>
-                <option value="p13_19_lightning_bug" th:selected="${'p13_19_lightning_bug' == currentSave.effect}">Lightning Bug</option>
                 <option value="p13_20_day_club" th:selected="${'p13_20_day_club' == currentSave.effect}">Day Club</option>
-                <option value="p13_21_rainbizzle" th:selected="${'p13_21_rainbizzle' == currentSave.effect}">Rainbizzle</option>
                 <option value="p13_22_fruit_basket" th:selected="${'p13_22_fruit_basket' == currentSave.effect}">Fruit Basket</option>
                 <option value="p13_23_marvin's_mode" th:selected="${'p13_23_marvin''s_mode' == currentSave.effect}">Marvin's Mode</option>
                 <option value="p13_24_hidden_rainbow" th:selected="${'p13_24_hidden_rainbow' == currentSave.effect}">Hidden Rainbow</option>
-                <option value="p13_25_rainbow_bridge" th:selected="${'p13_25_rainbow_bridge' == currentSave.effect}">Rainbow Bridge</option>
-                <option value="p13_26_OG_sparkles" th:selected="${'p13_26_OG_sparkles' == currentSave.effect}">OG Sparkles</option>
                 <option value="p13_27_day_club_II" th:selected="${'p13_27_day_club_II' == currentSave.effect}">Day Club II</option>
                 <option value="p13_28_ghost" th:selected="${'p13_28_ghost' == currentSave.effect}">Ghost</option>
-                <option value="p13_29_sega_genesis" th:selected="${'p13_29_sega_genesis' == currentSave.effect}">Sega Genesis</option>
-                <option value="p13_30_sean's_bane" th:selected="${'p13_30_sean''s_bane' == currentSave.effect}">Sean's Bane</option>
-                <option value="p13_31_gulp_chug" th:selected="${'p13_31_gulp_chug' == currentSave.effect}">Gulp Chug</option>
-                <option value="p13_32_OG_watermelon" th:selected="${'p13_32_OG_watermelon' == currentSave.effect}">OG Watermelon</option>
                 <option value="p13_33_rainbow_dashish" th:selected="${'p13_33_rainbow_dashish' == currentSave.effect}">Rainbow Dashish</option>
                 <option value="p13_34_OG_rainbow_dash" th:selected="${'p13_34_OG_rainbow_dash' == currentSave.effect}">OG Rainbow Dash</option>
                 <option value="p13_35_thumb_light" th:selected="${'p13_35_thumb_light' == currentSave.effect}">Thumb Light</option>
                 <option value="p13_36_euro_2" th:selected="${'p13_36_euro_2' == currentSave.effect}">Euro 2</option>
-                <option value="p13_37_OG_rainbow_drops" th:selected="${'p13_37_OG_rainbow_drops' == currentSave.effect}">OG Rainbow Drops</option>
                 <option value="p13_38_alt_pulse" th:selected="${'p13_38_alt_pulse' == currentSave.effect}">Alt Pulse</option>
-                <option value="p13_39_lightning_storm" th:selected="${'p13_39_lightning_storm' == currentSave.effect}">Lightning Storm</option>
-                <option value="p13_40_sparkle_pony" th:selected="${'p13_40_sparkle_pony' == currentSave.effect}">Sparkle Pony</option>
-                <option value="p13_41_thing2_-_nebula" th:selected="${'p13_41_thing2_-_nebula' == currentSave.effect}">Thing2 - Nebula</option>
                 <option value="p13_42_OG_lantern" th:selected="${'p13_42_OG_lantern' == currentSave.effect}">OG Lantern</option>
                 <option value="p13_43_sorcerer" th:selected="${'p13_43_sorcerer' == currentSave.effect}">Sorcerer</option>
                 <option value="p13_44_ice_cream_soda" th:selected="${'p13_44_ice_cream_soda' == currentSave.effect}">Ice Cream Soda</option>
-                <option value="p13_45_adventure_time" th:selected="${'p13_45_adventure_time' == currentSave.effect}">Adventure Time</option>
-                <option value="p13_46_flintstones_-_candy_corn" th:selected="${'p13_46_flintstones_-_candy_corn' == currentSave.effect}">Flintstones - Candy Corn</option>
                 <option value="p13_47_indiana_jones" th:selected="${'p13_47_indiana_jones' == currentSave.effect}">Indiana Jones</option>
                 <option value="p13_48_zen" th:selected="${'p13_48_zen' == currentSave.effect}">Zen</option>
-                <option value="p13_49_candy_crush" th:selected="${'p13_49_candy_crush' == currentSave.effect}">Candy Crush</option>
+            </optgroup>
+
+            <!-- 2. Slow Effect -->
+            <optgroup label="Smooth effect">
+                <option value="p2_1_candy" th:selected="${'p2_1_candy' == currentSave.effect}">Candy</option>
+                <option value="p2_4_watermelon" th:selected="${'p2_4_watermelon' == currentSave.effect}">Watermelon</option>
+                <option value="p2_8_blue_blazer" th:selected="${'p2_8_blue_blazer' == currentSave.effect}">Blue Blazer</option>
+                <option value="p2_9_solar_flare" th:selected="${'p2_9_solar_flare' == currentSave.effect}">Solar Flare</option>
+                <option value="p2_10_strobe" th:selected="${'p2_10_strobe' == currentSave.effect}">Strobe</option>
+                <option value="p3_1_flamebow" th:selected="${'p3_1_flamebow' == currentSave.effect}">Flamebow</option>
+                <option value="p3_2_alicorn" th:selected="${'p3_2_alicorn' == currentSave.effect}">Alicorn</option>
+                <option value="p3_4_rainbow_dash" th:selected="${'p3_4_rainbow_dash' == currentSave.effect}">Rainbow Dash</option>
+                <option value="p3_5_fireball" th:selected="${'p3_5_fireball' == currentSave.effect}">Fireball</option>
+                <option value="p3_6_froth" th:selected="${'p3_6_froth' == currentSave.effect}">Froth</option>
+                <option value="p3_7_jammin" th:selected="${'p3_7_jammin' == currentSave.effect}">Jammin</option>
+                <option value="p3_10_daybreak" th:selected="${'p3_10_daybreak' == currentSave.effect}">Daybreak</option>
+                <option value="p13_1_flames" th:selected="${'p13_1_flames' == currentSave.effect}">Flames</option>
+                <option value="p13_4_party_fish" th:selected="${'p13_4_party_fish' == currentSave.effect}">Party Fish</option>
+                <option value="p13_8_bouncer" th:selected="${'p13_8_bouncer' == currentSave.effect}">Bouncer</option>
+                <option value="p13_10_rave9000" th:selected="${'p13_10_rave9000' == currentSave.effect}">Rave9000</option>
+                <option value="p13_13_baby_spice" th:selected="${'p13_13_baby_spice' == currentSave.effect}">Baby Spice</option>
+                <option value="p13_15_poke_bowl" th:selected="${'p13_15_poke_bowl' == currentSave.effect}">Poke Bowl</option>
+                <option value="p13_17_bonus_bonanza" th:selected="${'p13_17_bonus_bonanza' == currentSave.effect}">Bonus Bonanza</option>
+                <option value="p13_19_lightning_bug" th:selected="${'p13_19_lightning_bug' == currentSave.effect}">Lightning Bug</option>
+                <option value="p13_21_rainbizzle" th:selected="${'p13_21_rainbizzle' == currentSave.effect}">Rainbizzle</option>
+                <option value="p13_29_sega_genesis" th:selected="${'p13_29_sega_genesis' == currentSave.effect}">Sega Genesis</option>
+                <option value="p13_31_gulp_chug" th:selected="${'p13_31_gulp_chug' == currentSave.effect}">Gulp Chug</option>
+                <option value="p13_32_OG_watermelon" th:selected="${'p13_32_OG_watermelon' == currentSave.effect}">OG Watermelon</option>
+                <option value="p13_40_sparkle_pony" th:selected="${'p13_40_sparkle_pony' == currentSave.effect}">Sparkle Pony</option>
+                <option value="p13_41_thing2_-_nebula" th:selected="${'p13_41_thing2_-_nebula' == currentSave.effect}">Thing2 - Nebula</option>
+                <option value="p13_46_flintstones_-_candy_corn" th:selected="${'p13_46_flintstones_-_candy_corn' == currentSave.effect}">Flintstones - Candy Corn</option>
                 <option value="p13_50_5-O" th:selected="${'p13_50_5-O' == currentSave.effect}">5-O</option>
             </optgroup>
+
+            <!-- 3. Rapid Effect -->
+            <optgroup label="Dazzling effect">
+                <option value="p1_2_rainbow_drops" th:selected="${'p1_2_rainbow_drops' == currentSave.effect}">Rainbow Drops</option>
+                <option value="p1_5_fire" th:selected="${'p1_5_fire' == currentSave.effect}">Fire</option>
+                <option value="p1_8_air" th:selected="${'p1_8_air' == currentSave.effect}">Air</option>
+                <option value="p1_9_spirit" th:selected="${'p1_9_spirit' == currentSave.effect}">Spirit</option>
+                <option value="p2_2_petals" th:selected="${'p2_2_petals' == currentSave.effect}">Petals</option>
+                <option value="p2_5_freedom" th:selected="${'p2_5_freedom' == currentSave.effect}">Freedom</option>
+                <option value="p2_6_microdots" th:selected="${'p2_6_microdots' == currentSave.effect}">Microdots</option>
+                <option value="p2_7_unicorn" th:selected="${'p2_7_unicorn' == currentSave.effect}">Unicorn</option>
+                <option value="p3_3_liquid_sugar" th:selected="${'p3_3_liquid_sugar' == currentSave.effect}">Liquid Sugar</option>
+                <option value="p13_2_skittles" th:selected="${'p13_2_skittles' == currentSave.effect}">Skittles</option>
+                <option value="p13_7_OG_candy" th:selected="${'p13_7_OG_candy' == currentSave.effect}">OG Candy</option>
+                <option value="p13_16_mr._bones" th:selected="${'p13_16_mr._bones' == currentSave.effect}">Mr. Bones</option>
+                <option value="p13_18_OG_strobe" th:selected="${'p13_18_OG_strobe' == currentSave.effect}">OG Strobe</option>
+                <option value="p13_25_rainbow_bridge" th:selected="${'p13_25_rainbow_bridge' == currentSave.effect}">Rainbow Bridge</option>
+                <option value="p13_26_OG_sparkles" th:selected="${'p13_26_OG_sparkles' == currentSave.effect}">OG Sparkles</option>
+                <option value="p13_30_sean's_bane" th:selected="${'p13_30_sean''s_bane' == currentSave.effect}">Sean's Bane</option>
+                <option value="p13_37_OG_rainbow_drops" th:selected="${'p13_37_OG_rainbow_drops' == currentSave.effect}">OG Rainbow Drops</option>
+                <option value="p13_39_lightning_storm" th:selected="${'p13_39_lightning_storm' == currentSave.effect}">Lightning Storm</option>
+                <option value="p13_45_adventure_time" th:selected="${'p13_45_adventure_time' == currentSave.effect}">Adventure Time</option>
+                <option value="p13_49_candy_crush" th:selected="${'p13_49_candy_crush' == currentSave.effect}">Candy Crush</option>
+            </optgroup>
         </select>
+
+        <!-- Custom Dropdown UI for Effect Selection -->
+        <div id = "customSelectionContainer" 
+        style = "position:relative; 
+        margin-top: 4px;">
+            <!--Display box for current option-->
+            <div id="customSelectHeader" onclick="toggleCustomDropdown()" style="background: #222; 
+            border: 1px solid #444; 
+            border-radius: 4px; 
+            padding: 6px 10px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;">
+                <div style="display: flex; 
+                align-items: center; 
+                gap: 8px; 
+                overflow: hidden;">
+                    <img id="headerImg" src="" style="width: 24px; 
+                    height: 24px; 
+                    object-fit: contain; 
+                    display: none;" />
+                    <span id="headerText" style="font-size: 0.9rem; 
+                    white-space: nowrap; 
+                    overflow: hidden; 
+                    text-overflow: ellipsis;">-- None (Solid Color) --</span>
+                </div>
+                <span style="font-size: 0.75rem; 
+                color: #aaa;">▼</span>
+            </div> 
+
+            <!-- Dropdown List for other options-->
+            <div id="customDropdownList" 
+            style="display: none;
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            right: 0; 
+            background: #222; 
+            border: 1px solid #444; 
+            border-radius: 4px; 
+            max-height: 260px; 
+            overflow-y: auto; 
+            z-index: 1000; 
+            margin-top: 3px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+            </div>
+        </div>
     </div>
 
     <!-- Top-Right: Panel containing Go Home, View Rotations & Save Form -->
     <div class="user-panel">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <a href="/home" class="home-btn" style="font-size: 0.85rem; padding: 5px 10px;">Go back home</a>
+        <div style="display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 10px;">
+            <a href="/home" class="home-btn" 
+            style="font-size: 0.85rem; 
+            padding: 5px 10px;">Go back home</a>
             <div style="display: flex; gap: 4px;">
                 <button onclick="setDefaultRotation('pi_2')" class="control-btn" title="Standing View">Standing</button>
                 <button onclick="setDefaultRotation('pi_6')" class="control-btn" title="Side View">Side</button>
@@ -317,11 +386,25 @@
         </form>
 
         <!-- Speed control buttons (- / +) -->
-        <div style="margin-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.3); padding-top: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <label style="color: #ffffff; font-weight: 500; font-size: 0.85rem; margin: 0;">Animation Speed:</label>
-                <span id="speedDisplay" style="font-size: 0.85rem; color: #4da3ff; font-weight: bold;">1x</span>
+        <div style="margin-top: 10px; 
+        border-top: 1px solid rgba(255, 255, 255, 0.3); 
+        padding-top: 8px;">
+            <div style="display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px;">
+                <label style="color: #ffffff; 
+                font-weight: 500; 
+                font-size: 0.85rem; margin: 0;">Animation Speed:
+                </label>
+
+                <span id="speedDisplay" 
+                style="font-size: 0.85rem; 
+                color: #4da3ff; 
+                font-weight: bold;">1x
+                </span>
             </div>
+            
             <div style="display: flex; gap: 5px;">
                 <button onclick="adjustSpeed(-1)" class="control-btn" style="flex: 1; font-weight: bold; font-size: 1rem;">-</button>
                 <button onclick="setSpeed(1)" class="control-btn" style="flex: 1; font-size: 0.75rem;" title="Reset to 1x">normal</button>
