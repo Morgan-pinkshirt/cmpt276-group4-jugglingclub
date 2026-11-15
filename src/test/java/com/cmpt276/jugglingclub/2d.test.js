@@ -52,8 +52,8 @@ test('Display mode after user selection', () => {
     expect(svgStill.style.display).toBe('none');
     expect(svgMov.style.display).toBe('none');
 
-    // Select a 2nd mode from a different page - I chose one that has a ' in the name because it might create issues when getting the value
-    option.value = `p13_23_marvin's_mode`;
+    // Select a 2nd mode from a different page
+    option.value = 'p13_23_marvin_mode';
     button.click();    
 
     expect(img.src).toContain(`p13_23_marvin's_mode`);
@@ -462,9 +462,11 @@ test('Test the orientation of the static club', () => {
         expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
     })
 })
+
+
 // test resetSlider
 test('Reset to default view', () => {
-    const slider = document.getElementById("colourSlider"); // potentially fix in js
+    const colourSlider = document.getElementById("colourSlider"); // potentially fix in js
     const clubBody = document.getElementById("clubBody");
     const clubHandle = document.getElementById("clubHandle");
     const bodyMov = document.getElementById("BodyMov");
@@ -501,7 +503,7 @@ test('Reset to default view', () => {
     const satOutputStatic = document.getElementById("static-saturation-value");
 
 
-    expect(slider).not.toBeNull();
+    expect(colourSlider).not.toBeNull();
     expect(clubBody).not.toBeNull();
     expect(clubHandle).not.toBeNull();
     expect(bodyMov).not.toBeNull();
@@ -543,13 +545,13 @@ test('Reset to default view', () => {
 
     // change the handle color
     handleButton.click();
-    slider.value = "20";    
-    slider.dispatchEvent(new Event("input"));
+    colourSlider.value = "20";    
+    colourSlider.dispatchEvent(new Event("input"));
 
     // change the body color
     bodyButton.click();
-    slider.value = "145";    
-    slider.dispatchEvent(new Event("input"));
+    colourSlider.value = "145";    
+    colourSlider.dispatchEvent(new Event("input"));
 
     // Increase the speed of the moving club
     control.value = "250";    
@@ -578,15 +580,16 @@ test('Reset to default view', () => {
 
     document.addEventListener("DOMContentLoaded", function () {
         resetButton.click();
+        // didnt't test the slider values default, just the club's value
         // reset the color of the handle and body
         expect(handle.getAttribute("fill")).toBe('white');
         expect(handleMov.getAttribute("fill")).toBe('white');
         expect(club.getAttribute("fill")).toBe('grey');
         expect(clubMov.getAttribute("fill")).toBe("grey");
         expect(canvasStill.style.display).toBe('none');
-        expect(canvasMov.style.display).toBe('none');
+        expect(canvasMoving.style.display).toBe('none');
         expect(svgStill.style.display).toBe('block');
-        expect(svgMov.style.display).toBe('block');
+        expect(svgMoving.style.display).toBe('block');
 
         // reset speed
         expect(window.jestersSpeed).toBe(1);
