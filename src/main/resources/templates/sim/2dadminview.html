@@ -47,8 +47,7 @@
         <section class="page-intro">
             <h1>2D Simulation</h1>
             <p>
-                Design, customize, and preview your
-                LED juggling club in real time.
+
             </p>
         </section>
         <section class="universal-controls">
@@ -56,11 +55,11 @@
                 <i data-lucide="settings"></i>
                 <div>
                     <h2 id="universal-heading">
-                        Design Controls
+                        
                     </h2>
                     <p>
                         <form action="/deleteproject" method = "POST" id ="savingform">
-<label for="projectname">projectname:</label>
+<label for="projectname" th:text="${currentSave.projectname}">projectname</label>
 <input type="submit" value = "delete">
 <input type="hidden" id="projectname" name="projectname" th:value="${currentSave.projectname}">
 <input type="hidden" name="productType" id = "hproductType"th:value="${currentSave.productType}">
@@ -82,22 +81,22 @@
                     <i data-lucide="mouse-pointer-2"></i>
                 
                 </span>
-                <div class="part-switch">
-                    <button type="button"
+                <div class="part-switch" hidden>
+                    <input type="hidden"
                             id="bodyButton"
                             class="active">
-                            Juggling Club Body
-                    </button>
-                    <button type="button"
+                            
+                </input>
+                    <input type="hidden"
                             id="handleButton">
-                            Juggling Club Handle
-                    </button>
+                            
+            </input>
                 </div>
             </div>
             <div class="universal-section">
                 <label for="colourSlider" class="control-title">
                     <i data-lucide="palette"></i>
-                    Color Slider
+                
                 </label>
                 <input
                     type="hidden"
@@ -107,12 +106,10 @@
             <div class="universal-section">
                 <label for="options" class="control-title">
                     <i data-lucide="sliders-horizontal"></i>
-                    Lighting Effect (Cannot be separated by Juggling Club Part)
                 </label>
                 <form class="mode-form" onsubmit="return false">
                     <fieldset>
                         <legend class="sr-only">
-                            Preview a lighting effect
                         </legend>
                         <div class="effect-row">
                             <select id="options" hidden>
@@ -293,7 +290,6 @@
                                     Rotating Club Preview
                                 </h2>
                                 <p>
-                                    Test and explore colours and lighting effects on a static club preview.
                                 </p>
                             </div>
                         </div>
@@ -469,7 +465,6 @@
                                     Static Club Preview
                                 </h2>
                                 <p>
-                                    Test and explore colours and lighting effects on a static club preview.
                                 </p>
                             </div>
                         </div>

@@ -136,10 +136,10 @@
         <label for="bodyColor">Body Color:</label><br>
         <input type="color" id="bodyColor" th:value="${currentSave.bodyColor}" oninput="updateBodyColor()">
 
-                <label for="brightnessRange">Brightness: <span id="brightnessVal">1.0</span></label>
+                <label for="brightnessRange">Brightness: <span id="brightnessVal" th:text="${currentSave.brightness}">1.0</span></label>
         <input type="range" id="brightnessRange" min="0.2" max="3" step="0.05" th:value="${currentSave.brightness}" oninput="updateBrightness()">
 
-        <label for="saturationRange">Saturation: <span id="saturationVal">1.0</span></label>
+        <label for="saturationRange">Saturation: <span id="saturationVal" th:text="${currentSave.saturation}">1.0</span></label>
         <input type="range" id="saturationRange" min="0" max="3" step="0.05" th:value="${currentSave.saturation}" oninput="updateSaturation()">
     </div>
 
