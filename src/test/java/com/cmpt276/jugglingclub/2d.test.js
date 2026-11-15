@@ -180,3 +180,115 @@ test('Change the speed of the moving club', () => {
     expect(club.style.animationPlayState).toBe('running');
     expect(club.style.animationDuration).toBe('20s');
 })
+
+test('Change the brightness of the moving club', () => {
+    const visual = document.getElementById("moving-visual");
+    const brightness = document.getElementById("moving-brightness");
+    const brightOutput = document.getElementById("moving-brightness-value");
+
+    expect(visual).not.toBeNull();
+    expect(brightness).not.toBeNull();
+    expect(brightOutput).not.toBeNull();
+
+    // Test brightness of 30%
+    brightness.value = "30";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
+    expect(brightOutput.innerHTML).toBe('30%');
+
+    // Test brightness of 0%
+    brightness.value = "0";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test brightness of 100%
+    brightness.value = "100";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(brightOutput.innerHTML).toBe('100%');
+})
+
+test('Change the brightness of the static club', () => {
+    const visual = document.getElementById("static-visual");
+    const brightness = document.getElementById("static-brightness");
+    const brightOutput = document.getElementById("static-brightness-value");
+
+    expect(visual).not.toBeNull();
+    expect(brightness).not.toBeNull();
+    expect(brightOutput).not.toBeNull();
+
+    // Test brightness of 30%
+    brightness.value = "30";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
+    expect(brightOutput.innerHTML).toBe('30%');
+
+    // Test brightness of 0%
+    brightness.value = "0";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test brightness of 100%
+    brightness.value = "100";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(brightOutput.innerHTML).toBe('100%');
+})
+
+test('Change the saturation of the moving club', () => {
+    const visual = document.getElementById("moving-visual");
+    const saturation = document.getElementById("moving-saturation");;
+    const satOutput = document.getElementById("moving-saturation-value");
+
+    expect(visual).not.toBeNull();
+    expect(saturation).not.toBeNull();
+    expect(satOutput).not.toBeNull();
+
+    // Test saturation of 30%
+    brightness.value = "30";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
+    expect(brightOutput.innerHTML).toBe('30%');
+
+    // Test saturation of 0%
+    brightness.value = "0";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test saturation of 100%
+    brightness.value = "100";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(brightOutput.innerHTML).toBe('100%');
+})
+
+test('Change the brightness of the static club', () => {
+    const visual = document.getElementById("static-visual");
+    const saturation = document.getElementById("static-saturation");
+    const satOutput = document.getElementById("static-saturation-value");
+
+    expect(visual).not.toBeNull();
+    expect(saturation).not.toBeNull();
+    expect(satOutput).not.toBeNull();
+
+    // Test saturation of 30%
+    brightness.value = "30";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
+    expect(brightOutput.innerHTML).toBe('30%');
+
+    // Test saturation of 0%
+    brightness.value = "0";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test saturation of 100%
+    brightness.value = "100";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(brightOutput.innerHTML).toBe('100%');
+})
