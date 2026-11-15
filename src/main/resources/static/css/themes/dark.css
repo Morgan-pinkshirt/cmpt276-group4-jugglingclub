@@ -1,31 +1,28 @@
 body {
     background-color: #121212;
     color: #e5e5e5;
-    font-family: Arial, sans-serif;
 }
 
 header {
     background-color: #1e1e1e;
     color: #ffffff;
-    border-bottom: 1px solid #333333;
+    border-bottom-color: #333333;
 }
 
 nav {
     background-color: #1e1e1e;
-    border-bottom: 1px solid #333333;
+    border-bottom-color: #333333;
 }
 
 section {
     background-color: #1e1e1e;
-    border: 1px solid #3a3a3a;
-    border-radius: 8px;
+    border-color: #3a3a3a;
 }
-
 
 footer {
     background-color: #1e1e1e;
     color: #aaaaaa;
-    border-top: 1px solid #333333;
+    border-top-color: #333333;
 }
 
 a {
@@ -35,98 +32,414 @@ a {
 button, input[type="submit"] {
     background-color: #2563eb;
     color: #ffffff;
-    border: 1px solid #2563eb;
-    border-radius: 4px;
-    cursor: pointer;
+    border-color: #2563eb;
 }
 
 input, select {
     background-color: #2d2d2d;
     color: #e5e5e5;
-    border: 1px solid #555555;
-    border-radius: 4px;
+    border-color: #555555;
 }
 
-.guest-page .guest-sidebar {
-    background-color: #2d2d2d;
-    border: none;
+.accounts-table th,
+.accounts-table td {
+    border-bottom-color: rgba(128, 128, 128, 0.35);
 }
 
-.guest-page .guest-sidebar a {
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) {
+    --ns-bg: #121212;
+    --ns-panel: #1e1e1e;
+    --ns-border: #3a3a3a;
+    --ns-accent: #2563eb;
+    --ns-hover: #1d4ed8;
+    --ns-text: #e5e5e5;
+    --ns-muted: #b3b3b3;
+    background: var(--ns-bg);
+    color: var(--ns-text);
+    color-scheme: dark;
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page) a {
+    color: #93c5fd;
+}
+
+body:is(.guest-page, .member-page) header {
+    background: #1e1e1e;
     color: #ffffff;
+    border-color: var(--ns-border);
+    box-shadow: 0 5px 25px #0003;
+}
+
+body:is(.guest-page, .member-page) header h1 {
+    color: #ffffff;
+}
+
+body.guest-page header::after {
+    background: #1e304b;
+    color: #bfdbfe;
+    border-color: #3b6390;
+}
+
+body.member-page .account-role {
+    background: #1e304b;
+    color: #bfdbfe;
+    border-color: #3b6390;
+}
+
+body.admin-page .account-role {
+    background: #493823;
+    color: #ffdc96;
+    border-color: #a27c40;
+}
+
+body.member-page .account-id,
+body.member-page .account-username {
+    color: var(--ns-muted);
+}
+
+body.guest-page .guest-sidebar,
+body.member-page .member-sidebar {
+    background: #252525;
+    border-right-color: var(--ns-border);
+}
+
+body.guest-page .guest-sidebar a,
+body.member-page .member-sidebar a {
     background: transparent;
-    border: none;
+    color: #93c5fd;
 }
 
-.guest-page .guest-home svg {
-    display: block;
+body.guest-page .guest-sidebar a:hover,
+body.member-page .member-sidebar a:hover {
+    background: #263d5e;
+}
+
+body.guest-page .guest-home svg,
+body.member-page .member-home svg,
+body.member-page .member-settings svg {
+    color: #93c5fd;
+}
+
+body.guest-page .guest-main section,
+body.member-page .member-main section {
+    background: linear-gradient(145deg, #282828, #1e1e1e);
+    border-color: var(--ns-border);
+    box-shadow: 0 12px 32px #0003;
+}
+
+body.guest-page .guest-main section:hover,
+body.member-page .member-main section:hover {
+    border-color: #60a5fa;
+    box-shadow: 0 15px 38px #0006;
+}
+
+body.guest-page .guest-panel-content h2,
+body.member-page .member-panel-content h2 {
     color: #ffffff;
 }
 
-.guest-page .guest-button {
-    background-color: #2563eb;
-    color: #ffffff;
-    border: 1px solid #2563eb;
+body.guest-page .guest-panel-content p,
+body.member-page .member-panel-content p {
+    color: var(--ns-muted);
 }
 
-.member-page .member-sidebar {
-    background-color: #2d2d2d;
-    border: none;
+body.guest-page .guest-preview,
+body.member-page .member-preview {
+    background: none;
+    box-shadow: none;
+    color: inherit;
 }
 
-.member-page .member-sidebar a {
+body.guest-page .guest-button,
+body.member-page .member-button {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
+    border-color: #3b82f6;
+}
+
+body.guest-page .guest-button:hover,
+body.member-page .member-button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    box-shadow: 0 6px 20px #2563eb55;
+}
+
+body.guest-page footer,
+body.member-page footer {
+    background: #252525;
+    color: var(--ns-muted);
+    border-color: var(--ns-border);
+}
+
+html body.member-page.view-accounts-page
+section.view-accounts-panel {
+    background: #1e1e1e !important;
+    background-color: #1e1e1e !important;
+    background-image: none !important;
+    color: #e5e5e5 !important;
+    border-color: #3a3a3a !important;
+    box-shadow: 0 12px 32px #0003;
+}
+
+html body.view-accounts-page .view-accounts-panel h2 {
+    color: #ffffff !important;
+}
+
+html body.view-accounts-page table.accounts-table {
+    background: transparent !important;
+    color: #e5e5e5 !important;
+}
+
+html body.view-accounts-page .accounts-table thead,
+html body.view-accounts-page .accounts-table tbody,
+html body.view-accounts-page .accounts-table tr {
+    background: transparent !important;
+}
+
+html body.view-accounts-page .accounts-table th,
+html body.view-accounts-page .accounts-table td {
+    border-bottom-color: #3a3a3a;
+}
+
+html body.view-accounts-page .accounts-table th {
+    background: #292929 !important;
+    color: #bfdbfe !important;
+}
+
+html body.view-accounts-page .accounts-table td {
+    background: transparent !important;
+    color: #e5e5e5 !important;
+}
+
+html body.view-accounts-page
+.accounts-table tbody tr:hover td {
+    background: #292929 !important;
+}
+
+body.view-accounts-page .accounts-table button,
+body.view-accounts-page .accounts-table .member-button {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+body.view-accounts-page .accounts-table button:hover,
+body.view-accounts-page .accounts-table .member-button:hover {
+    background: #1d4ed8;
+}
+
+body.view-accounts-page .accounts-table td > span {
+    background: #253b38;
+    color: #a1e5cd;
+    border-color: #426d60;
+}
+
+body.login-page {
+    background: radial-gradient(
+        ellipse at 50% 30%,
+        #202b3d,
+        #121212 65%
+    );
+}
+
+body.login-page header {
     background: transparent;
-    border: none;
 }
 
-.member-page .member-home svg, .member-page .member-settings svg {
-    display: block;
+body.login-page header h1 {
     color: #ffffff;
 }
 
-.member-page .member-button {
-    background-color: #2563eb;
+body.login-page main {
+    background: transparent;
+}
+
+body.login-page .login-panel {
+    background: var(--ns-panel);
+    border-color: #3a3a3a;
+    box-shadow: 0 20px 65px #0006;
+}
+
+body.login-page .login-panel h2 {
     color: #ffffff;
-    border: 1px solid #2563eb;
 }
 
-.login-page header {
-    background-color: #1e1e1e;
+body.login-page .login-panel label {
+    color: #d4d4d4;
+}
+
+body.login-page .login-panel input {
+    background: #2d2d2d;
     color: #ffffff;
-    border-bottom: 1px solid #333333;
+    border-color: #555555;
 }
 
-.login-page main {
-    background-color: #121212;
+body.login-page .login-panel input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px #2563eb33;
 }
 
-.login-page .login-panel {
-    background-color: #242424;
-    border: 1px solid #3a3a3a;
-    border-radius: 0;
-}
-
-.login-page .login-panel input {
-    background-color: #2d2d2d;
+body.login-page .login-panel button {
+    background: var(--ns-accent);
     color: #ffffff;
-    border: 1px solid #555555;
-    border-radius: 4px;
+    border-color: #3b82f6;
 }
 
-.login-page .login-panel button {
-    background-color: #2563eb;
+body.login-page .login-panel button:hover {
+    background: var(--ns-hover);
+}
+
+body.login-page .login-links a {
+    color: #93c5fd;
+}
+
+body.login-page .login-links a:hover {
     color: #ffffff;
-    border: 1px solid #2563eb;
-    border-radius: 4px;
 }
 
-.login-page .login-links a {
-    color: #60a5fa;
-}
-
-.login-page footer {
-    background-color: #1e1e1e;
+body.login-page footer {
+    background: transparent;
     color: #aaaaaa;
-    border-top: 1px solid #333333;
 }
+
+body.settings-page > header {
+    background: #1e1e1e;
+    border-bottom-color: var(--ns-border);
+}
+
+body.settings-page > header h1 {
+    color: #ffffff;
+}
+
+body.settings-page > header p {
+    color: var(--ns-muted);
+}
+
+body.settings-page > nav {
+    background: #252525;
+    border-bottom-color: var(--ns-border);
+}
+
+body.settings-page > nav a {
+    color: #93c5fd;
+}
+
+body.settings-page > nav a:hover {
+    background: #1e304b;
+    color: #ffffff;
+}
+
+body.settings-page > main > section {
+    background: var(--ns-panel);
+    color: var(--ns-text);
+    border-color: var(--ns-border);
+    box-shadow: 0 8px 25px #0002;
+}
+
+body.settings-page > main > section h2 {
+    color: #ffffff;
+}
+
+body.settings-page > main > section p {
+    color: var(--ns-muted);
+}
+
+body.settings-page .settings-identity p {
+    color: #d4d4d4;
+}
+
+body.settings-page .settings-identity strong {
+    color: #93c5fd;
+}
+
+body.settings-page label {
+    color: #d4d4d4;
+}
+
+body.settings-page #currentUsername {
+    color: #93c5fd;
+}
+
+body.settings-page input,
+body.settings-page select {
+    background: #2d2d2d;
+    color: #ffffff;
+    border-color: #555555;
+}
+
+body.settings-page input:focus,
+body.settings-page select:focus {
+    outline-color: #60a5fa;
+}
+
+body.settings-page button {
+    background: var(--ns-accent);
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+body.settings-page button:hover {
+    background: var(--ns-hover);
+}
+
+body.settings-page > footer {
+    background: #252525;
+    color: var(--ns-muted);
+    border-top-color: var(--ns-border);
+}
+
+body.construction-page > header {
+    background: #1e1e1e;
+    color: #ffffff;
+    border-bottom-color: var(--ns-border);
+}
+
+body.construction-page > header p {
+    color: var(--ns-muted);
+}
+
+body.construction-page > nav {
+    background: #252525;
+    border-bottom-color: var(--ns-border);
+}
+
+body.construction-page > nav a {
+    color: #93c5fd;
+}
+
+body.construction-page > main > section {
+    background: var(--ns-panel);
+    border-color: var(--ns-border);
+    box-shadow: 0 16px 45px #0004;
+}
+
+body.construction-page > main h2 {
+    color: #ffffff;
+}
+
+body.construction-page > main p {
+    color: var(--ns-muted);
+}
+
+body.construction-page > main a {
+    color: #ffffff;
+    background: var(--ns-accent);
+}
+
+body.construction-page > main a:hover {
+    background: var(--ns-hover);
+}
+
+body.construction-page > footer {
+    background: #252525;
+    color: var(--ns-muted);
+    border-top-color: var(--ns-border);
+}
+
+body:is(.guest-page, .member-page, .login-page,
+        .settings-page, .construction-page)
+:is(a, button, input, select):focus-visible {
+    outline-color: #93c5fd;
+}
+
