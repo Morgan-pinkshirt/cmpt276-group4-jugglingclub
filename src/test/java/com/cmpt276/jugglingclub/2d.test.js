@@ -20,7 +20,9 @@ beforeEach(() => {
 
     require('../../../../../main/resources/static/2d-sim/moving.js');
     require('../../../../../main/resources/static/2d-sim/script.js');
-    require('../../../../../main/resources/static/2d-sim/speed.js')
+    require('../../../../../main/resources/static/2d-sim/speed.js');
+    require('../../../../../main/resources/static/2d-sim/sim.js');
+    require('../../../../../main/resources/static/2d-sim/controls.js');
 })
 
 test('Display mode after user selection', () => {
@@ -181,6 +183,7 @@ test('Change the speed of the moving club', () => {
     expect(club.style.animationDuration).toBe('20s');
 })
 
+// The input is a slider, I cannot choose a value under 0 and above 100
 test('Change the brightness of the moving club', () => {
     const visual = document.getElementById("moving-visual");
     const brightness = document.getElementById("moving-brightness");
@@ -193,22 +196,35 @@ test('Change the brightness of the moving club', () => {
     // Test brightness of 30%
     brightness.value = "30";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
-    expect(brightOutput.innerHTML).toBe('30%');
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.3');
+    expect(brightOutput.innerHTML).toBe("30%");
 
     // Test brightness of 0%
     brightness.value = "0";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0');
     expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test brightness of 0.1%
+    brightness.value = "1";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.01');
+    expect(brightOutput.innerHTML).toBe('1%');
 
     // Test brightness of 100%
     brightness.value = "100";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('1');
     expect(brightOutput.innerHTML).toBe('100%');
+
+    // Test brightness of 99.9%
+    brightness.value = "99";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.99');
+    expect(brightOutput.innerHTML).toBe('99%');
 })
 
+// The input is a slider, I cannot choose a value under 0 and above 100
 test('Change the brightness of the static club', () => {
     const visual = document.getElementById("static-visual");
     const brightness = document.getElementById("static-brightness");
@@ -221,20 +237,32 @@ test('Change the brightness of the static club', () => {
     // Test brightness of 30%
     brightness.value = "30";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.3');
     expect(brightOutput.innerHTML).toBe('30%');
 
     // Test brightness of 0%
     brightness.value = "0";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0');
     expect(brightOutput.innerHTML).toBe('0%');
+
+    // Test brightness of 0.1%
+    brightness.value = "1";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.01');
+    expect(brightOutput.innerHTML).toBe('1%');
 
     // Test brightness of 100%
     brightness.value = "100";    
     brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('1');
     expect(brightOutput.innerHTML).toBe('100%');
+     
+    // Test brightness of 99.9%
+    brightness.value = "99";    
+    brightness.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-brightness")).toBe('0.99');
+    expect(brightOutput.innerHTML).toBe('99%');
 })
 
 test('Change the saturation of the moving club', () => {
@@ -247,25 +275,37 @@ test('Change the saturation of the moving club', () => {
     expect(satOutput).not.toBeNull();
 
     // Test saturation of 30%
-    brightness.value = "30";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
-    expect(brightOutput.innerHTML).toBe('30%');
+    saturation.value = "30";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.3');
+    expect(satOutput.innerHTML).toBe('30%');
 
     // Test saturation of 0%
-    brightness.value = "0";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
-    expect(brightOutput.innerHTML).toBe('0%');
+    saturation.value = "0";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0');
+    expect(satOutput.innerHTML).toBe('0%');
+
+    // Test saturation of 0.1%
+    saturation.value = "1";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.01');
+    expect(satOutput.innerHTML).toBe('1%');
 
     // Test saturation of 100%
-    brightness.value = "100";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
-    expect(brightOutput.innerHTML).toBe('100%');
+    saturation.value = "100";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('1');
+    expect(satOutput.innerHTML).toBe('100%');
+
+    // Test saturation of 99.9%
+    saturation.value = "99";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.99');
+    expect(satOutput.innerHTML).toBe('99%');
 })
 
-test('Change the brightness of the static club', () => {
+test('Change the saturation of the static club', () => {
     const visual = document.getElementById("static-visual");
     const saturation = document.getElementById("static-saturation");
     const satOutput = document.getElementById("static-saturation-value");
@@ -275,20 +315,357 @@ test('Change the brightness of the static club', () => {
     expect(satOutput).not.toBeNull();
 
     // Test saturation of 30%
-    brightness.value = "30";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0.3);
-    expect(brightOutput.innerHTML).toBe('30%');
+    saturation.value = "30";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.3');
+    expect(satOutput.innerHTML).toBe('30%');
 
     // Test saturation of 0%
-    brightness.value = "0";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(0);
-    expect(brightOutput.innerHTML).toBe('0%');
+    saturation.value = "0";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0');
+    expect(satOutput.innerHTML).toBe('0%');
+
+    // Test saturation of 0.1%
+    saturation.value = "1";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.01');
+    expect(satOutput.innerHTML).toBe('1%');
 
     // Test saturation of 100%
-    brightness.value = "100";    
-    brightness.dispatchEvent(new Event("input"));
-    expect(visual.style.getPropertyValue("--visual-brightness")).toBe(100);
-    expect(brightOutput.innerHTML).toBe('100%');
+    saturation.value = "100";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('1');
+    expect(satOutput.innerHTML).toBe('100%');
+
+    // Test saturation of 99.9%
+    saturation.value = "99";    
+    saturation.dispatchEvent(new Event("input"));
+    expect(visual.style.getPropertyValue("--visual-saturation")).toBe('0.99');
+    expect(satOutput.innerHTML).toBe('99%');
+})
+
+test('Testing the Zoom on the moving club', () => {
+    const movingZoomOut = document.getElementById("moving-zoom-out");
+    const movingZoomIn = document.getElementById("moving-zoom-in");
+    const movingZoomValue = document.getElementById("moving-zoom-value");
+    const movingClub = document.getElementById("clubDivision");
+
+    expect(movingZoomOut).not.toBeNull();
+    expect(movingZoomIn).not.toBeNull();
+    expect(movingZoomValue).not.toBeNull();
+    expect(movingClub).not.toBeNull();
+    // added the DOMContentLoaded otherwise the test fails. Everything in the controls.js file is inside it
+    document.addEventListener("DOMContentLoaded", function () {
+        // testing zoom out
+        movingZoomOut.click();
+        expect(movingClub.style.getPropertyValue("--preview-zoom")).toBe('0.75');
+        expect(movingZoomValue.innerHTML).toBe('75%');
+        expect(movingZoomOut).toBeDisabled();
+        expect(movingZoomIn).not.toBeDisabled();
+
+        // can't try to zoom out more because the button is disabled
+        // test zoom in
+        movingZoomIn.click();
+        expect(movingClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(movingZoomValue.innerHTML).toBe('100%');
+        expect(movingZoomIn).not.toBeDisabled();
+        expect(movingZoomOut).not.toBeDisabled();
+
+        // test zoom in
+        movingZoomIn.click();
+        expect(movingClub.style.getPropertyValue("--preview-zoom")).toBe('1.25');
+        expect(movingZoomValue.innerHTML).toBe('125%');
+        expect(movingZoomIn).toBeDisabled();
+        expect(movingZoomOut).not.toBeDisabled();
+    })
+
+})
+
+test('Testint the Zoom on the static club', () => {
+    const staticZoomOut = document.getElementById("static-zoom-out");
+    const staticZoomIn = document.getElementById("static-zoom-in");
+    const staticZoomValue = document.getElementById("static-zoom-value");
+    const staticClub = document.getElementById("static-transform");
+
+    expect(staticZoomOut).not.toBeNull();
+    expect(staticZoomIn).not.toBeNull();
+    expect(staticZoomValue).not.toBeNull();
+    expect(staticClub).not.toBeNull();
+    // added the DOMContentLoaded otherwise the test fails. Everything in the controls.js file is inside it
+    document.addEventListener("DOMContentLoaded", function () {
+        // testing zoom out
+        staticZoomOut.click();
+        expect(staticClub.style.getPropertyValue("--preview-zoom")).toBe('0.75');
+        expect(staticZoomValue.innerHTML).toBe('75%');
+        expect(staticZoomOut).toBeDisabled();
+        expect(staticZoomIn).not.toBeDisabled();
+
+        // can't try to zoom out more because the button is disabled
+        // test zoom in
+        staticZoomIn.click();
+        expect(staticClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(staticZoomValue.innerHTML).toBe('100%');
+        expect(staticZoomIn).not.toBeDisabled();
+        expect(staticZoomOut).not.toBeDisabled();
+
+        // test zoom in
+        staticZoomIn.click();
+        expect(staticClub.style.getPropertyValue("--preview-zoom")).toBe('1.25');
+        expect(staticZoomValue.innerHTML).toBe('125%');
+        expect(staticZoomIn).toBeDisabled();
+        expect(staticZoomOut).not.toBeDisabled();
+    })
+})
+
+test('Test the orientation of the static club', () => {
+    const rotateLeft = document.getElementById("static-rotate-left");
+    const rotateRight = document.getElementById("static-rotate-right");
+    const resetOrientation = document.getElementById("static-reset-orientation");
+    const staticClub = document.getElementById("static-transform");
+
+    expect(rotateLeft).not.toBeNull();
+    expect(rotateRight).not.toBeNull();
+    expect(resetOrientation).not.toBeNull();
+    expect(staticClub).not.toBeNull();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // test left rotation - rotate 90 deg each time
+        // 1/4 rotation to the left
+        rotateLeft.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('270');
+        // 1/2 rotation
+        rotateLeft.click();
+        // 3/4 rotation to the left
+        rotateLeft.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('90');
+        // full rotation
+        rotateLeft.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
+
+        // test right rotation - rotate 90 deg each time
+        // 1/4 rotation to the right
+        rotateRight.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('90');
+        // 1/2 rotation
+        rotateRight.click();
+        // 3/4 rotation to the right
+        rotateRight.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('270');
+        // full rotation
+        rotateRight.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
+
+        // test reset orientation
+        rotateLeft.click();
+        resetOrientation.click();
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
+    })
+})
+// test resetSlider
+test('Reset to default view', () => {
+    const slider = document.getElementById("colourSlider"); // potentially fix in js
+    const clubBody = document.getElementById("clubBody");
+    const clubHandle = document.getElementById("clubHandle");
+    const bodyMov = document.getElementById("BodyMov");
+    const handleMov = document.getElementById("HandleMov");
+    const option = document.getElementById("options");
+    const img = document.getElementById("img");
+    const button = document.getElementById("view-button");
+    // const modeName = document.getElementById("mode_name");
+    const svgMoving = document.getElementById("svg_moving");
+    const svgStill = document.getElementById("svg_still");
+    const canvasMoving = document.getElementById("canvas_moving");
+    const canvasStill = document.getElementById("canvas_still");
+    const resetButton = document.getElementById("reset-simulator");
+    const control = document.getElementById("moving-speed");
+    const label = document.getElementById("moving-speed-value");
+    const staticClub = document.getElementById("static-transform");
+    const staticZoomOut = document.getElementById("static-zoom-out");
+    const staticZoomIn = document.getElementById("static-zoom-in");
+    const staticZoomValue = document.getElementById("static-zoom-value");
+    const movingZoomOut = document.getElementById("static-zoom-out");
+    const movingZoomIn = document.getElementById("static-zoom-in");
+    const movingZoomValue = document.getElementById("moving-zoom-value");
+    const movingClub = document.getElementById("clubDivision");
+    const rotateLeft = document.getElementById("static-rotate-left");
+    const visualMov = document.getElementById("moving-visual");
+    const brightnessMov = document.getElementById("moving-brightness");
+    const brightOutputMov = document.getElementById("moving-brightness-value");
+    const visualStatic = document.getElementById("static-visual");
+    const brightnessStatic = document.getElementById("static-brightness");
+    const brightOutputStatic = document.getElementById("static-brightness-value");
+    const saturationMov = document.getElementById("moving-saturation");;
+    const satOutputMov = document.getElementById("moving-saturation-value");
+    const saturationStatic = document.getElementById("static-saturation");
+    const satOutputStatic = document.getElementById("static-saturation-value");
+
+
+    expect(slider).not.toBeNull();
+    expect(clubBody).not.toBeNull();
+    expect(clubHandle).not.toBeNull();
+    expect(bodyMov).not.toBeNull();
+    expect(handleMov).not.toBeNull();
+    expect(option).not.toBeNull();
+    expect(img).not.toBeNull();
+    expect(button).not.toBeNull();
+
+    expect(svgMoving).not.toBeNull();
+    expect(svgStill).not.toBeNull();
+    expect(canvasMoving).not.toBeNull();
+    expect(canvasStill).not.toBeNull();
+    expect(resetButton).not.toBeNull();
+    expect(staticClub).not.toBeNull();
+
+    expect(control).not.toBeNull();
+    expect(label).not.toBeNull();
+
+    expect(staticZoomIn).not.toBeNull();
+    expect(staticZoomOut).not.toBeNull();
+    expect(staticZoomValue).not.toBeNull();
+    expect(movingZoomIn).not.toBeNull();
+    expect(movingZoomOut).not.toBeNull();
+    expect(movingZoomValue).not.toBeNull();
+    expect(movingClub).not.toBeNull();
+    expect(rotateLeft).not.toBeNull();
+    
+    expect(visualMov).not.toBeNull();
+    expect(brightnessMov).not.toBeNull();
+    expect(brightOutputMov).not.toBeNull();
+    expect(visualStatic).not.toBeNull();
+    expect(brightnessStatic).not.toBeNull();
+    expect(brightOutputStatic).not.toBeNull();
+
+    expect(saturationMov).not.toBeNull();
+    expect(satOutputMov).not.toBeNull();
+    expect(saturationStatic).not.toBeNull();
+    expect(satOutputStatic).not.toBeNull();
+
+    // change the handle color
+    handleButton.click();
+    slider.value = "20";    
+    slider.dispatchEvent(new Event("input"));
+
+    // change the body color
+    bodyButton.click();
+    slider.value = "145";    
+    slider.dispatchEvent(new Event("input"));
+
+    // Increase the speed of the moving club
+    control.value = "250";    
+    control.dispatchEvent(new Event("input"));
+
+    // lower the brightness and saturation of the moving club
+    brightnessMov.value = "10";    
+    brightnessMov.dispatchEvent(new Event("input"));
+    saturationMov.value = "0";    
+    saturationMov.dispatchEvent(new Event("input"));
+
+    // lower the brightness and saturation of the moving club
+    brightnessStatic.value = "50";    
+    brightnessStatic.dispatchEvent(new Event("input"));
+    saturationStatic.value = "30";    
+    saturationStatic.dispatchEvent(new Event("input"));
+
+    // Zoom in on the moving club
+    movingZoomIn.click();
+
+    // Zoom out on the static club
+    staticZoomOut.click();
+
+    // rotate club to the left
+    rotateLeft.click();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        resetButton.click();
+        // reset the color of the handle and body
+        expect(handle.getAttribute("fill")).toBe('white');
+        expect(handleMov.getAttribute("fill")).toBe('white');
+        expect(club.getAttribute("fill")).toBe('grey');
+        expect(clubMov.getAttribute("fill")).toBe("grey");
+        expect(canvasStill.style.display).toBe('none');
+        expect(canvasMov.style.display).toBe('none');
+        expect(svgStill.style.display).toBe('block');
+        expect(svgMov.style.display).toBe('block');
+
+        // reset speed
+        expect(window.jestersSpeed).toBe(1);
+        expect(label.innerHTML).toBe('1.0×')
+        expect(clubMov.style.animationPlayState).toBe('running');
+        expect(clubMov.style.animationDuration).toBe('1s');
+
+        // reset brightness and saturation for the moving club
+        expect(visualMov.style.getPropertyValue("--visual-brightness")).toBe('1.0');
+        expect(brightOutputMov.innerHTML).toBe("100%");
+        expect(visualMov.style.getPropertyValue("--visual-saturation")).toBe('1.0');
+        expect(satOutputMov.innerHTML).toBe("100%");
+
+        // reset brightness and saturation for the static club
+        expect(visualStatic.style.getPropertyValue("--visual-brightness")).toBe('1.0');
+        expect(brightOutputStatic.innerHTML).toBe("100%");
+        expect(visualStatic.style.getPropertyValue("--visual-saturation")).toBe('1.0');
+        expect(satOutputStatic.innerHTML).toBe("100%");
+
+        // reset zoom on the moving club
+        expect(movingClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(movingZoomValue.innerHTML).toBe('100%');
+        expect(movingZoomIn).not.toBeDisabled();
+        expect(movingZoomOut).not.toBeDisabled();
+
+        // reset zoom on the static club
+        expect(staticClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(staticZoomValue.innerHTML).toBe('100%');
+        expect(staticZoomIn).not.toBeDisabled();
+        expect(staticZoomOut).not.toBeDisabled();
+
+        // reset the orientation
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
+
+
+
+        // Change the color to a mode and reset
+        option.value = 'p1_8_air';
+        button.click();  
+        expect(img.src).toContain('img/p1_8_air.png');
+
+        resetButton.click();
+        // reset the color of the handle and body
+        expect(handle.getAttribute("fill")).toBe('white');
+        expect(handleMov.getAttribute("fill")).toBe('white');
+        expect(club.getAttribute("fill")).toBe('grey');
+        expect(clubMov.getAttribute("fill")).toBe("grey");
+
+        // reset speed
+        expect(window.jestersSpeed).toBe(1);
+        expect(label.innerHTML).toBe('1.0×')
+        expect(clubMov.style.animationPlayState).toBe('running');
+        expect(clubMov.style.animationDuration).toBe('1s');
+
+        // reset brightness and saturation for the moving club
+        expect(visualMov.style.getPropertyValue("--visual-brightness")).toBe('1.0');
+        expect(brightOutputMov.innerHTML).toBe("100%");
+        expect(visualMov.style.getPropertyValue("--visual-saturation")).toBe('1.0');
+        expect(satOutputMov.innerHTML).toBe("100%");
+
+        // reset brightness and saturation for the static club
+        expect(visualStatic.style.getPropertyValue("--visual-brightness")).toBe('1.0');
+        expect(brightOutputStatic.innerHTML).toBe("100%");
+        expect(visualStatic.style.getPropertyValue("--visual-saturation")).toBe('1.0');
+        expect(satOutputStatic.innerHTML).toBe("100%");
+
+        // reset zoom on the moving club
+        expect(movingClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(movingZoomValue.innerHTML).toBe('100%');
+        expect(movingZoomIn).not.toBeDisabled();
+        expect(movingZoomOut).not.toBeDisabled();
+
+        // reset zoom on the static club
+        expect(staticClub.style.getPropertyValue("--preview-zoom")).toBe('1');
+        expect(staticZoomValue.innerHTML).toBe('100%');
+        expect(staticZoomIn).not.toBeDisabled();
+        expect(staticZoomOut).not.toBeDisabled();
+
+        // reset the orientation
+        expect(staticClub.style.getPropertyValue("--static-angle")).toBe('0');
+    })
 })
