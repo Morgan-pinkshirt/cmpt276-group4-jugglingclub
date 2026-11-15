@@ -66,10 +66,19 @@ public class savecontroller { // this only deal with ids and stuff
         if (!roleService.isLoggedIn(session)) {
         return "redirect:/home";
     }   
+
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
+
+        
         if(currentsave == null){
             session.setAttribute("message", "ERROR: can not find save"); 
+            return "redirect:/home";
+        }
+        if(currentsave.getProductType().equals("ball")){
+        
+            session.setAttribute("message", "balls are not currenty functional on 2d simulator"); 
+        
             return "redirect:/home";
         }
 
@@ -85,12 +94,7 @@ public class savecontroller { // this only deal with ids and stuff
         if(currentsave.getSpin() == null){
             currentsave.setSpin("1");
         }
-        if(currentsave.getProductType() == "ball"){
         
-            session.setAttribute("message", "balls are not currenty functional on 2d simulator"); 
-        
-            return "redirect:/home";
-        }
 
         model.addAttribute("currentSave", currentsave);
 
@@ -189,20 +193,22 @@ public class savecontroller { // this only deal with ids and stuff
         int id = Integer.parseInt(UID);
         save currentsave = saveREPO.findByUid(id).orElse(null);
 
+        
+
         if(currentsave == null){
             session.setAttribute("message", "ERROR: can not find save"); 
         
             return "redirect:/home";
 
         }
-
-
-        if(currentsave.getProductType() == "ball"){
+        if(currentsave.getProductType().equals("ball")){
         
             session.setAttribute("message", "balls are not currenty functional on 2d simulator"); 
         
             return "redirect:/home";
         }
+
+        
 
         model.addAttribute("currentSave", currentsave);
         model.addAttribute("UID",UID);
