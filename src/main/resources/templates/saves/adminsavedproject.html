@@ -35,19 +35,25 @@
                 <table class="accounts-table">
                     <thead>
                         <tr>
-                            <th>UID</th>
                             <th>projectname</th>
                             <th>owner</th>
-                            <th>view</th>
+                            <th>3D</th>
+                            <th>2D</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="project : ${projects}">
-                            <td th:text="${project.uid}">1</td>
-                            <td th:text="${project.projectname}">projectname</td>
+                            <td th:text="${project.projectname}">projectname
+                            </td>
                             <td th:text="${project.name}">owner</td>
-                            <td>
+                            <td> 
                                 <form th:action="@{/viewproject}" method="post">
+                                    <input type="hidden" name="UID" th:value="${project.uid}">
+                                    <button class="member-button" type="submit">view</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{/2dviewproject}" method="post">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
                                     <button class="member-button" type="submit">view</button>
                                 </form>

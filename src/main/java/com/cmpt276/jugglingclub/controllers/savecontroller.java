@@ -163,5 +163,16 @@ public class savecontroller { // this only deal with ids and stuff
         return "sim/adminview";
     }
     
-        
+
+        @PostMapping("/2dviewproject")
+    public String viewproject2d(@RequestParam String UID,Model model, HttpSession session) {
+        if (!roleService.isAdmin(session)) {
+        return "redirect:/home";
+    }   
+        int id = Integer.parseInt(UID);
+        save currentsave = saveREPO.findByUid(id).orElse(null);
+        model.addAttribute("currentSave", currentsave);
+        model.addAttribute("UID",UID);
+        return "sim/2dadminview";
+    }
 }

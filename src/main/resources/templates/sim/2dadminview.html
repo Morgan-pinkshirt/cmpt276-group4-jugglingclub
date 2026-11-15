@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Simulation | TheJestersClub</title>
+    <base th:href="@{/2d-sim/}" href="/2d-sim/">
+    <link rel="stylesheet" th:href="@{/2d-sim/style.css}">
+    <link rel="stylesheet" th:href="@{/2d-sim/moving.css}">
+    <link rel="stylesheet" th:href="@{/2d-sim/sim.css}">
+    <script
+        src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"defer>
+    </script>
+</head>
+<body>
+<div class="studio-shell">
+    <header class="studio-header">
+        <div class="brand">
+            <i data-lucide="drama"></i>
+            <span>The Jesters Club</span>
+        </div>
+        <a th:href="@{/home}"
+            href="/home"
+            class="back-button">
+            <i data-lucide="arrow-left"></i>
+            <span>Back to Home</span>
+        </a>
+        <style>
+        select, input[type="color"] { 
+            padding: 5px 8px; 
+            margin-top: 3px; 
+            margin-bottom: 8px;
+            border-radius: 4px;
+            border: 1px solid #444; 
+            background: #222; 
+            color: #fff; 
+            cursor: pointer;
+            width: 100%;
+        }
+        input[type="color"] { 
+            height: 32px; 
+            padding: 2px; 
+        }
+        </style>
+    </header>
+    <main>
+        <section class="page-intro">
+            <h1>2D Simulation</h1>
+            <p>
+                Design, customize, and preview your
+                LED juggling club in real time.
+            </p>
+        </section>
+        <section class="universal-controls">
+            <div class="universal-intro">
+                <i data-lucide="settings"></i>
+                <div>
+                    <h2 id="universal-heading">
+                        Design Controls
+                    </h2>
+                    <p>
+                        <form action="/deleteproject" method = "POST" id ="savingform">
+<label for="projectname">projectname:</label>
+<input type="submit" value = "delete">
+<input type="hidden" id="projectname" name="projectname" th:value="${currentSave.projectname}">
+<input type="hidden" name="productType" id = "hproductType"th:value="${currentSave.productType}">
+<input type="hidden" name="productColor" id="hproductColor" th:value="${currentSave.productColor}">
+<input type="hidden" name="bodyColor" id="hbodyColor" th:value="${currentSave.bodyColor}">
+<input type="hidden" name="UID" th:value="${UID}">
+<input type="hidden" name="brightness" id = "hbright" th:value="${currentSave.brightness}">
+<input type="hidden" name="saturation" id="hsat" th:value="${currentSave.saturation}">
+<input type="hidden" name="effect" id="heffect" th:value="${currentSave.effect}">
+<input type="hidden" name="spin" id="hspin" th:value="${currentSave.spin}">
+
+                        </form>
+                        Test and explore colours and lighting effects on a rotating club preview.
+                    </p>
+                </div>
+            </div>
+            <div class="universal-section">
+                <span class="control-title">
+                    <i data-lucide="mouse-pointer-2"></i>
+                
+                </span>
+                <div class="part-switch">
+                    <button type="button"
+                            id="bodyButton"
+                            class="active">
+                            Juggling Club Body
+                    </button>
+                    <button type="button"
+                            id="handleButton">
+                            Juggling Club Handle
+                    </button>
+                </div>
+            </div>
+            <div class="universal-section">
+                <label for="colourSlider" class="control-title">
+                    <i data-lucide="palette"></i>
+                    Color Slider
+                </label>
+                <input
+                    type="hidden"
+                    id="colorSlider"
+                    th:value="${currentSave.productColor}">
+            </div>
+            <div class="universal-section">
+                <label for="options" class="control-title">
+                    <i data-lucide="sliders-horizontal"></i>
+                    Lighting Effect (Cannot be separated by Juggling Club Part)
+                </label>
+                <form class="mode-form" onsubmit="return false">
+                    <fieldset>
+                        <legend class="sr-only">
+                            Preview a lighting effect
+                        </legend>
+                        <div class="effect-row">
+                            <select id="options" hidden>
+                                <option value="none" th:selected="${'none' == currentSave.effect}">-- None (Solid Color) --</option>
+            <optgroup label="Page 1">
+                <option value="p1_1_rainbow" th:selected="${'p1_1_rainbow' == currentSave.effect}">Rainbow</option>
+                <option value="p1_2_rainbow_drops" th:selected="${'p1_2_rainbow_drops' == currentSave.effect}">Rainbow Drops</option>
+                <option value="p1_3_bold" th:selected="${'p1_3_bold' == currentSave.effect}">Bold</option>
+                <option value="p1_4_lantern" th:selected="${'p1_4_lantern' == currentSave.effect}">Lantern</option>
+                <option value="p1_5_fire" th:selected="${'p1_5_fire' == currentSave.effect}">Fire</option>
+                <option value="p1_6_water" th:selected="${'p1_6_water' == currentSave.effect}">Water</option>
+                <option value="p1_7_earth" th:selected="${'p1_7_earth' == currentSave.effect}">Earth</option>
+                <option value="p1_8_air" th:selected="${'p1_8_air' == currentSave.effect}">Air</option>
+                <option value="p1_9_spirit" th:selected="${'p1_9_spirit' == currentSave.effect}">Spirit</option>
+                <option value="p1_10_pulse" th:selected="${'p1_10_pulse' == currentSave.effect}">Pulse</option>
+            </optgroup>
+            <optgroup label="Page 2">
+                <option value="p2_1_candy" th:selected="${'p2_1_candy' == currentSave.effect}">Candy</option>
+                <option value="p2_2_petals" th:selected="${'p2_2_petals' == currentSave.effect}">Petals</option>
+                <option value="p2_3_love" th:selected="${'p2_3_love' == currentSave.effect}">Love</option>
+                <option value="p2_4_watermelon" th:selected="${'p2_4_watermelon' == currentSave.effect}">Watermelon</option>
+                <option value="p2_5_freedom" th:selected="${'p2_5_freedom' == currentSave.effect}">Freedom</option>
+                <option value="p2_6_microdots" th:selected="${'p2_6_microdots' == currentSave.effect}">Microdots</option>
+                <option value="p2_7_unicorn" th:selected="${'p2_7_unicorn' == currentSave.effect}">Unicorn</option>
+                <option value="p2_8_blue_blazer" th:selected="${'p2_8_blue_blazer' == currentSave.effect}">Blue Blazer</option>
+                <option value="p2_9_solar_flare" th:selected="${'p2_9_solar_flare' == currentSave.effect}">Solar Flare</option>
+                <option value="p2_10_strobe" th:selected="${'p2_10_strobe' == currentSave.effect}">Strobe</option>
+            </optgroup>
+            <optgroup label="Page 3">
+                <option value="p3_1_flamebow" th:selected="${'p3_1_flamebow' == currentSave.effect}">Flamebow</option>
+                <option value="p3_3_liquid_sugar" th:selected="${'p3_3_liquid_sugar' == currentSave.effect}">Liquid Sugar</option>
+                <option value="p3_4_rainbow_dash" th:selected="${'p3_4_rainbow_dash' == currentSave.effect}">Rainbow Dash</option>
+                <option value="p3_5_fireball" th:selected="${'p3_5_fireball' == currentSave.effect}">Fireball</option>
+                <option value="p3_6_froth" th:selected="${'p3_6_froth' == currentSave.effect}">Froth</option>
+                <option value="p3_8_bolder" th:selected="${'p3_8_bolder' == currentSave.effect}">Bolder</option>
+                <option value="p3_9_sunset" th:selected="${'p3_9_sunset' == currentSave.effect}">Sunset</option>
+                <option value="p3_10_daybreak" th:selected="${'p3_10_daybreak' == currentSave.effect}">Daybreak</option>
+            </optgroup>
+            <optgroup label="Page 13">
+                <option value="p13_1_flames" th:selected="${'p13_1_flames' == currentSave.effect}">Flames</option>
+                <option value="p13_2_skittles" th:selected="${'p13_2_skittles' == currentSave.effect}">Skittles</option>
+                <option value="p13_3_rainbow_brite" th:selected="${'p13_3_rainbow_brite' == currentSave.effect}">Rainbow Brite</option>
+                <option value="p13_4_party_fish" th:selected="${'p13_4_party_fish' == currentSave.effect}">Party Fish</option>
+                <option value="p13_5_candle" th:selected="${'p13_5_candle' == currentSave.effect}">Candle</option>
+                <option value="p13_6_rainbow_fade" th:selected="${'p13_6_rainbow_fade' == currentSave.effect}">Rainbow Fade</option>
+                <option value="p13_7_OG_candy" th:selected="${'p13_7_OG_candy' == currentSave.effect}">OG Candy</option>
+                <option value="p13_8_bouncer" th:selected="${'p13_8_bouncer' == currentSave.effect}">Bouncer</option>
+                <option value="p13_9_kinetic_colors" th:selected="${'p13_9_kinetic_colors' == currentSave.effect}">Kinetic Colors</option>
+                <option value="p13_10_rave9000" th:selected="${'p13_10_rave9000' == currentSave.effect}">Rave9000</option>
+                <option value="p13_11_balance_point" th:selected="${'p13_11_balance_point' == currentSave.effect}">Balance Point</option>
+                <option value="p13_12_expandoblob" th:selected="${'p13_12_expandoblob' == currentSave.effect}">Expandoblob</option>
+                <option value="p13_13_baby_spice" th:selected="${'p13_13_baby_spice' == currentSave.effect}">Baby Spice</option>
+                <option value="p13_14_responsive_rainbow_fade" th:selected="${'p13_14_responsive_rainbow_fade' == currentSave.effect}">Responsive Rainbow Fade</option>
+                <option value="p13_15_poke_bowl" th:selected="${'p13_15_poke_bowl' == currentSave.effect}">Poke Bowl</option>
+                <option value="p13_16_mr._bones" th:selected="${'p13_16_mr._bones' == currentSave.effect}">Mr. Bones</option>
+                <option value="p13_17_bonus_bonanza" th:selected="${'p13_17_bonus_bonanza' == currentSave.effect}">Bonus Bonanza</option>
+                <option value="p13_18_OG_strobe" th:selected="${'p13_18_OG_strobe' == currentSave.effect}">OG Strobe</option>
+                <option value="p13_19_lightning_bug" th:selected="${'p13_19_lightning_bug' == currentSave.effect}">Lightning Bug</option>
+                <option value="p13_20_day_club" th:selected="${'p13_20_day_club' == currentSave.effect}">Day Club</option>
+                <option value="p13_21_rainbizzle" th:selected="${'p13_21_rainbizzle' == currentSave.effect}">Rainbizzle</option>
+                <option value="p13_22_fruit_basket" th:selected="${'p13_22_fruit_basket' == currentSave.effect}">Fruit Basket</option>
+                <option value="p13_23_marvin_mode" th:selected="${'p13_23_marvin_mode' == currentSave.effect}">Marvin's Mode</option>
+                <option value="p13_24_hidden_rainbow" th:selected="${'p13_24_hidden_rainbow' == currentSave.effect}">Hidden Rainbow</option>
+                <option value="p13_25_rainbow_bridge" th:selected="${'p13_25_rainbow_bridge' == currentSave.effect}">Rainbow Bridge</option>
+                <option value="p13_26_OG_sparkles" th:selected="${'p13_26_OG_sparkles' == currentSave.effect}">OG Sparkles</option>
+                <option value="p13_27_day_club_II" th:selected="${'p13_27_day_club_II' == currentSave.effect}">Day Club II</option>
+                <option value="p13_28_ghost" th:selected="${'p13_28_ghost' == currentSave.effect}">Ghost</option>
+                <option value="p13_29_sega_genesis" th:selected="${'p13_29_sega_genesis' == currentSave.effect}">Sega Genesis</option>
+                <option value="p13_30_sean_bane" th:selected="${'p13_30_sean_bane' == currentSave.effect}">Sean's Bane</option>
+                <option value="p13_31_gulp_chug" th:selected="${'p13_31_gulp_chug' == currentSave.effect}">Gulp Chug</option>
+                <option value="p13_32_OG_watermelon" th:selected="${'p13_32_OG_watermelon' == currentSave.effect}">OG Watermelon</option>
+                <option value="p13_33_rainbow_dashish" th:selected="${'p13_33_rainbow_dashish' == currentSave.effect}">Rainbow Dashish</option>
+                <option value="p13_34_OG_rainbow_dash" th:selected="${'p13_34_OG_rainbow_dash' == currentSave.effect}">OG Rainbow Dash</option>
+                <option value="p13_35_thumb_light" th:selected="${'p13_35_thumb_light' == currentSave.effect}">Thumb Light</option>
+                <option value="p13_36_euro_2" th:selected="${'p13_36_euro_2' == currentSave.effect}">Euro 2</option>
+                <option value="p13_37_OG_rainbow_drops" th:selected="${'p13_37_OG_rainbow_drops' == currentSave.effect}">OG Rainbow Drops</option>
+                <option value="p13_38_alt_pulse" th:selected="${'p13_38_alt_pulse' == currentSave.effect}">Alt Pulse</option>
+                <option value="p13_39_lightning_storm" th:selected="${'p13_39_lightning_storm' == currentSave.effect}">Lightning Storm</option>
+                <option value="p13_40_sparkle_pony" th:selected="${'p13_40_sparkle_pony' == currentSave.effect}">Sparkle Pony</option>
+                <option value="p13_41_thing2_-_nebula" th:selected="${'p13_41_thing2_-_nebula' == currentSave.effect}">Thing2 - Nebula</option>
+                <option value="p13_42_OG_lantern" th:selected="${'p13_42_OG_lantern' == currentSave.effect}">OG Lantern</option>
+                <option value="p13_43_sorcerer" th:selected="${'p13_43_sorcerer' == currentSave.effect}">Sorcerer</option>
+                <option value="p13_44_ice_cream_soda" th:selected="${'p13_44_ice_cream_soda' == currentSave.effect}">Ice Cream Soda</option>
+                <option value="p13_45_adventure_time" th:selected="${'p13_45_adventure_time' == currentSave.effect}">Adventure Time</option>
+                <option value="p13_46_flintstones_-_candy_corn" th:selected="${'p13_46_flintstones_-_candy_corn' == currentSave.effect}">Flintstones - Candy Corn</option>
+                <option value="p13_47_indiana_jones" th:selected="${'p13_47_indiana_jones' == currentSave.effect}">Indiana Jones</option>
+                <option value="p13_48_zen" th:selected="${'p13_48_zen' == currentSave.effect}">Zen</option>
+                <option value="p13_49_candy_crush" th:selected="${'p13_49_candy_crush' == currentSave.effect}">Candy Crush</option>
+                <option value="p13_50_5-O" th:selected="${'p13_50_5-O' == currentSave.effect}">5-O</option>
+            </optgroup>
+        </select>
+                            </select>
+                            <input
+                                type="hidden"
+                                
+                                id="view-button"
+                                value="View">
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            
+        </section>
+        <div class="simulations-grid">
+            <section id="moving" class="model simulator-card">
+                <div class="card-content">
+                    <div class="preview-stage moving-preview">
+                        <div class="club-visual" id="moving-visual">
+                            <div id="clubDivision">
+                                <div style="display:none">
+                                    <img
+                                        id="img"
+                                        th:src="@{/2d-sim/img/p1_1_rainbow.png}"
+                                        alt="">
+                                </div>
+                                <svg
+                                    id="svg_moving"
+                                    width="120"
+                                    height="300"
+                                    viewBox="0 0 120 300">
+                                    <path
+                                        id="BodyMov"
+                                        d="M60 20 C20 20 25 100 50 160 L70 160 C95 100 100 20 60 20"
+                                        fill="grey">
+                                    </path>
+                                    <rect
+                                        id="HandleMov"
+                                        x="50"
+                                        y="160"
+                                        width="20"
+                                        height="110"
+                                        fill="white">
+                                    </rect>
+                                    <rect
+                                        x="47"
+                                        y="265"
+                                        width="26"
+                                        height="15"
+                                        rx="15"
+                                        fill="black">
+                                    </rect>
+                                </svg>
+                                <canvas
+                                    id="canvas_moving"
+                                    width="200"
+                                    height="400">
+                                </canvas>
+                            </div>
+                        </div>
+                        <div class="preview-toolbar">
+                            <button
+                                type="button"
+                                id="moving-zoom-out"
+                                class="tool-button"
+                                title="Zoom out">
+                                <i data-lucide="minus"></i>
+                            </button>
+                            <output
+                                id="moving-zoom-value"
+                                class="zoom-value">
+                                100%
+                            </output>
+                            <button
+                                type="button"
+                                id="moving-zoom-in"
+                                class="tool-button"
+                                title="Zoom in">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="details-column">
+                        <div class="card-heading">
+                            <i data-lucide="refresh-cw"
+                                class="heading-icon"></i>
+                            <div>
+                                <h2 id="moving-heading">
+                                    Rotating Club Preview
+                                </h2>
+                                <p>
+                                    Test and explore colours and lighting effects on a static club preview.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="adjustment-panel">
+                            <h3>Lighting Adjustments</h3>
+                            <div class="adjustment-divider"></div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-brightness">
+                                        <i data-lucide="sun"></i>
+                                        Brightness Level
+                                    </label>
+                                    <output
+                                        id="moving-brightness-value"
+                                        for="moving-brightness">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    id="moving-brightness"
+                                    min="0"
+                                    step="0.05"
+                                    max="3"
+                                    th:value="${currentSave.brightness}">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-saturation">
+                                        <i data-lucide="droplet"></i>
+                                        Saturation Level
+                                    </label>
+                                    <output
+                                        id="moving-saturation-value"
+                                        for="moving-saturation">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    id="moving-saturation"
+                                    min="0"
+                                    max="3"
+                                    step="0.05"
+                                    th:value="${currentSave.saturation}">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="moving-speed">
+                                        <i data-lucide="gauge"></i>
+                                        Rotation Speed
+                                    </label>
+                                    <output
+                                        id="moving-speed-value"
+                                        for="moving-speed">
+                                        1.0×
+                                    </output>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    id="moving-speed"
+                                    min="0"
+                                    max="400"
+                                    step="10"
+                                    th:value="${currentSave.spin}">
+                            </div>
+                            <h4 id="mode_name"
+                                aria-live="polite">
+                                Page 1 - #1 - Rainbow
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                id="static"
+                class="model simulator-card">
+                <div class="card-content">
+                    <div class="preview-stage static-preview">
+                        <div class="club-visual" id="static-visual">
+                            <div id="static-transform">
+                                <svg
+                                    id="svg_still"
+                                    width="120"
+                                    height="300"
+                                    viewBox="0 0 120 300">
+                                    <path
+                                        id="clubBody"
+                                        d="M60 20 C20 20 25 100 50 160 L70 160 C95 100 100 20 60 20"
+                                        fill="grey">
+                                    </path>
+                                    <rect
+                                        id="clubHandle"
+                                        x="50"
+                                        y="160"
+                                        width="20"
+                                        height="110"
+                                        fill="white">
+                                    </rect>
+                                    <rect
+                                        x="47"
+                                        y="265"
+                                        width="26"
+                                        height="15"
+                                        rx="15"
+                                        fill="black">
+                                    </rect>
+                                </svg>
+                                <canvas
+                                    id="canvas_still"
+                                    width="200"
+                                    height="400">
+                                </canvas>
+                            </div>
+                        </div>
+                        <div class="orientation-toolbar">
+                            <button
+                                type="button"
+                                id="static-rotate-left"
+                                class="tool-button"
+                                title="Rotate left 90 degrees">
+                                <i data-lucide="rotate-ccw"></i>
+                            </button>
+                            <button
+                                type="button"
+                                id="static-rotate-right"
+                                class="tool-button"
+                                title="Rotate right 90 degrees">
+                                <i data-lucide="rotate-cw"></i>
+                            </button>
+                            <button
+                                type="button"
+                                id="static-reset-orientation"
+                                class="tool-button"
+                                title="Reset orientation">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>
+                        </div>
+                        <div class="preview-toolbar">
+                            <button
+                                type="button"
+                                id="static-zoom-out"
+                                class="tool-button"
+                                title="Zoom out">
+                                <i data-lucide="minus"></i>
+                            </button>
+                            <output
+                                id="static-zoom-value"
+                                class="zoom-value">
+                                100%
+                            </output>
+                            <button
+                                type="button"
+                                id="static-zoom-in"
+                                class="tool-button"
+                                title="Zoom in">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="details-column">
+                        <div class="card-heading">
+                            <i data-lucide="layers"
+                                class="heading-icon"></i>
+                            <div>
+                                <h2 id="static-heading">
+                                    Static Club Preview
+                                </h2>
+                                <p>
+                                    Test and explore colours and lighting effects on a static club preview.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="adjustment-panel">
+                            <h3>Lighting Settings & Adjustments</h3>
+                            <div class="adjustment-divider"></div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="static-brightness">
+                                        <i data-lucide="sun"></i>
+                                        Brightness Level
+                                    </label>
+                                    <output
+                                        id="static-brightness-value"
+                                        for="static-brightness">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    id="static-brightness"
+                                    min="0"
+                                    max="3"
+                                    step="0.05"
+                                    th:value="${currentSave.brightness}">
+                            </div>
+                            <div class="setting">
+                                <div class="setting-heading">
+                                    <label
+                                        class="setting-label"
+                                        for="static-saturation">
+                                        <i data-lucide="droplet"></i>
+                                        Saturation Level
+                                    </label>
+                                    <output
+                                        id="static-saturation-value"
+                                        for="static-saturation">
+                                        100%
+                                    </output>
+                                </div>
+                                <input
+                                    type="hidden"
+                                    id="static-saturation"
+                                    th:value="${currentSave.saturation}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <footer class="studio-footer">
+        <p>The Jester Club - CMPT 276 Group 4</p>
+    </footer>
+</div>
+<script th:src="@{/2d-sim/moving.js}" defer></script>
+<script th:src="@{/2d-sim/script.js}" defer></script>
+<script th:src="@{/2d-sim/sim.js}" defer></script>
+<script th:src="@{/2d-sim/speed.js}" defer></script>
+<script th:src="@{/2d-sim/controls.js}" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
+</body>
+</html>
