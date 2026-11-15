@@ -19,12 +19,30 @@
             <i data-lucide="drama"></i>
             <span>The Jesters Club</span>
         </div>
-        <a th:href="@{/home}"
-            href="/home"
-            class="back-button">
-            <i data-lucide="arrow-left"></i>
-            <span>Back to Home</span>
-        </a>
+
+        <!-- Navigation Buttons -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a th:href="@{/simulator}"
+               class="back-button"
+               style="background: #2563eb; color: white; border-color: #2563eb;">
+                <i data-lucide="box"></i>
+                <span>3D Simulator</span>
+            </a>
+
+           <a th:href="@{/viewsavedprojects}"
+                href="/viewsavedprojects"
+                class="back-button"
+                style="background: #2563eb; color: white; border-color: #2563eb;">
+                <i data-lucide="box"></i>
+                <span>My Products</span>
+            </a>
+            
+            <a th:href="@{/home}"
+                class="back-button">
+                <i data-lucide="arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+        </div>
     </header>
     <main>
         <section class="page-intro">
