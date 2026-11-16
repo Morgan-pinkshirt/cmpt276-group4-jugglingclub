@@ -147,17 +147,30 @@ document.addEventListener("DOMContentLoaded", function () {
             effectEl.dispatchEvent(new Event('change'));
         }
 
-        const brightInput = document.getElementById('static-brightness') || document.getElementById('brightness') || document.getElementById('brightnessRange');
-        if (brightInput && data.brightness) {
-            brightInput.value = Math.min(100, Math.max(0, parseFloat(data.brightness) * 50));
-            brightInput.dispatchEvent(new Event('input'));
-        }
+        // Scale from 3D (0 - 2) to 2D percentage (0 - 100, where 1.0 -> 50%)
+        const briVal = data.brightness !== undefined ? Number(data.brightness) : 1;
+        const briPercent = briVal <= 2 ? Math.min(100, Math.max(0, briVal * 50)) : briVal;
 
-        const satInput = document.getElementById('static-saturation') || document.getElementById('saturation') || document.getElementById('saturationRange');
-        if (satInput && data.saturation) {
-            satInput.value = Math.min(100, Math.max(0, parseFloat(data.saturation) * 50));
-            satInput.dispatchEvent(new Event('input'));
-        }
+        const satVal = data.saturation !== undefined ? Number(data.saturation) : 1;
+        const satPercent = satVal <= 2 ? Math.min(100, Math.max(0, satVal * 50)) : satVal;
+
+        // Sync BOTH Static (right) and Rotating (left) sliders in 2D
+        ['static-brightness', 'brightness'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = briPercent;
+                el.dispatchEvent(new Event('input'));
+            }
+        });
+
+        ['static-saturation', 'saturation'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = satPercent;
+                el.dispatchEvent(new Event('input'));
+            }
+        });
+    
 
         const bodyHex = data.bodyColor || data.productColor;
         const handleHex = data.handleColor;
