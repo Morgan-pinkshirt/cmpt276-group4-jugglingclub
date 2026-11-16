@@ -1,10 +1,14 @@
-
 package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.models.usersRepository;
+import com.cmpt276.jugglingclub.roles.RoleService;
+
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,18 +17,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Controller
 public class SettingsController {
 
+    private final RoleService roleService;
     private final usersRepository userRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder =
+            new BCryptPasswordEncoder();
 
-    public SettingsController(usersRepository userRepository) {
+    public SettingsController(
+            usersRepository userRepository,
+            RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
     @PostMapping("/settings/username")
-    public String changeUsername(HttpSession session, @RequestParam String username) {
-        user currentUser = (user) session.getAttribute("user");
+    public String changeUsername(
+            HttpSession session,
+            @RequestParam String username) {
+
+        user sessionUser = (user) session.getAttribute("user");
+
+        if (sessionUser == null) {
+            return "redirect:/userlogin";
+        }
+
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
 
         if (currentUser == null) {
+            session.invalidate();
             return "redirect:/userlogin";
         }
 
@@ -34,9 +55,12 @@ public class SettingsController {
             return "redirect:/settings";
         }
 
-        user existingUser = userRepository.findByName(username).orElse(null);
+        user existingUser = userRepository
+                .findByName(username)
+                .orElse(null);
 
-        if (existingUser != null && existingUser.getUid() != currentUser.getUid()) {
+        if (existingUser != null &&
+                existingUser.getUid() != currentUser.getUid()) {
             return "redirect:/settings";
         }
 
@@ -48,25 +72,39 @@ public class SettingsController {
     }
 
     @PostMapping("/settings/password")
-    public String changePassword(HttpSession session, @RequestParam String currentPassword, @RequestParam String newPassword) {
+    public String changePassword(
+            HttpSession session,
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword) {
+
         user sessionUser = (user) session.getAttribute("user");
 
         if (sessionUser == null) {
             return "redirect:/userlogin";
         }
 
-        user currentUser = userRepository.findById(sessionUser.getUid()).orElse(null);
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
 
         if (currentUser == null) {
             session.invalidate();
             return "redirect:/userlogin";
         }
 
-        if (!passwordEncoder.matches(currentPassword, currentUser.getPassword()) || newPassword.isEmpty()) {
+        if (!passwordEncoder.matches(
+                currentPassword,
+                currentUser.getPassword())) {
             return "redirect:/settings";
         }
 
-        currentUser.setPassword(passwordEncoder.encode(newPassword));
+        if (newPassword.isEmpty()) {
+            return "redirect:/settings";
+        }
+
+        currentUser.setPassword(
+                passwordEncoder.encode(newPassword));
+
         userRepository.save(currentUser);
         session.invalidate();
 
@@ -74,18 +112,25 @@ public class SettingsController {
     }
 
     @PostMapping("/settings/theme")
-    public String changeTheme(HttpSession session, @RequestParam String theme) {
+    public String changeTheme(
+            HttpSession session,
+            @RequestParam String theme) {
+
         user sessionUser = (user) session.getAttribute("user");
 
         if (sessionUser == null) {
             return "redirect:/userlogin";
         }
 
-        if (!theme.equals("light") && !theme.equals("dark")) {
+        if (!theme.equals("light")
+                && !theme.equals("dark")
+                && !theme.equals("purple")) {
             return "redirect:/settings";
         }
 
-        user currentUser = userRepository.findById(sessionUser.getUid()).orElse(null);
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
 
         if (currentUser == null) {
             session.invalidate();
@@ -94,12 +139,140 @@ public class SettingsController {
 
         currentUser.setTheme(theme);
         userRepository.save(currentUser);
+
         session.setAttribute("user", currentUser);
 
         return "redirect:/settings";
     }
 
+    @PostMapping("/setquestions")
+    public String setQuestions(
+            HttpSession session,
+            Model model,
+            @RequestParam String favcolor,
+            @RequestParam String mothername,
+            @RequestParam String favplace,
+            @RequestParam String favsubject,
+            @RequestParam String hometown,
+            @RequestParam String favgame) {
+
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/home";
+        }
+
+        user sessionUser = (user) session.getAttribute("user");
+
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
+
+        if (currentUser == null) {
+            model.addAttribute(
+                    "message",
+                    "Account not found.");
+
+            session.invalidate();
+            return "users/result";
+        }
+
+        Object verifiedUid = session.getAttribute("securityQuestionsVerifiedUid");
+        session.removeAttribute("securityQuestionsVerifiedUid");
+
+        if (!(verifiedUid instanceof Integer)
+                || ((Integer) verifiedUid) != currentUser.getUid()) {
+            return "redirect:/securityquestions";
+        }
+
+        if (!favcolor.isBlank()) {
+            currentUser.setFavcolor(favcolor);
+        }
+        if (!mothername.isBlank()) {
+            currentUser.setMothername(mothername);
+        }
+        if (!favplace.isBlank()) {
+            currentUser.setFavplace(favplace);
+        }
+        if (!favsubject.isBlank()) {
+            currentUser.setFavsubject(favsubject);
+        }
+        if (!hometown.isBlank()) {
+            currentUser.setHometown(hometown);
+        }
+        if (!favgame.isBlank()) {
+            currentUser.setFavgame(favgame);
+        }
+
+        userRepository.save(currentUser);
+
+        session.setAttribute("user", currentUser);
+        session.setAttribute(
+                "message",
+                "Security questions updated.");
+
+        return "redirect:/home";
+    }
+
+    @GetMapping("/securityquestions")
+    public String securityQuestions(
+            Model model,
+            HttpSession session) {
+
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/home";
+        }
+
+        user sessionUser = (user) session.getAttribute("user");
+
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
+
+        if (currentUser == null) {
+            session.invalidate();
+            return "redirect:/userlogin";
+        }
+
+        session.removeAttribute("securityQuestionsVerifiedUid");
+        model.addAttribute("user", currentUser);
+
+        return "roles/questions-confirm";
+    }
+
+    @PostMapping("/securityquestions/confirm")
+    public String confirmSecurityQuestions(
+            Model model,
+            HttpSession session,
+            @RequestParam String currentPassword) {
+
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/home";
+        }
+
+        user sessionUser = (user) session.getAttribute("user");
+
+        user currentUser = userRepository
+                .findById(sessionUser.getUid())
+                .orElse(null);
+
+        if (currentUser == null) {
+            session.invalidate();
+            return "redirect:/userlogin";
+        }
+
+        if (!passwordEncoder.matches(
+                currentPassword,
+                currentUser.getPassword())) {
+            model.addAttribute("message", "Incorrect password.");
+            return "users/result";
+        }
+
+        session.setAttribute("securityQuestionsVerifiedUid", currentUser.getUid());
+        model.addAttribute("user", currentUser);
+        return "roles/questions";
+    }
 }
+
+
 
 
 

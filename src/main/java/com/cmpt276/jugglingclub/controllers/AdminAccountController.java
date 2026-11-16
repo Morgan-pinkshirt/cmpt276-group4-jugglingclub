@@ -37,12 +37,14 @@ public class AdminAccountController {
 
         session.setAttribute("user", currentUser);
 
-        if (currentUser.getRole() != Role.ADMIN) {
+        if (currentUser.getRole() != Role.ADMIN
+                && currentUser.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/home";
         }
 
         model.addAttribute("accounts", userRepository.findAll(Sort.by("uid")));
         model.addAttribute("currentUid", currentUser.getUid());
+        model.addAttribute("currentRole", currentUser.getRole());
         model.addAttribute("theme", currentUser.getTheme());
 
         return "roles/view-accounts";
@@ -63,7 +65,7 @@ public class AdminAccountController {
             return "redirect:/userlogin";
         }
 
-        if (currentUser.getRole() != Role.ADMIN) {
+        if ( currentUser.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/home";
         }
 
@@ -73,11 +75,21 @@ public class AdminAccountController {
 
         user targetUser = userRepository.findById(uid).orElse(null);
 
-        if (targetUser != null) {
+        if (targetUser == null) {
+            return "redirect:/admin/accounts";
+        }
+
+        boolean canDeleteMember =
+                targetUser.getRole() == Role.MEMBER;
+
+        boolean canDeleteAdmin =
+                currentUser.getRole() == Role.SUPER_ADMIN
+                && targetUser.getRole() == Role.ADMIN;
+
+        if (canDeleteMember || canDeleteAdmin) {
             userRepository.delete(targetUser);
         }
 
         return "redirect:/admin/accounts";
     }
 }
-
