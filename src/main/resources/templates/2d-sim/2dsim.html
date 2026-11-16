@@ -408,10 +408,9 @@
                     bodyColor: serverSave.bodyColor,
                     handleColor: serverSave.productColor,
                     ballColor: serverSave.ballColor || '',
-                    // Use UI percentage for sliders, but if 2D script reads raw value for rendering, 
-                    // you can adjust or keep uiBrightness. Let's pass the 0-100 for sliders:
-                    brightness: uiBrightness,
-                    saturation: uiSaturation,
+                    
+                    brightness: serverSave.brightness ? Number(serverSave.brightness) : 1,
+                    saturation: serverSave.saturation ? Number(serverSave.saturation) : 1,
                     effect: serverSave.effect || 'none'
                 };
                 // Save to sessionStorage
