@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
 </head>
+
 <body class="member-page view-accounts-page">
     <header>
         <h1>The Jester Club</h1>
@@ -17,13 +19,14 @@
         <nav class="member-sidebar">
             <a class="member-home" href="/home" aria-label="Home">
                 <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
+                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z" />
                 </svg>
             </a>
 
             <a class="member-settings" href="/settings" aria-label="Settings">
                 <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L8.4 18.9 L9.7 19.5Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
+                    <path fill="currentColor" fill-rule="evenodd"
+                        d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L8.4 18.9 L9.7 19.5Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z" />
                 </svg>
             </a>
         </nav>
@@ -31,45 +34,69 @@
         <main class="view-accounts-main">
             <section class="view-accounts-panel">
                 <h2>Account Management</h2>
+                <style>
+                    /* Center alignment for the Edit column header and cells */
+                    .edit-column {
+                        text-align: center !important;
+                        vertical-align: middle;
+                    }
+
+                    /* Flex container to keep 2D and 3D buttons neatly aligned side by side */
+                    .edit-button-group {
+                        display: flex;
+                        gap: 8px;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
 
                 <table class="accounts-table">
                     <thead>
                         <tr>
                             <th>UID</th>
                             <th>Project Name</th>
-                            <th>Edit</th>
+                            <!-- Centered Edit Header -->
+                            <th class="edit-column">Edit</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- Iterate through the projects list -->
                         <tr th:each="project : ${projects}">
                             <td th:text="${project.uid}">1</td>
                             <td th:text="${project.projectname}">Project Name</td>
-                            <td>
-                                <div style="display: flex; gap: 8px; justify-content: center;">
-                                    <!--2D edit-->
-                                    <form th:action="@{2d-sim}" method="post">
+
+                            <!-- Edit Column with Centered Buttons -->
+                            <td class="edit-column">
+                                <div class="edit-button-group">
+                                    <!-- 2D Editor Form -->
+                                    <form th:action="@{/2d-sim}" method="post" style="margin: 0;">
                                         <input type="hidden" name="UID" th:value="${project.uid}">
-                                        <button class="member-button" type="submit">2D</button>
+                                        <button class="member-button" type="submit">2D editor</button>
                                     </form>
-                                    
-                                    <!--3D edit-->
-                                    <form th:action="@{/customsave}" method="post"> <!-- 3D edit and somehow customsave go to 3d -->
+
+                                    <!-- 3D Editor Form -->
+                                    <form th:action="@{/customsave}" method="post" style="margin: 0;">
                                         <input type="hidden" name="UID" th:value="${project.uid}">
-                                        <button class="member-button" type="submit">3D</button>
+                                        <button class="member-button" type="submit">3D editor</button>
                                     </form>
                                 </div>
                             </td>
+
+                            <!-- Delete Column -->
                             <td>
-                                <form th:action="@{/deleteproject}" method="post" onsubmit="return confirm('Are you sure you want to delete this project?');">
+                                <form th:action="@{/deleteproject}" method="post"
+                                    onsubmit="return confirm('Are you sure you want to delete this project?');"
+                                    style="margin: 0;">
                                     <input type="hidden" name="UID" th:value="${project.uid}">
                                     <button class="member-button" type="submit">Delete</button>
                                 </form>
-                
                             </td>
                         </tr>
+
+                        <!-- Fallback row if the project list is empty -->
                         <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="4">No projects found.</td>
+                            <td colspan="4" style="text-align: center;">No projects found.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -83,4 +110,5 @@
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
 </body>
+
 </html>
