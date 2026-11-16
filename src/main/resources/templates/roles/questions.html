@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Settings</title>
+    <title>Security Questions - The Jester Club</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
 </head>
-<body>
+<body class="settings-page">
     <header>
         <h1>The Jester Club</h1>
         <p>Jester Club Simulator</p>
@@ -20,51 +20,45 @@
     </nav>
 
     <main>
+        <section>
+            <h2>Security Questions</h2>
+            <p>Existing answers are shown below. Leave a field blank to keep its current answer.</p>
+            <p th:if="${error}" th:text="${error}"></p>
 
-        <section>
-            <h2>seurity questions</h2>
+            <form action="/setquestions" method="post"
+                  style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="favcolor">Favourite Color:</label>
+                    <input type="text" id="favcolor" name="favcolor" th:value="${user.favcolor}">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="mothername">Mother's Name:</label>
+                    <input type="text" id="mothername" name="mothername" th:value="${user.mothername}">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="favplace">Favourite Place:</label>
+                    <input type="text" id="favplace" name="favplace" th:value="${user.favplace}">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="favsubject">Favourite Subject:</label>
+                    <input type="text" id="favsubject" name="favsubject" th:value="${user.favsubject}">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="hometown">Hometown:</label>
+                    <input type="text" id="hometown" name="hometown" th:value="${user.hometown}">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label for="favgame">Favourite Game:</label>
+                    <input type="text" id="favgame" name="favgame" th:value="${user.favgame}">
+                </div>
+                <button type="submit">Update</button>
+            </form>
         </section>
-
-        <form action="/setquestions" method="POST"> 
-        <section>
-            <h2>favourite color</h2>
-                <label for="favourite color">favourite color:</label>
-                <input type="text" name="favcolor" th:value="${user.favcolor}" required>
-        </section>
-        <section>
-            <h2>mother's name</h2>
-                <label for="mother's name">mother's name:</label>
-                <input type="text" name="mothername" th:value="${user.mothername}" required>
-        </section>
-        <section>
-            <h2>favourite place</h2>
-                <label for="favourite place">favourite place:</label>
-                <input type="text"  name="favplace" th:value="${user.favplace}" required>
-        </section>
-        <section>
-            <h2>favourite subject</h2>
-                <label for="favourite subject">favourite subject:</label>
-                <input type="text"  name="favsubject" th:value="${user.favsubject}" required>
-        </section>
-        <section>
-            <h2>hometown</h2>
-                <label for="hometown">hometown:</label>
-                <input type="text"  name="hometown" th:value="${user.hometown}" required>
-        </section>
-        <section>
-            <h2>favourite game</h2>
-                <label for="favourite game">favourite game:</label>
-                <input type="text" name="favgame" th:value="${user.favgame}" required>
-        </section>
-                <input type="submit" value = "update">
-
-
-        </form>
     </main>
 
     <footer>
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
-
 </body>
 </html>
+

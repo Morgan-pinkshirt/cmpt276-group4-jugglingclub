@@ -57,6 +57,7 @@
                             <th>Project Name</th>
                             <!-- Centered Edit Header -->
                             <th class="edit-column">Edit</th>
+                            <th>Export</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
@@ -83,6 +84,8 @@
                                 </div>
                             </td>
 
+                            <td><a class="member-button" th:href="@{/exportproject(UID=${project.uid})}">Export</a></td>
+
                             <!-- Delete Column -->
                             <td>
                                 <form th:action="@{/deleteproject}" method="post"
@@ -96,10 +99,19 @@
 
                         <!-- Fallback row if the project list is empty -->
                         <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="4" style="text-align: center;">No projects found.</td>
+                            <td colspan="5" style="text-align: center;">No projects found.</td>
                         </tr>
                     </tbody>
                 </table>
+
+                <section>
+                    <h3>Import Project</h3>
+                    <form th:action="@{/importproject}" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" accept=".json,application/json" required>
+                        <button class="member-button" type="submit">Import JSON</button>
+                    </form>
+                    <p th:if="${importMessage}" th:text="${importMessage}"></p>
+                </section>
 
                 <a class="member-button" href="/home">Back to Home</a>
             </section>

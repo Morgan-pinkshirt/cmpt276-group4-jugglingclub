@@ -1,10 +1,16 @@
 package com.cmpt276.jugglingclub.controllers;
+import java.util.List;
 import com.cmpt276.jugglingclub.models.usersRepository;
+import com.cmpt276.jugglingclub.models.AccountTokenRepository;
+import com.cmpt276.jugglingclub.services.Email;
+import java.time.LocalDateTime;
 
 
 import com.cmpt276.jugglingclub.models.user;
 import org.springframework.ui.Model;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,20 +22,44 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.cmpt276.jugglingclub.roles.RoleService;
+import com.cmpt276.jugglingclub.services.AccountTokenService;
+import com.cmpt276.jugglingclub.models.AccountToken.TokenType;
 
 import java.util.Random;
 @Controller
 public class usercontroller{
-
     @Autowired usersRepository userREPO;
+    private final RoleService roleService;
+    private final AccountTokenService tokenService;
+    private final AccountTokenRepository tokenRepository;
+    private final Email emailService;
 
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
 
-    private final Random rand = new Random();
+    public usercontroller(RoleService roleService, AccountTokenService tokenService,
+                          AccountTokenRepository tokenRepository, Email emailService) {
+        this.roleService = roleService;
+        this.tokenService = tokenService;
+        this.tokenRepository = tokenRepository;
+        this.emailService = emailService;
+    }
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-// use this to check for session's existence:
-
+    public boolean vaildator(HttpServletRequest request, HttpSession session, HttpServletResponse response){ // USE THIS TO CHECK FOR session is logged in or not
+        if(session == null){
+            return false;
+        }
+        user user = (user) session.getAttribute("user");
+        if(user == null){
+            return  false;
+        }else{
+            return true;
+        }
+    }
     @GetMapping("/")
     public String startup() {
         return "redirect:/home";
@@ -47,31 +77,28 @@ public class usercontroller{
             return "users/userlogin";
         }
         else {
-            
-            // Prevent caching
+
             response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
             
-
+            model.addAttribute("stinky",user);
             return "redirect:/home";
         }
     }
     
     
-    @PostMapping("/userlogin")// tihs should make username a real vairble trust =D
+    @PostMapping("/userlogin")
     public String login(Model model, @RequestParam String username, @RequestParam String password , HttpServletRequest request, HttpSession session, HttpServletResponse response, @RequestParam(required = false) String guestTheme){
         
         user vailduser = userREPO.findByName(username).orElse(null);
         if(vailduser == null){
             model.addAttribute("message","username or password dont match, log in failed");
-            session.invalidate();
             return "users/result";
         }
         if(!passwordEncoder.matches(password, vailduser.getPassword())){
 
             model.addAttribute("message","username or password dont match, log in failed");
-            session.invalidate();
             return "users/result";
         }
         
@@ -79,36 +106,76 @@ public class usercontroller{
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
         
-            if ("light".equals(guestTheme)
-                || "dark".equals(guestTheme)
-                || "purple".equals(guestTheme)) {
-        
-            vailduser.setTheme(guestTheme);
-            userREPO.save(vailduser);
-        }
-
         request.getSession(true).setAttribute("user", vailduser); 
+
+        model.addAttribute("stinky", session.getAttribute("user")); 
        
         return "redirect:/home";
     }
     
     
     @PostMapping("/usermakeaccount")
-    public String makeaccount(Model model, @RequestParam String username, @RequestParam String password ,HttpServletRequest request, HttpSession session, HttpServletResponse response){ //, HttpServletRequest request, HttpSession session
-       
+    public String makeaccount(Model model,
+                              @RequestParam String username,
+                              @RequestParam String password,
+                              @RequestParam(defaultValue = "") String email,
+                              @RequestParam(defaultValue = "") String favcolor,
+                              @RequestParam(defaultValue = "") String mothername,
+                              @RequestParam(defaultValue = "") String favplace,
+                              @RequestParam(defaultValue = "") String favsubject,
+                              @RequestParam(defaultValue = "") String hometown,
+                              @RequestParam(defaultValue = "") String favgame,
+                              HttpServletRequest request,
+                              HttpSession session,
+                              HttpServletResponse response) {
+
         user vailduser = userREPO.findByName(username).orElse(null);
 
-        if(!(vailduser == null)){
-            model.addAttribute("message","user name taken, try again");
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
-        session.invalidate();
+        if (vailduser != null) {
+            model.addAttribute("message", "user name taken, try again");
             return "users/result";
         }
+
+        email = email.trim();
+
+        if (!email.isBlank()) {
+            boolean emailUsed = userREPO.findByEmailIgnoreCase(email).isPresent();
+            boolean emailPending = tokenRepository
+                    .existsByPendingEmailIgnoreCaseAndTypeAndUsedFalseAndExpiresAtAfter(
+                            email, TokenType.EMAIL_VERIFICATION, LocalDateTime.now());
+
+            if (emailUsed || emailPending) {
+                model.addAttribute("emailError", "This email address is already in use.");
+                model.addAttribute("username", username);
+                model.addAttribute("email", email);
+                model.addAttribute("favcolor", favcolor);
+                model.addAttribute("mothername", mothername);
+                model.addAttribute("favplace", favplace);
+                model.addAttribute("favsubject", favsubject);
+                model.addAttribute("hometown", hometown);
+                model.addAttribute("favgame", favgame);
+                return "users/createaccount";
+            }
+        }
+
         final String hashedPassword = passwordEncoder.encode(password);
-        user auser = new user(username,hashedPassword); // get value
+        user auser = new user(username, hashedPassword);
+        auser.setTheme("purple");
+        auser.setFavcolor(favcolor.trim());
+        auser.setMothername(mothername.trim());
+        auser.setFavplace(favplace.trim());
+        auser.setFavsubject(favsubject.trim());
+        auser.setHometown(hometown.trim());
+        auser.setFavgame(favgame.trim());
         userREPO.save(auser);
+
+        if (!email.isBlank()) {
+            String token = tokenService.createToken(
+                    auser, TokenType.EMAIL_VERIFICATION, email);
+            String verificationLink = baseUrl + "/verify-email?token=" + token;
+            emailService.sendVerificationEmail(email, verificationLink);
+        }
+
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
@@ -118,12 +185,11 @@ public class usercontroller{
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public String getMethodName(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        
-        // destroy the session
+
         request.getSession().invalidate();
         return "redirect:/home";
     }
@@ -136,19 +202,32 @@ public class usercontroller{
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
         session.invalidate();
+        HttpSession recoverySession = request.getSession(true);
         user vailduser = userREPO.findByName(username).orElse(null);
         String chosen;
         String message;
-        
-        int random = this.rand.nextInt(6);
+        Random rand = new Random();
         if(vailduser == null){
             model.addAttribute("message","account dont exist");
             return "users/result";
         }
-        if(vailduser.getFavcolor() == null){
-            model.addAttribute("message","account did not set up questions");
+
+        String[] answers = {
+            vailduser.getFavcolor(), vailduser.getMothername(),
+            vailduser.getFavplace(), vailduser.getFavsubject(),
+            vailduser.getHometown(), vailduser.getFavgame()
+        };
+        List<Integer> availableQuestions = new java.util.ArrayList<>();
+        for (int i = 0; i < answers.length; i++) {
+            if (answers[i] != null && !answers[i].isBlank()) {
+                availableQuestions.add(i);
+            }
+        }
+        if (availableQuestions.isEmpty()) {
+            model.addAttribute("message", "account did not set up questions");
             return "users/result";
         }
+        int random = availableQuestions.get(rand.nextInt(availableQuestions.size()));
         switch(random){
             case 0:
                 chosen = "favcolor";
@@ -178,6 +257,8 @@ public class usercontroller{
                 model.addAttribute("message","ERROR OCCURED!!!!!!");
                 return "users/result";
         }
+        recoverySession.setAttribute("recoveryUid", vailduser.getUid());
+        recoverySession.setAttribute("recoveryQuestion", chosen);
         model.addAttribute("message", message);        
         model.addAttribute("username", vailduser.getName());
         model.addAttribute("question", chosen);
@@ -190,8 +271,18 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
         Boolean correct = false;
         if(vailduser == null){
-            session.invalidate();
             model.addAttribute("message","account dont exist");
+            return "users/result";
+        }
+
+        Object recoveryUid = session.getAttribute("recoveryUid");
+        String recoveryQuestion = (String) session.getAttribute("recoveryQuestion");
+        session.removeAttribute("recoveryUid");
+        session.removeAttribute("recoveryQuestion");
+        if (!(recoveryUid instanceof Integer)
+                || ((Integer) recoveryUid) != vailduser.getUid()
+                || !question.equals(recoveryQuestion)) {
+            model.addAttribute("message", "Security question session expired or invalid.");
             return "users/result";
         }
         
@@ -233,7 +324,6 @@ public class usercontroller{
 
         }
         if(!correct){
-            session.invalidate();
             model.addAttribute("message","WRONG ANswer");
             return "users/result";
         }
@@ -241,10 +331,8 @@ public class usercontroller{
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        vailduser.setPassword(passwordEncoder.encode("12345"));
-        userREPO.save(vailduser);
-        request.getSession(true).setAttribute("user", vailduser); 
-        request.getSession(false).setAttribute("message", "your password is now 12345, please change it in settings"); 
-        return "redirect:/home";
+        String token = tokenService.createToken(vailduser, TokenType.PASSWORD_RESET, null);
+        return "redirect:/reset-password?token=" + token;
     }
+
 }

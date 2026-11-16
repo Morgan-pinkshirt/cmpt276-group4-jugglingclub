@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
+    <link rel="stylesheet" th:href="@{/css/themes/purple.css}">
     <script th:src="@{/createaccount.js}" defer></script>
 </head>
 <body class="login-page">
@@ -20,10 +20,36 @@
 
                 <form action="/usermakeaccount" id="login" method="post">
                     <label for="username">Username</label>
-                    <input id="username" type="text" name="username" required>
+                    <input id="username" type="text" name="username" th:value="${username}" required>
 
                     <label for="password">Password</label>
                     <input id="password" type="password" name="password" required>
+
+                    <h3>Email (Optional)</h3>
+                    <label for="email">Email Address</label>
+                    <input id="email" type="email" name="email" th:value="${email}">
+                    <p th:if="${emailError}" th:text="${emailError}" style="color: red;"></p>
+
+                    <h3>Security Questions (Optional)</h3>
+                    <p>You can answer one or more security questions for password recovery.</p>
+
+                    <label for="favcolor">What is your favourite color?</label>
+                    <input id="favcolor" type="text" name="favcolor" th:value="${favcolor}">
+
+                    <label for="mothername">What is your mother's name?</label>
+                    <input id="mothername" type="text" name="mothername" th:value="${mothername}">
+
+                    <label for="favplace">What is your favourite place?</label>
+                    <input id="favplace" type="text" name="favplace" th:value="${favplace}">
+
+                    <label for="favsubject">What is your favourite subject?</label>
+                    <input id="favsubject" type="text" name="favsubject" th:value="${favsubject}">
+
+                    <label for="hometown">Where were you born?</label>
+                    <input id="hometown" type="text" name="hometown" th:value="${hometown}">
+
+                    <label for="favgame">What is your favourite game?</label>
+                    <input id="favgame" type="text" name="favgame" th:value="${favgame}">
 
                     <button type="submit">Register</button>
                 </form>
