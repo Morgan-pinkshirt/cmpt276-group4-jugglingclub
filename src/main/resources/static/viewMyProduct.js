@@ -488,8 +488,8 @@ function applyEffectTexture() {
         const isTarget = isRing || child.name === 'handlePart' ||
             child.name === 'bodyPart' || child.name === 'ballPart';
         if (!isTarget) return;
-        if (child.material 
-            && child.material !== customProjectorMaterial 
+        if (child.material
+            && child.material !== customProjectorMaterial
             && child.material !== ringProjectorMaterial) {
             child.material.dispose();
         }
@@ -658,16 +658,94 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+function saveStateAndRedirect(event, targetUrl) {
+    event.preventDefault();
+    const currentSelection = {
+        UID: document.querySelector('input[name="UID"]')?.value || document.getElementById('UID')?.value || 'new',
+        projectname: document.getElementById('projectName')?.value || document.getElementById('projectname')?.value || 'My Project',
+        productType: document.getElementById('propTypeSelector')?.value || document.getElementById('productType')?.value || 'club',
+
+        productColor: document.getElementById('productColor')?.value || '#ffffff',
+        bodyColor: document.getElementById('bodyColor')?.value || '#ffffff',
+        handleColor: document.getElementById('productColor')?.value || '#ffffff',
+        ballColor: document.getElementById('ballColor')?.value || '',
+
+        brightness: document.getElementById('brightnessRange')?.value || document.getElementById('brightness')?.value || '1',
+        saturation: document.getElementById('saturationRange')?.value || document.getElementById('saturation')?.value || '1',
+
+        effect: document.getElementById('effectSelect')?.value || document.getElementById('effect')?.value || 'none'
+    };
+
+    sessionStorage.setItem('tempSelection', JSON.stringify(currentSelection));
+    window.location.href = targetUrl;
+}
+
+function restoreFromSessionStorage() {
+    const savedTempData = sessionStorage.getItem('tempSelection');
+    if (!savedTempData) return;
+
+    const data = JSON.parse(savedTempData);
+
+    const setField = (ids, value) => {
+        if (value === undefined || value === null || value === '') return;
+        for (let id of ids) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = value;
+                el.dispatchEvent(new Event('input'));
+                el.dispatchEvent(new Event('change'));
+                break;
+            }
+        }
+    };
+
+    const uidInput = document.querySelector('input[name="UID"]') || document.getElementById('UID');
+    if (uidInput && data.UID) uidInput.value = data.UID;
+
+    setField(['projectName', 'projectname'], data.projectname);
+
+    if (data.productType) {
+        const propSelector = document.getElementById('propTypeSelector') || document.getElementById('productType');
+        if (propSelector) {
+            propSelector.value = data.productType;
+            propSelector.dispatchEvent(new Event('change'));
+        }
+    }
+
+    setField(['productColor'], data.handleColor || data.productColor);
+    setField(['bodyColor'], data.bodyColor);
+    setField(['ballColor'], data.ballColor);
+    let brightnessVal = data.brightness !== undefined ? Number(data.brightness) : 1;
+    if (brightnessVal > 2) brightnessVal = brightnessVal / 100; 
+    let saturationVal = data.saturation !== undefined ? Number(data.saturation) : 1;
+    if (saturationVal > 2) saturationVal = saturationVal / 100;
+    setField(['brightnessRange', 'brightness'], brightnessVal);
+    setField(['saturationRange', 'saturation'], saturationVal);
+
+    const effectEl = document.getElementById('effectSelect') || document.getElementById('effect');
+    if (effectEl && data.effect) {
+        effectEl.value = data.effect;
+        effectEl.dispatchEvent(new Event('change'));
+    }
+
+    sessionStorage.removeItem('tempSelection');
+    console.log("Restored temporary selection successfully in 3D:", data);
+
+    if (typeof updateProduct === 'function') updateProduct();
+    setTimeout(() => {if (typeof updateEffect === 'function') updateEffect();}, 50);
+}
+
 // Automatically close the dropdown when clicking outside its container
 window.addEventListener('click', (e) => {
     const container = document.getElementById('customSelectionContainer');
     if (container && !container.contains(e.target)) {
-        closeCustomDropdown();
+        if (typeof closeCustomDropdown === 'function') closeCustomDropdown();
     }
 });
 
-// Build the 3D scene as soon as the DOM is ready
+// Build the 3D scene and restore state in the correct chronological order
 document.addEventListener('DOMContentLoaded', () => {
-    init();                 // render the 3D scene right away
-    initCustomDropdown();   // lightweight version: only updates the header
+    init();                 
+    initCustomDropdown();
+    restoreFromSessionStorage();
 });
