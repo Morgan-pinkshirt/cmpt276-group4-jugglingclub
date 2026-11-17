@@ -199,3 +199,4 @@ document.addEventListener("DOMContentLoaded", function () {
     updateStaticZoom();
     updateStaticOrientation();
 });
+clickedButton.click();
