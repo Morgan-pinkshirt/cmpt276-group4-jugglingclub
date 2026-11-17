@@ -3,6 +3,7 @@ package com.cmpt276.jugglingclub;
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.models.usersRepository;
 import com.cmpt276.jugglingclub.models.AccountToken.TokenType;
+import com.cmpt276.jugglingclub.services.Email;
 import com.cmpt276.jugglingclub.services.AccountTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import org.springframework.web.client.RestClientException;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @SpringBootTest
@@ -39,6 +45,9 @@ public class usercontrollerTest {
 
     @MockitoBean
     private AccountTokenService tokenService;
+
+    @MockitoBean
+    private Email emailService;
 
     @Test
     void testgetlogin() throws Exception {
@@ -268,6 +277,56 @@ public class usercontrollerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute(
                         "message", "Security question session expired or invalid."));
     }
-}
 
-    
+    @Test
+    void testRegistrationWithPendingEmailCreatesUnlinkedAccount() throws Exception {
+        when(tokenService.createToken(any(user.class), eq(TokenType.EMAIL_VERIFICATION), eq("pending@example.com")))
+                .thenReturn("verification-token");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
+                        .param("username", "newmember")
+                        .param("password", "12345")
+                        .param("email", "pending@example.com"))
+                .andExpect(MockMvcResultMatchers.view().name("users/registration-success"));
+
+        org.mockito.ArgumentCaptor<user> captured = org.mockito.ArgumentCaptor.forClass(user.class);
+        verify(usersRepository).save(captured.capture());
+        assertNull(captured.getValue().getEmail());
+        verify(emailService).sendVerificationEmail(
+                eq("pending@example.com"),
+                org.mockito.ArgumentMatchers.contains("/verify-email?token=verification-token"));
+    }
+
+    @Test
+    void testRegistrationWithInvalidEmailDoesNotCreateAccount() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
+                        .param("username", "invalidmember")
+                        .param("password", "12345")
+                        .param("email", "email@example"))
+                .andExpect(MockMvcResultMatchers.view().name("users/createaccount"))
+                .andExpect(MockMvcResultMatchers.model().attribute(
+                        "emailError", "Please enter a valid email address."));
+
+        verify(usersRepository, never()).save(any());
+        org.mockito.Mockito.verifyNoInteractions(emailService);
+    }
+
+    @Test
+    void testRegistrationEmailSendFailureReturnsFriendlyResult() throws Exception {
+        when(tokenService.createToken(any(user.class), eq(TokenType.EMAIL_VERIFICATION), eq("pending@example.com")))
+                .thenReturn("failure-token");
+        doThrow(new RestClientException("Brevo refused request"))
+                .when(emailService).sendVerificationEmail(any(String.class), any(String.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
+                        .param("username", "failedsend")
+                        .param("password", "12345")
+                        .param("email", "pending@example.com"))
+                .andExpect(MockMvcResultMatchers.view().name("users/result"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("message"));
+
+        verify(usersRepository).save(any(user.class));
+        verify(tokenService).validateToken("failure-token", TokenType.EMAIL_VERIFICATION);
+    }
+
+}

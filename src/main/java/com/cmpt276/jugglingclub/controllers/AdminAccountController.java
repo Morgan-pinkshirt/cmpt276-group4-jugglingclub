@@ -1,11 +1,14 @@
+
 package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.models.usersRepository;
+import com.cmpt276.jugglingclub.models.AccountTokenRepository;
 import com.cmpt276.jugglingclub.roles.Role;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminAccountController {
 
     private final usersRepository userRepository;
+    private final AccountTokenRepository accountTokenRepository;
 
-    public AdminAccountController(usersRepository userRepository) {
+    public AdminAccountController(
+            usersRepository userRepository,
+            AccountTokenRepository accountTokenRepository) {
         this.userRepository = userRepository;
+        this.accountTokenRepository = accountTokenRepository;
     }
 
     @GetMapping("/admin/accounts")
@@ -50,6 +57,7 @@ public class AdminAccountController {
         return "roles/view-accounts";
     }
 
+    @Transactional
     @PostMapping("/admin/accounts/delete")
     public String deleteAccount(HttpSession session, @RequestParam int uid) {
         user sessionUser = (user) session.getAttribute("user");
@@ -65,7 +73,7 @@ public class AdminAccountController {
             return "redirect:/userlogin";
         }
 
-        if ( currentUser.getRole() != Role.SUPER_ADMIN) {
+        if (currentUser.getRole() != Role.SUPER_ADMIN) {
             return "redirect:/home";
         }
 
@@ -87,6 +95,8 @@ public class AdminAccountController {
                 && targetUser.getRole() == Role.ADMIN;
 
         if (canDeleteMember || canDeleteAdmin) {
+            accountTokenRepository.deleteByAccount(targetUser);
+            accountTokenRepository.flush();
             userRepository.delete(targetUser);
         }
 

@@ -1,12 +1,14 @@
 package com.cmpt276.jugglingclub;
 
 import com.cmpt276.jugglingclub.controllers.AdminAccountController;
+import com.cmpt276.jugglingclub.models.AccountTokenRepository;
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.models.usersRepository;
 import com.cmpt276.jugglingclub.roles.Role;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,16 +20,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminAccountControllerTest {
 
-    @Mock
-    private usersRepository userRepository;
+        @Mock
+        private usersRepository userRepository;
 
-    @Mock
-    private Model model;
+        @Mock
+        private AccountTokenRepository accountTokenRepository;
+
+        @Mock
+        private Model model;
 
     @InjectMocks
     private AdminAccountController controller;
@@ -148,7 +154,7 @@ public class AdminAccountControllerTest {
 
         assertEquals("redirect:/userlogin", result);
 
-        verifyNoInteractions(userRepository);
+        verifyNoInteractions(userRepository, accountTokenRepository);
     }
 
     @Test
@@ -164,6 +170,7 @@ public class AdminAccountControllerTest {
         assertEquals("redirect:/home", result);
 
         verify(userRepository, never()).delete(any());
+        verifyNoInteractions(accountTokenRepository);
         verify(userRepository, never()).findById(2);
     }
 
@@ -180,6 +187,7 @@ public class AdminAccountControllerTest {
         assertEquals("redirect:/home", result);
 
         verify(userRepository, never()).delete(any());
+        verifyNoInteractions(accountTokenRepository);
         verify(userRepository, never()).findById(2);
     }
 
@@ -200,8 +208,10 @@ public class AdminAccountControllerTest {
 
         assertEquals("redirect:/admin/accounts", result);
 
-        verify(userRepository).delete(member);
-        verify(userRepository, times(1)).delete(member);
+        InOrder order = inOrder(accountTokenRepository, userRepository);
+        order.verify(accountTokenRepository).deleteByAccount(member);
+        order.verify(accountTokenRepository).flush();
+        order.verify(userRepository).delete(member);
     }
 
     @Test
@@ -221,7 +231,10 @@ public class AdminAccountControllerTest {
 
         assertEquals("redirect:/admin/accounts", result);
 
-        verify(userRepository).delete(target);
+        InOrder order = inOrder(accountTokenRepository, userRepository);
+        order.verify(accountTokenRepository).deleteByAccount(target);
+        order.verify(accountTokenRepository).flush();
+        order.verify(userRepository).delete(target);
     }
 
     @Test
@@ -237,6 +250,7 @@ public class AdminAccountControllerTest {
         assertEquals("redirect:/admin/accounts", result);
 
         verify(userRepository, never()).delete(any());
+        verifyNoInteractions(accountTokenRepository);
     }
 
     @Test
@@ -257,6 +271,7 @@ public class AdminAccountControllerTest {
         assertEquals("redirect:/admin/accounts", result);
 
         verify(userRepository, never()).delete(any());
+        verifyNoInteractions(accountTokenRepository);
     }
 
     @Test
@@ -275,5 +290,6 @@ public class AdminAccountControllerTest {
         assertEquals("redirect:/admin/accounts", result);
 
         verify(userRepository, never()).delete(any());
+        verifyNoInteractions(accountTokenRepository);
     }
 }

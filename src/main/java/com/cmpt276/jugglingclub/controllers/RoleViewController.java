@@ -2,6 +2,7 @@ package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.save;
 import com.cmpt276.jugglingclub.models.user;
+import com.cmpt276.jugglingclub.models.usersRepository;
 import com.cmpt276.jugglingclub.roles.Role;
 import com.cmpt276.jugglingclub.roles.RoleService;
 
@@ -10,19 +11,18 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 @Controller
 public class RoleViewController {
 
     private final RoleService roleService;
+    private final usersRepository userRepository;
 
-    public RoleViewController(RoleService roleService) {
+    public RoleViewController(
+            RoleService roleService,
+            usersRepository userRepository) {
         this.roleService = roleService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/home")
@@ -50,12 +50,28 @@ public class RoleViewController {
 
     @GetMapping("/settings")
     public String settings(HttpSession session, Model model) {
-    if (!roleService.isLoggedIn(session)) {
-        return "redirect:/home";
-    }
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/home";
+        }
 
-    model.addAttribute("user", session.getAttribute("user"));
-    return "roles/settings";
+        user sessionUser = (user) session.getAttribute("user");
+
+        if (sessionUser == null) {
+            return "redirect:/userlogin";
+        }
+
+        user currentUser = userRepository.findById(sessionUser.getUid())
+                .orElse(null);
+
+        if (currentUser == null) {
+            session.invalidate();
+            return "redirect:/userlogin";
+        }
+
+        session.setAttribute("user", currentUser);
+        model.addAttribute("user", currentUser);
+
+        return "roles/settings";
     }
 
     @GetMapping("/warehouse")
@@ -66,17 +82,19 @@ public class RoleViewController {
         return "roles/warehouse";
     }
 
-    @GetMapping("/simulator") // model
-    public String simulator(HttpSession session, Model model) { // it is to convert view 
+    @GetMapping("/simulator")
+    public String simulator(HttpSession session, Model model) {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        save currentsave = new save("", "", "ball", "#9f1ad3", "#ffffff", "1","1","none" );
-        model.addAttribute("UID","new"); // this to tell save the data that current settings is not from a save
-        model.addAttribute("productType","ball"); // this is the preset default values
-        model.addAttribute("productColor","#9f1ad3");
-        model.addAttribute("bodyColor","#ffffff");
+
+        save currentsave = new save("", "", "ball", "#9f1ad3", "#ffffff", "1", "1", "none");
+        model.addAttribute("UID", "new");
+        model.addAttribute("productType", "ball");
+        model.addAttribute("productColor", "#9f1ad3");
+        model.addAttribute("bodyColor", "#ffffff");
         model.addAttribute("currentSave", currentsave);
+
         return "sim/view";
     }
 

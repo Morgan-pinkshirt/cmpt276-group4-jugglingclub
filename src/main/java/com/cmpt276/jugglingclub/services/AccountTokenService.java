@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AccountTokenService {
@@ -26,6 +27,15 @@ public class AccountTokenService {
     }
 
     public String createToken(user account, TokenType type, String pendingEmail) {
+
+        if (type == TokenType.EMAIL_VERIFICATION) {
+            List<AccountToken> previousTokens = tokenRepository
+                    .findByAccountAndTypeAndUsedFalse(account, TokenType.EMAIL_VERIFICATION);
+            for (AccountToken previous : previousTokens) {
+                previous.setUsed(true);
+                tokenRepository.save(previous);
+            }
+        }
 
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
