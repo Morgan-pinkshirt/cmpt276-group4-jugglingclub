@@ -233,6 +233,23 @@ public class AccountTokenServiceTest {
 
 
 
+
+    @Test
+    void testNewVerificationTokenInvalidatesOldTokensForSameAccount() {
+        user account = new user("billy", "bob");
+        AccountToken old = new AccountToken("oldhash", account,
+                TokenType.EMAIL_VERIFICATION, "old@example.com", LocalDateTime.now().plusMinutes(20));
+        when(tokenRepository.findByAccountAndTypeAndUsedFalse(account, TokenType.EMAIL_VERIFICATION))
+                .thenReturn(java.util.List.of(old));
+
+        tokenService.createToken(account, TokenType.EMAIL_VERIFICATION, "new@example.com");
+
+        assertTrue(old.isUsed());
+        org.mockito.InOrder order = inOrder(tokenRepository);
+        order.verify(tokenRepository).findByAccountAndTypeAndUsedFalse(account, TokenType.EMAIL_VERIFICATION);
+        order.verify(tokenRepository).save(old);
+        order.verify(tokenRepository).save(argThat(token -> token != old &&
+                "new@example.com".equals(token.getPendingEmail())));
+    }
+
 }
-
-

@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestClientException;
 import com.cmpt276.jugglingclub.roles.RoleService;
 import com.cmpt276.jugglingclub.services.AccountTokenService;
 import com.cmpt276.jugglingclub.models.AccountToken.TokenType;
@@ -139,12 +140,20 @@ public class usercontroller{
         email = email.trim();
 
         if (!email.isBlank()) {
+            if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+$")) {
+                model.addAttribute("emailError", "Please enter a valid email address.");
+                model.addAttribute("username", username);
+                model.addAttribute("email", email);
+                model.addAttribute("favcolor", favcolor);
+                model.addAttribute("mothername", mothername);
+                model.addAttribute("favplace", favplace);
+                model.addAttribute("favsubject", favsubject);
+                model.addAttribute("hometown", hometown);
+                model.addAttribute("favgame", favgame);
+                return "users/createaccount";
+            }
             boolean emailUsed = userREPO.findByEmailIgnoreCase(email).isPresent();
-            boolean emailPending = tokenRepository
-                    .existsByPendingEmailIgnoreCaseAndTypeAndUsedFalseAndExpiresAtAfter(
-                            email, TokenType.EMAIL_VERIFICATION, LocalDateTime.now());
-
-            if (emailUsed || emailPending) {
+            if (emailUsed) {
                 model.addAttribute("emailError", "This email address is already in use.");
                 model.addAttribute("username", username);
                 model.addAttribute("email", email);
@@ -173,7 +182,20 @@ public class usercontroller{
             String token = tokenService.createToken(
                     auser, TokenType.EMAIL_VERIFICATION, email);
             String verificationLink = baseUrl + "/verify-email?token=" + token;
-            emailService.sendVerificationEmail(email, verificationLink);
+            try {
+                emailService.sendVerificationEmail(email, verificationLink);
+            } catch (RestClientException e) {
+                tokenService.validateToken(token, TokenType.EMAIL_VERIFICATION)
+                        .ifPresent(tokenService::markUsed);
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                response.setHeader("Pragma", "no-cache");
+                response.setHeader("Expires", "0");
+                session.invalidate();
+                model.addAttribute("message",
+                        "Your account was created, but the verification email could not be sent. "
+                        + "Please log in and try adding your email again in Settings.");
+                return "users/result";
+            }
         }
 
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");

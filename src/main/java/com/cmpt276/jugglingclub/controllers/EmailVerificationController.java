@@ -2,7 +2,6 @@ package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.AccountToken;
 import com.cmpt276.jugglingclub.models.AccountTokenRepository;
-import java.time.LocalDateTime;
 import com.cmpt276.jugglingclub.models.AccountToken.TokenType;
 import com.cmpt276.jugglingclub.models.usersRepository;
 import com.cmpt276.jugglingclub.models.user;
@@ -20,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestClientException;
 
 @Controller
 public class EmailVerificationController {
@@ -148,14 +148,10 @@ public class EmailVerificationController {
             return "roles/settings";
         }
 
-        boolean emailPending = tokenRepository
-                .existsByPendingEmailIgnoreCaseAndTypeAndUsedFalseAndExpiresAtAfter(
-                        newEmail, TokenType.EMAIL_VERIFICATION, LocalDateTime.now());
-
-        if (emailPending) {
+        if (!newEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+$")) {
             model.addAttribute("user", account);
             model.addAttribute("emailValue", newEmail);
-            model.addAttribute("emailError", "This email address is already in use.");
+            model.addAttribute("emailError", "Please enter a valid email address.");
             return "roles/settings";
         }
 
@@ -168,7 +164,16 @@ public class EmailVerificationController {
         String verificationLink =
                 baseUrl + "/verify-email?token=" + token;
 
-        emailService.sendVerificationEmail(newEmail, verificationLink);
+        try {
+            emailService.sendVerificationEmail(newEmail, verificationLink);
+        } catch (RestClientException e) {
+            tokenService.validateToken(token, TokenType.EMAIL_VERIFICATION)
+                    .ifPresent(tokenService::markUsed);
+            model.addAttribute("user", account);
+            model.addAttribute("emailValue", newEmail);
+            model.addAttribute("emailError", "Verification email could not be sent. Please try again.");
+            return "roles/settings";
+        }
 
         model.addAttribute("message",
                 "A verification email has been sent. Please check your inbox.");
