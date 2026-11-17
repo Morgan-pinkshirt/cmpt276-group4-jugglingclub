@@ -35,7 +35,7 @@
                 <table class="accounts-table">
                     <thead>
                         <tr>
-                            <th>UID</th>
+                            <!-- <th>UID</th> -->
                             <th>Username</th>
                             <th>Role</th>
                             <th>Action</th>
@@ -43,7 +43,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="account : ${accounts}">
-                            <td th:text="${account.uid}">1</td>
+                            <!-- <td th:text="${account.uid}">1</td> -->
                             <td th:text="${account.name}">Username</td>
                             <td th:text="${account.role.displayName}">jester</td>
                             <td>
