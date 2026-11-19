@@ -54,9 +54,14 @@ function changeColor(body, handle) {
     if (selectedPart === "body") {
         body.setAttribute("fill", colour);
         bodyColour = slider.value;
+        
+
+        document.getElementById('hbodyColor').value = hslToHex(parseFloat(typeof bodyColour !== 'undefined' ? bodyColour : 0), 100, 50);
     } else {
         handle.setAttribute("fill", colour);
         handleColour = slider.value;
+        document.getElementById('hproductColor').value = hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50);
+
     }
 }
 
@@ -136,12 +141,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const projInput = document.getElementById('projectname') || document.getElementById('projectName');
         if (projInput && data.projectname) projInput.value = data.projectname;
-
+        
         const productTypeEl = document.getElementById('propTypeSelector') || document.getElementById('productType');
         if (productTypeEl && data.productType) {
             productTypeEl.value = data.productType;
             productTypeEl.dispatchEvent(new Event('change'));
-        }
+        }   
 
         const effectEl = document.getElementById('options') || document.getElementById('effectSelect') || document.getElementById('effect');
         if (effectEl && data.effect) {
@@ -157,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const satPercent = satVal <= 2 ? Math.min(100, Math.max(0, satVal * 50)) : satVal;
 
         // Sync BOTH Static (right) and Rotating (left) sliders in 2D
-        ['static-brightness', 'brightness'].forEach(id => {
+        ['static-brightness', 'moving-brightness'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.value = briPercent;
@@ -165,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        ['static-saturation', 'saturation'].forEach(id => {
+        ['static-saturation', 'moving-saturation'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.value = satPercent;
@@ -178,6 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const handleHex = data.handleColor;
 
         if (bodyHex && typeof hexToHSL === 'function') {
+            document.getElementById('hbodyColor').value = bodyHex;
             const bodyHsl = hexToHSL(bodyHex);
             bodyColour = bodyHsl.h;
             let bodyStr = `hsl(${bodyHsl.h}, ${bodyHsl.s}%, ${bodyHsl.l}%)`;
@@ -186,6 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (handleHex && typeof hexToHSL === 'function') {
+            document.getElementById('hproductColor').value = handleHex;
             const handleHsl = hexToHSL(handleHex);
             handleColour = handleHsl.h;
             let handleStr = `hsl(${handleHsl.h}, ${handleHsl.s}%, ${handleHsl.l}%)`;
