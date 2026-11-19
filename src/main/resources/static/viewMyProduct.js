@@ -660,18 +660,25 @@ function animate() {
 
 function saveStateAndRedirect(event, targetUrl) {
     event.preventDefault();
+
+    // Fallback to originalHandleHex / originalBodyHex if DOM input isn't present or was altered
+    const handleHex = document.getElementById('productColor')?.value
+        || (typeof originalHandleHex !== 'undefined' ? originalHandleHex : '#ffffff');
+    const bodyHex = document.getElementById('bodyColor')?.value
+        || (typeof originalBodyHex !== 'undefined' ? originalBodyHex : '#ffffff');
+
     const currentSelection = {
         UID: document.querySelector('input[name="UID"]')?.value || document.getElementById('UID')?.value || 'new',
         projectname: document.getElementById('projectName')?.value || document.getElementById('projectname')?.value || 'My Project',
         productType: document.getElementById('propTypeSelector')?.value || document.getElementById('productType')?.value || 'club',
 
-        productColor: document.getElementById('productColor')?.value || '#ffffff',
-        bodyColor: document.getElementById('bodyColor')?.value || '#ffffff',
-        handleColor: document.getElementById('productColor')?.value || '#ffffff',
+        productColor: handleHex,
+        bodyColor: bodyHex,
+        handleColor: handleHex,
         ballColor: document.getElementById('ballColor')?.value || '',
 
-        brightness: document.getElementById('brightnessRange')?.value || document.getElementById('brightness')?.value || '1',
-        saturation: document.getElementById('saturationRange')?.value || document.getElementById('saturation')?.value || '1',
+        brightness: 1,
+        saturation: 1,
 
         effect: document.getElementById('effectSelect')?.value || document.getElementById('effect')?.value || 'none'
     };
@@ -716,7 +723,7 @@ function restoreFromSessionStorage() {
     setField(['bodyColor'], data.bodyColor);
     setField(['ballColor'], data.ballColor);
     let brightnessVal = data.brightness !== undefined ? Number(data.brightness) : 1;
-    if (brightnessVal > 2) brightnessVal = brightnessVal / 100; 
+    if (brightnessVal > 2) brightnessVal = brightnessVal / 100;
     let saturationVal = data.saturation !== undefined ? Number(data.saturation) : 1;
     if (saturationVal > 2) saturationVal = saturationVal / 100;
     setField(['brightnessRange', 'brightness'], brightnessVal);
@@ -726,13 +733,42 @@ function restoreFromSessionStorage() {
     if (effectEl && data.effect) {
         effectEl.value = data.effect;
         effectEl.dispatchEvent(new Event('change'));
+
+        const container = document.getElementById('customSelectionContainer');
+        if (container) {
+            const matchingItem =
+                container.querySelector(`[data-value="${CSS.escape(data.effect)}"]`) ||
+                container.querySelector(`[data-effect="${CSS.escape(data.effect)}"]`);
+
+            if (matchingItem) {
+                const itemTextEl = matchingItem.querySelector('span, .label, .name') || matchingItem;
+                const labelText = itemTextEl.textContent.trim();
+
+                const triggerTextEl =
+                    container.querySelector('.selected-text, .dropdown-label, .select-value, span') ||
+                    container.querySelector('button, .dropdown-toggle');
+
+                if (triggerTextEl && labelText) {
+                    triggerTextEl.textContent = labelText;
+                }
+            } else if (effectEl.selectedIndex >= 0) {
+                // Fallback take text from <select>
+                const labelText = effectEl.options[effectEl.selectedIndex].textContent.trim();
+                const triggerTextEl =
+                    container.querySelector('.selected-text, .dropdown-label, .select-value, span') ||
+                    container.querySelector('button, .dropdown-toggle');
+                if (triggerTextEl && labelText) {
+                    triggerTextEl.textContent = labelText;
+                }
+            }
+        }
     }
 
     sessionStorage.removeItem('tempSelection');
     console.log("Restored temporary selection successfully in 3D:", data);
 
     if (typeof updateProduct === 'function') updateProduct();
-    setTimeout(() => {if (typeof updateEffect === 'function') updateEffect();}, 50);
+    setTimeout(() => { if (typeof updateEffect === 'function') updateEffect(); }, 50);
 }
 
 // Automatically close the dropdown when clicking outside its container
@@ -745,7 +781,7 @@ window.addEventListener('click', (e) => {
 
 // Build the 3D scene and restore state in the correct chronological order
 document.addEventListener('DOMContentLoaded', () => {
-    init();                 
+    init();
     initCustomDropdown();
     restoreFromSessionStorage();
 });
