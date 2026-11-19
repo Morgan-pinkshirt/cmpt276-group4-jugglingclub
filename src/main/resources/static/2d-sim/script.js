@@ -99,7 +99,7 @@ function saveStateAndRedirect(event, targetUrl) {
     event.preventDefault();
     const bodyHex = hslToHex(parseFloat(typeof bodyColour !== 'undefined' ? bodyColour : 0), 100, 50);
     const handleHex = hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50);
-
+    //#ff0000
     const rawBrightness = document.getElementById('static-brightness')?.value || document.getElementById('brightness')?.value || '50';
     const rawSaturation = document.getElementById('static-saturation')?.value || document.getElementById('saturation')?.value || '50';
     const brightness3D = (parseFloat(rawBrightness) / 50).toFixed(2); // 50 -> 1.0, 100 -> 2.0

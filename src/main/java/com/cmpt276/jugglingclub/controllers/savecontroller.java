@@ -79,6 +79,25 @@ public class savecontroller { // this only deals with ids and stuff
         return "2d-sim/2dsim";
     }
 
+    @PostMapping("/2d-adsim")
+    public String viewIn2D(@RequestParam String UID, Model model, HttpSession session) {
+        if (!roleService.isLoggedIn(session)) {
+            return "redirect:/home";
+        }
+        int id = Integer.parseInt(UID);
+        save currentsave = saveREPO.findByUid(id).orElse(null);
+
+        if (currentsave == null) {
+            return "redirect:/home";
+        }
+
+        model.addAttribute("currentSave", currentsave);
+        model.addAttribute("UID", id);
+
+        // Maps to templates/2d-sim/2dsim.html
+        return "2d-sim/2dadsim";
+    }
+
     @PostMapping("/savecustom")
     public String savedata(HttpSession session, Model model, @RequestParam String productType,
             @RequestParam String productColor,

@@ -97,12 +97,18 @@ public class RoleViewController {
 
         return "sim/view";
     }
+    
+
+        
+
+  
 
     @GetMapping("/2d-sim")
-    public String twoDSimulator(HttpSession session) {
+    public String twoDSimulator(HttpSession session, Model model) {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
+        model.addAttribute("UID", "new");
         return "2d-sim/2dsim";
     }
 

@@ -191,6 +191,26 @@
                         </fieldset>
                     </form>
                 </div>
+                <div>
+                    <form action="/savecustom" method="POST" id="savingform"
+            style="border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 8px;">
+            <label for="projectname" style="font-size: 0.85rem; 
+        color: #ffffff; 
+        font-weight: 500;">Project Name:</label>
+            <input type="text" id="projectname" name="projectname" th:value="${currentSave?.projectname}" required
+                placeholder="Enter project name...">
+            <input type="submit" value="Save Creation" class="save-btn" style="margin-top: 4px;">
+
+            <!-- Hidden fields -->
+            <input type="hidden" name="productType" id="hproductType" th:value="${currentSave?.productType}">
+            <input type="hidden" name="productColor" id="hproductColor" th:value="${currentSave?.productColor}">
+            <input type="hidden" name="bodyColor" id="hbodyColor" th:value="${currentSave?.bodyColor}">
+            <input type="hidden" name="UID" th:value="${UID}">
+            <input type="hidden" name="brightness" id="hbright" th:value="${currentSave?.brightness}">
+            <input type="hidden" name="saturation" id="hsat" th:value="${currentSave?.saturation}">
+            <input type="hidden" name="effect" id="heffect" th:value="${currentSave?.effect}">
+        </form>
+</div>
                 <div class="reset-section">
                     <button type="button" id="reset-simulator" class="reset-button">
                         <i data-lucide="rotate-ccw"></i>
