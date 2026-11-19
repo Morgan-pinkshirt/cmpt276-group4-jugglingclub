@@ -108,10 +108,6 @@ public class RoleViewController {
         if (!roleService.isLoggedIn(session)) {
             return "redirect:/userlogin";
         }
-        save currentsave = new save("", "", "club", "#808080", "#808080", "1", "1", "none");
-        model.addAttribute("currentSave", currentsave);
-    
-        model.addAttribute("UID", "new");
         return "2d-sim/2dsim";
     }
 
