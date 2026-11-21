@@ -85,7 +85,7 @@ function createDropdownItem(opt, container) {
 
     item.onclick = () => {
         const selectElem = document.getElementById('effectSelect');
-        if(selectElem) {
+        if (selectElem) {
             selectElem.value = val;
             selectElem.dispatchEvent(new Event('change'));
         }

@@ -23,36 +23,42 @@ html {
     touch-action: none;
 }
 
-/* Panel Color & Adjustments */
-.ui-panel {
-    color: white;
+.left-panels {
     position: absolute;
     top: 20px;
     left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+    width: 270px;
+    max-width: calc(100vw - 340px);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+/* Panel Color & Adjustments */
+.ui-panel {
+    color: white;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(4px);
     padding: 14px 18px;
     border-radius: 8px;
-    z-index: 10;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 270px;
+    width: 100%;
 }
 
 /* Panel Effect Patterns */
 .effect-panel {
     color: white;
-    position: absolute;
-    top: 440px;
-    left: 20px;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(4px);
     padding: 14px 18px;
     border-radius: 8px;
-    z-index: 10;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 270px;
+    width: 100%;
 }
 
 /* Top-right user and navigation panel styling */
@@ -179,4 +185,44 @@ input[type="range"] {
 .nav-btn.primary {
     background: #2563eb;
     color: white;
+}
+
+/* Inline color picker paired with the "Same Color" sync button */
+.staff-sync-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 3px;
+    margin-bottom: 8px;
+}
+
+.staff-sync-row input[type="color"] {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+
+.staff-sync-btn {
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+
+/* Subtle dark scrollbar when left panels exceed viewport height */
+.left-panels::-webkit-scrollbar {
+    width: 6px;
+}
+
+.left-panels::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.left-panels::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 3px;
+}
+
+.left-panels::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
 }

@@ -39,24 +39,34 @@ function init() {
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
 
-    // Oxyz Grid Helper
-    const gridHelper = new THREE.GridHelper(10, 10, 0x444444, 0x222222);
-    gridHelper.position.y = -1.5;
-    scene.add(gridHelper);
-
     // Get initial values from HTML form elements
     const typeElem = document.getElementById('productType');
     const colorElem = document.getElementById('productColor');
     const bodyColorElem = document.getElementById('bodyColor');
     const ballColorElem = document.getElementById('ballColor');
-
+    const knob1ColorElem = document.getElementById('knob1Color');
+    const knob2ColorElem = document.getElementById('knob2Color');
+    const staffColorElem = document.getElementById('staffColor');
+    const knobTypeElem = document.getElementById('knobType');
     const initialType = typeElem ? typeElem.value : 'ball';
+
     originalHandleHex = colorElem ? colorElem.value : '#ff5733';
     originalBodyHex = bodyColorElem ? bodyColorElem.value : '#ffffff';
     originalBallColorHex = ballColorElem ? ballColorElem.value : '#ff5733';
-
+    const initialStaffOptions = {
+        colorKnob1: knob1ColorElem ? knob1ColorElem.value : '#222222',
+        colorKnob2: knob2ColorElem ? knob2ColorElem.value : '#222222',
+        colorStaff: staffColorElem ? staffColorElem.value : '#cccccc',
+        knobType: knobTypeElem ? knobTypeElem.value : 'ball'
+    };
     toggleProductUI(initialType);
-    createProduct(initialType, originalHandleHex, originalBodyHex, originalBallColorHex);
+    createProduct(
+        initialType,
+        originalHandleHex,
+        originalBodyHex,
+        originalBallColorHex,
+        initialStaffOptions
+    );
 
     const effectSelect = document.getElementById('effectSelect');
     if (effectSelect && effectSelect.value !== 'none') {
@@ -177,5 +187,10 @@ function animate() {
 document.addEventListener('DOMContentLoaded', () => {
     init();
     initCustomDropdown();
-    restoreFromSessionStorage();
+    if (typeof restoreFromSessionStorage === 'function') {
+        restoreFromSessionStorage();
+    }
+    if (typeof updateCustomHeader === 'function') {
+        updateCustomHeader();
+    }
 });
