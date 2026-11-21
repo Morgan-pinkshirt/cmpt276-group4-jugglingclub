@@ -9,6 +9,8 @@ const slider = document.getElementById("colourSlider");
 const bodyButton = document.getElementById("bodyButton");
 const handleButton = document.getElementById("handleButton");
 
+// const ballColor = document.getElementById("ball-color");
+
 window.svgStill = document.getElementById("svg_still");
 window.svgMov = document.getElementById("svg_moving");
 
@@ -43,9 +45,14 @@ handleButton.addEventListener("click", function () {
 });
 
 slider.addEventListener("input", function () {
-    changeVisibilityColor();
-    changeColor(club, handle);
-    changeColor(clubMov, handleMov);
+    // changeVisibilityColor();
+    const prop = document.getElementById("prop-options").value;
+    if (prop === "club") {
+        changeColor(club, handle);
+        changeColor(clubMov, handleMov);
+    } else {
+        changeColor(document.getElementById(`${prop}-color`));
+    }
 
 });
 
@@ -58,6 +65,12 @@ function changeColor(body, handle) {
         handle.setAttribute("fill", colour);
         handleColour = slider.value;
     }
+}
+
+function changeColor(body) {
+    let colour = "hsl(" + slider.value + ", 100%, 50%)";
+    body.setAttribute("fill", colour);
+    bodyColour = slider.value;
 }
 
 function hslToHex(h, s, l) {

@@ -7,6 +7,9 @@ const ctxMov = canvasMov.getContext('2d');
 window.canvasStill = document.getElementById("canvas_still");
 const ctxStill = canvasStill.getContext('2d');
 
+window.canvasBall = document.getElementById("canvas_ball");
+const ctxBall = canvasBall.getContext('2d');
+
 const clickedButton = document.getElementById("view-button");
 
 window.modeName = document.getElementById("mode_name");
@@ -17,7 +20,7 @@ let angleStill = 0;
 const centerX = 101.5;
 const centerY = 443;
 
-function draw(ctx, angle, type) {
+function drawClub(ctx, angle, type) {
     const img = document.getElementById("img");
     ctx.save();
 
@@ -62,12 +65,48 @@ function draw(ctx, angle, type) {
     // Request next animation frame
 
     // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
-    requestAnimationFrame(() => draw(ctx, angle, type));
+    requestAnimationFrame(() => drawClub(ctx, angle, type));
+}
+
+function drawBall(ctx, angle) {
+    ctx.beginPath();
+    // To draw a circle https://www.w3schools.com/graphics/canvas_circles.asp
+    ctx.arc(95, 100, 40, 0, 2 * Math.PI);
+    // ctx.arc(95, 50, 20, 0, 2 * Math.PI);
+    // ctx.closePath();
+    // ctx.fillStyle = "purple";
+    // ctx.fill();
+    ctx.clip();
+
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle);
+    ctx.translate(-centerX, -centerY);	
+
+    // // To  wait for the image to load: https://stackoverflow.com/questions/42515769/how-to-wait-for-loading-images-in-canvas
+    if (img.complete) {
+        ctx.drawImage(img, -230, 120);
+    }
+    // ctx.restore();
+
+    // // Increase angle for next frame
+
+    // angle += 0.0075;
+    // if (angle > Math.PI * 2) {
+    //     angle = 0;
+    //     counter = 0;
+    // }
+    
+    // // Request next animation frame
+
+    // // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
+    // requestAnimationFrame(() => drawBall(ctx, angle));
 }
 
 // Start animation
-draw(ctxMov, angleMov, "moving");
-draw(ctxStill, angleStill, "still");
+drawClub(ctxMov, angleMov, "moving");
+drawClub(ctxStill, angleStill, "still");
+drawBall(ctxBall, angleStill);
 
 function numberTen(mode) {
     if (mode[4] != "_") {
@@ -79,6 +118,7 @@ function numberTen(mode) {
 
 clickedButton.addEventListener('click', function () {
 	const mode = document.getElementById("options").value;
+    const prop = document.getElementById("prop-options").value;
     let i = 5;
     if (mode[1] == 1 && mode[2] != 3) {
         modeName.innerHTML = `Page 1 - #${mode[3]}`;
@@ -113,9 +153,15 @@ clickedButton.addEventListener('click', function () {
     }
 	img.src=`img/${mode}.png`;
     angle = 0;
-    window.svgMov.style.display = "none";
-    window.canvasMov.style.display = "block";
-    window.svgStill.style.display = "none";
-    window.canvasStill.style.display = "block";
-    window.modeName.style.visibility = "visible";
+
+    if (prop === "club") {
+        window.svgMov.style.display = "none";
+        window.canvasMov.style.display = "block";
+        window.svgStill.style.display = "none";
+        window.canvasStill.style.display = "block";
+        window.modeName.style.visibility = "visible";
+    } else if (prop === "ball") {
+        window.stillBallSvg.style.display = "none";
+        window.canvasBall.style.display = "block";
+    }
 });
