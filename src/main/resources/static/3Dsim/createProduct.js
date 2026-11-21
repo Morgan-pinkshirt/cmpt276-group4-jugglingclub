@@ -66,8 +66,8 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor, staffOptions 
         let knob1Geo, knob2Geo, knob1Y, knob2Y, startY, endY;
 
         if (knobType === 'cylinder') {
-            const knobRadius = 0.28;
-            const knobHeight = 0.35;
+            const knobRadius = 0.20;
+            const knobHeight = 0.45;
             knob1Geo = new THREE.CylinderGeometry(knobRadius, knobRadius, knobHeight, 32);
             knob2Geo = new THREE.CylinderGeometry(knobRadius, knobRadius, knobHeight, 32);
             knob1Y = -halfLen - knobHeight / 2;

@@ -24,17 +24,29 @@ html {
 }
 
 .left-panels {
-    position: absolute;
+    position: fixed;
     top: 20px;
     left: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    z-index: 10;
+    gap: 10px;
+    z-index: 1050;
     width: 270px;
     max-width: calc(100vw - 340px);
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
+    overflow: visible;
+}
+/* Panel Effect Patterns */
+.effect-panel {
+    position: relative;
+    color: white;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    overflow: visible;
 }
 
 /* Panel Color & Adjustments */
@@ -49,16 +61,9 @@ html {
     width: 100%;
 }
 
-/* Panel Effect Patterns */
-.effect-panel {
-    color: white;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
-    padding: 14px 18px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%;
+#customDropdownList {
+    max-height: 240px;
+    overflow-y: auto;
 }
 
 /* Top-right user and navigation panel styling */
