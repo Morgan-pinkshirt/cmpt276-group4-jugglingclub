@@ -88,3 +88,15 @@ button.active {
 #poi_still {
     display: none;
 }
+
+#canvas_ball {
+    display: none;
+}
+
+#canvas_ring {
+    display: none;
+}
+
+#canvas_poi {
+    display: none;
+}

@@ -1,4 +1,7 @@
+import { current, hidding } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
+// type="module"
+
 
 const club = document.getElementById("clubBody");
 const handle = document.getElementById("clubHandle");
@@ -47,31 +50,39 @@ handleButton.addEventListener("click", function () {
 slider.addEventListener("input", function () {
     // changeVisibilityColor();
     const prop = document.getElementById("prop-options").value;
+    const newDisplay = document.getElementById(`${prop}-color`);
+    hidding(current, newDisplay);
     if (prop === "club") {
-        changeColor(club, handle);
-        changeColor(clubMov, handleMov);
+        changeColor(club, handle, prop);
+        changeColor(clubMov, handleMov, prop);
     } else {
-        changeColor(document.getElementById(`${prop}-color`));
+        changeColor(document.getElementById(`${prop}-color`), handle, prop);
+        // current = newDisplay;
     }
 
 });
+
+// export function changeCurrent(newCurrent) {
+//     current = newCurrent;
+// }
 
 function changeColor(body, handle) {
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
         body.setAttribute("fill", colour);
         bodyColour = slider.value;
-    } else {
+    } else if (prop === "club") {
         handle.setAttribute("fill", colour);
         handleColour = slider.value;
     }
+
 }
 
-function changeColor(body) {
-    let colour = "hsl(" + slider.value + ", 100%, 50%)";
-    body.setAttribute("fill", colour);
-    bodyColour = slider.value;
-}
+// function changeColor(body) {
+//     let colour = "hsl(" + slider.value + ", 100%, 50%)";
+//     body.setAttribute("fill", colour);
+//     bodyColour = slider.value;
+// }
 
 function hslToHex(h, s, l) {
     l /= 100;
@@ -218,3 +229,5 @@ document.addEventListener("DOMContentLoaded", function () {
 if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
+
+// export { current };

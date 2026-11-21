@@ -1,3 +1,6 @@
+// To share use a function and variable defined in the script in another script: https://www.w3schools.com/js/js_modules_export.asp
+
+// import { current } from './script.js';
 const movingSection = document.getElementById("moving");
 const handleBtn = document.getElementById("handleButton");
 // const moving
@@ -29,6 +32,7 @@ let current = window.canvasStill;
 function hidding(currentDisplay, newDisplay) {
     currentDisplay.style.display = "none";
     newDisplay.style.display = "block";
+    current = newDisplay;
 }
 
 propBtn.addEventListener('click', function () {
@@ -40,7 +44,7 @@ propBtn.addEventListener('click', function () {
         // window.canvasStill.style.display = "block";
         // window.stillBallSvg.style.display="none";
         hidding(current, canvasStill);
-        current = window.canvasStill;
+        // current = window.canvasStill;
     }
     else {
         window.svgStill.style.display = "none";
@@ -54,14 +58,16 @@ propBtn.addEventListener('click', function () {
         // window.canvasStill.style.display = "none";
         // window.stillBallSvg.style.display="block";
         hidding(current, stillBallSvg);
-        current = window.stillBallSvg;
+        // current = window.stillBallSvg;
     } else if (prop === "poi") {
         hidding(current, stillPoiSvg);
-        current = stillPoiSvg;
+        // current = stillPoiSvg;
 
     } else if (prop === "ring") {
         console.log("ring");
         hidding(current, stillRingSvg);
-        current = window.stillRingSvg;
+        // current = window.stillRingSvg;
     }
 });
+
+export { current, hidding };
