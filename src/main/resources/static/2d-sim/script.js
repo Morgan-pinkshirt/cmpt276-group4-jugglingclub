@@ -235,7 +235,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         sessionStorage.removeItem('tempSelection');
         console.log("Restored temporary selection successfully in 2D:", data);
+        clickedButton.click();
     }
+
 });
 
 if (typeof bodyButton !== 'undefined' && bodyButton) {
