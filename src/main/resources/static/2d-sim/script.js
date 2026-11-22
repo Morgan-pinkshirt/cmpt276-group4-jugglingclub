@@ -1,4 +1,6 @@
-import { current, hidding } from './prop.js';
+// import { current, hidding } from './prop.js';
+import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill } from './moving.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
 // type="module"
 
@@ -14,25 +16,64 @@ const handleButton = document.getElementById("handleButton");
 
 // const ballColor = document.getElementById("ball-color");
 
-window.svgStill = document.getElementById("svg_still");
-window.svgMov = document.getElementById("svg_moving");
+const svgStill = document.getElementById("svg_still");
+const svgMov = document.getElementById("svg_moving");
 
 let selectedPart = "body";
 let bodyColour = 0;
 let handleColour = 0;
 
+
 function changeVisibilityColor() {
-    window.svgStill.style.display = "block";
-    window.canvasStill.style.display = "none";
-    window.svgMov.style.display = "block";
-    window.canvasMov.style.display = "none";
-    window.modeName.style.visibility = "hidden";
+    svgStill.style.display = "block";
+    canvasStill.style.display = "none";
+    svgMov.style.display = "block";
+    canvasMov.style.display = "none";
+    modeName.style.visibility = "hidden";
+}
+
+// function toggleColor(current) {
+//     let oppositeMode;
+//     if (current === canvasStill) {
+//             oppositeMode = svgStill;
+//     } else if (current === stillBallSvg) {
+//             oppositeMode = stillBallSvg;
+//     } else if (current === stillRingSvg) {
+//             oppositeMode = stillRingSvg;
+//     } else if (current === stillPoiSvg) {
+//             oppositeMode = stillPoiSvg;
+//     } else {
+//             oppositeMode = current;
+//     }
+//     console.log("this is opposite");
+//     console.log(oppositeMode);
+//     hidding(current, oppositeMode);
+// }
+
+function toggleColor(prop) {
+    let oppositeMode;
+    if (prop === "club") {
+        oppositeMode = svgStill;
+    } else if (prop === "ball") {
+        oppositeMode = stillBallSvg;
+    } else if (prop === "ring") {
+        oppositeMode = stillRingSvg;
+    } else if (prop === "poi") {
+        oppositeMode = stillPoiSvg;
+    } else {
+        oppositeMode = current;
+    }
+    // console.log("this is opposite");
+    // console.log(oppositeMode);
+    hidding(current, oppositeMode);
 }
 
 bodyButton.addEventListener("click", function () {
     selectedPart = "body";
     slider.value = bodyColour;
-    changeVisibilityColor();
+    // changeVisibilityColor();
+    // hidding(current)
+    // toggleColor(current);
 
     bodyButton.classList.add("active");
     handleButton.classList.remove("active");
@@ -41,7 +82,8 @@ bodyButton.addEventListener("click", function () {
 handleButton.addEventListener("click", function () {
     selectedPart = "handle";
     slider.value = handleColour;
-    changeVisibilityColor();
+    // changeVisibilityColor();
+    // hidding(currentt, )
 
     handleButton.classList.add("active");
     bodyButton.classList.remove("active");
@@ -50,13 +92,16 @@ handleButton.addEventListener("click", function () {
 slider.addEventListener("input", function () {
     // changeVisibilityColor();
     const prop = document.getElementById("prop-options").value;
-    const newDisplay = document.getElementById(`${prop}-color`);
-    hidding(current, newDisplay);
+    // hidding(current, newDisplay);
+    toggleColor(prop);
     if (prop === "club") {
-        changeColor(club, handle, prop);
-        changeColor(clubMov, handleMov, prop);
+        changeColor(club, handle);
+        changeColor(clubMov, handleMov);
+        changeVisibilityColor();
     } else {
-        changeColor(document.getElementById(`${prop}-color`), handle, prop);
+        changeColorSingle(document.getElementById(`${prop}-color`));
+        console.log(current);
+        toggleColor(current);
         // current = newDisplay;
     }
 
@@ -67,22 +112,24 @@ slider.addEventListener("input", function () {
 // }
 
 function changeColor(body, handle) {
+    // toggleColor(current);
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
         body.setAttribute("fill", colour);
         bodyColour = slider.value;
-    } else if (prop === "club") {
+    } else {
         handle.setAttribute("fill", colour);
         handleColour = slider.value;
     }
 
 }
 
-// function changeColor(body) {
-//     let colour = "hsl(" + slider.value + ", 100%, 50%)";
-//     body.setAttribute("fill", colour);
-//     bodyColour = slider.value;
-// }
+function changeColorSingle(body) {
+    let colour = "hsl(" + slider.value + ", 100%, 50%)";
+    body.setAttribute("fill", colour);
+    bodyColour = slider.value;
+}
+
 
 function hslToHex(h, s, l) {
     l /= 100;
@@ -230,4 +277,4 @@ if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
 
-// export { current };
+export { svgStill, svgMov, handleButton, bodyButton };

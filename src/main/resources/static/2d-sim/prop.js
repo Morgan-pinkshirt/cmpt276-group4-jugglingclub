@@ -1,17 +1,19 @@
 // To share use a function and variable defined in the script in another script: https://www.w3schools.com/js/js_modules_export.asp
 
-// import { current } from './script.js';
+import { svgStill, svgMov, handleButton, bodyButton } from './script.js';
+import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill } from './moving.js';
+
 const movingSection = document.getElementById("moving");
-const handleBtn = document.getElementById("handleButton");
+// const handleBtn = document.getElementById("handleButton");
 // const moving
 
 const propBtn = document.getElementById("prop-button");
 // window.stillClubSvg = document.getElementById("svg_still");
 
 const staticDiv = document.getElementById("static-transform");
-window.stillBallSvg = document.getElementById("ball_still");
-window.stillRingSvg = document.getElementById("ring_still");
-window.stillPoiSvg = document.getElementById("poi_still");
+const stillBallSvg = document.getElementById("ball_still");
+const stillRingSvg = document.getElementById("ring_still");
+const stillPoiSvg = document.getElementById("poi_still");
 
 // const stillBallSvg = document.createElement("svg");
 // stillBallSvg.id = "ball-still";
@@ -27,7 +29,7 @@ window.stillPoiSvg = document.getElementById("poi_still");
 // stillBallSvg.appendChild(ball);
 // staticDiv.appendChild(stillBallSvg);
 
-let current = window.canvasStill;
+let current = svgStill;
 
 function hidding(currentDisplay, newDisplay) {
     currentDisplay.style.display = "none";
@@ -39,21 +41,22 @@ propBtn.addEventListener('click', function () {
     const prop = document.getElementById("prop-options").value;
     if (prop === "club") {
         movingSection.style.display = "block";
-        handleBtn.style.display = "block";
+        handleButton.style.display = "block";
+        bodyButton.style.display = "block";
         // // window.svgStill.style.display = "block";
         // window.canvasStill.style.display = "block";
         // window.stillBallSvg.style.display="none";
-        hidding(current, canvasStill);
+        hidding(current, svgStill);
         // current = window.canvasStill;
     }
     else {
-        window.svgStill.style.display = "none";
+        svgStill.style.display = "none";
         movingSection.style.display = "none";
-        handleBtn.style.display = "none";
+        handleButton.style.display = "none";
+        bodyButton.syle.display = "none";
     }
     if (prop === "ball") {
         console.log("juggling balls");
-        console.log(prop)
         // window.svgStill.style.display = "none";
         // window.canvasStill.style.display = "none";
         // window.stillBallSvg.style.display="block";
@@ -70,4 +73,4 @@ propBtn.addEventListener('click', function () {
     }
 });
 
-export { current, hidding };
+export { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill };

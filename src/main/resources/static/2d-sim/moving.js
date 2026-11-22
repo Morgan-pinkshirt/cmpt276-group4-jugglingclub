@@ -1,20 +1,21 @@
 // https://zetcode.com/canvas-api/rotate/. 31/10/26
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
-// import { current, hidding } from './prop.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg } from './prop.js';
+import { svgStill, svgMov } from './script.js';
 
-window.canvasMov = document.getElementById('canvas_moving');
+const canvasMov = document.getElementById('canvas_moving');
 const ctxMov = canvasMov.getContext('2d');
 
-window.canvasStill = document.getElementById("canvas_still");
+const canvasStill = document.getElementById("canvas_still");
 const ctxStill = canvasStill.getContext('2d');
 
-window.canvasBall = document.getElementById("canvas_ball");
+const canvasBall = document.getElementById("canvas_ball");
 const ctxBall = canvasBall.getContext('2d');
 
-window.canvasRing = document.getElementById("canvas_ring");
+const canvasRing = document.getElementById("canvas_ring");
 const ctxRing = canvasRing.getContext('2d');
 
-window.canvasPoi = document.getElementById("canvas_poi");
+const canvasPoi = document.getElementById("canvas_poi");
 const ctxPoi = canvasPoi.getContext('2d');
 
 const clickedButton = document.getElementById("view-button");
@@ -66,11 +67,10 @@ function drawClub(ctx, angle, type) {
 
     if (angle > Math.PI * 2) {
         angle = 0;
-        counter = 0;
+        // counter = 0;
     }
     
     // Request next animation frame
-
     // ChatGPT November 7th, 2026, "How can I pass the variable ctx = canvas.getContext('2d') as a parameter of my draw function". Solve the issue of not being able to pass the variable ctx as a paramter, or getting it flagged as an infinite loop. I used it for the requestAnimationFrame
     requestAnimationFrame(() => drawClub(ctx, angle, type));
 }
@@ -82,8 +82,6 @@ function drawBall(ctx, angle) {
     // To draw a circle https://www.w3schools.com/graphics/canvas_circles.asp
     ctx.arc(85, 200, 60, 0, 2 * Math.PI);
     ctx.closePath();
-    // ctx.fillStyle = "purple";
-    // ctx.fill();
     ctx.clip();
 
     ctx.setTransform(1,0,0,1,0,0);
@@ -95,14 +93,12 @@ function drawBall(ctx, angle) {
         ctx.drawImage(img, -230, 120);
     }
     ctx.restore();
-
     // Increase angle for next frame
     angle += 0.0075;
     if (angle > Math.PI * 2) {
         angle = 0;
-        counter = 0;
+        // counter = 0;
     }
-    
     // Request next animation frame
     requestAnimationFrame(() => drawBall(ctx, angle));
 }
@@ -126,14 +122,12 @@ function drawRing(ctx, angle) {
         ctx.drawImage(img, -230, 120);
     }
     ctx.restore();
-
     // Increase angle for next frame
     angle += 0.0075;
     if (angle > Math.PI * 2) {
         angle = 0;
-        counter = 0;
+        // counter = 0;
     }
-    
     // Request next animation frame
     requestAnimationFrame(() => drawRing(ctx, angle));
 }
@@ -161,14 +155,12 @@ function drawPoi(ctx, angle) {
         ctx.drawImage(img, -230, 120);
     }
     ctx.restore();
-
     // Increase angle for next frame
     angle += 0.0075;
     if (angle > Math.PI * 2) {
         angle = 0;
-        counter = 0;
+        // counter = 0;
     }
-    
     // Request next animation frame
     requestAnimationFrame(() => drawPoi(ctx, angle));
 }
@@ -224,26 +216,36 @@ clickedButton.addEventListener('click', function () {
         i++;
     }
 	img.src=`img/${mode}.png`;
-    angle = 0;
+    // angle = 0;
 
     if (prop === "club") {
-        window.svgMov.style.display = "none";
-        window.canvasMov.style.display = "block";
-        window.svgStill.style.display = "none";
-        window.canvasStill.style.display = "block";
-        window.modeName.style.visibility = "visible";
+        hidding(svgStill, canvasStill);
+        svgMov.style.display = "none";
+        canvasMov.style.display = "block";
+        // window.svgStill.style.display = "none";
+        canvasStill.style.display = "block";
+        canvasPoi.style.display = "none";
+        // window.modeName.style.visibility = "visible";
     } else if (prop === "ball") {
-        // hidding(current, canvasBall);
-        window.canvasRing.style.display = "none";
-        window.stillBallSvg.style.display = "none";
-        window.canvasBall.style.display = "block";
+        hidding(stillBallSvg, canvasBall);
+        canvasRing.style.display = "none";
+        // window.stillBallSvg.style.display = "none";
+        canvasPoi.style.display = "none";
+        canvasBall.style.display = "block";
     } else if (prop === "ring") {
-        window.stillRingSvg.style.display = "none";
-        window.canvasBall.style.display = "none";
-        window.canvasRing.style.display = "block";
-    } else if (prop === "poi") 
-        window.canvasRing.style.display = "none";
-        window.canvasBall.style.display = "none";
-        window.stillPoiSvg.style.display = "none";
-        window.canvasPoi.style.display = "block";
+        hidding(stillRingSvg, canvasRing);
+        // window.stillRingSvg.style.display = "none";
+        canvasBall.style.display = "none";
+        canvasPoi.style.display = "none";
+        canvasRing.style.display = "block";
+    } else if (prop === "poi") {
+        hidding(stillPoiSvg, canvasPoi);
+        canvasRing.style.display = "none";
+        canvasBall.style.display = "none";
+        // window.stillPoiSvg.style.display = "none";
+        canvasPoi.style.display = "block";
+    }
 });
+
+// export { clickedButton, angleMov, angleStill }
+export { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill }

@@ -449,11 +449,11 @@
     </script>
 
     <!-- 2D Simulation Scripts (Load AFTER the bridge sets sessionStorage) -->
-    <script th:src="@{/2d-sim/moving.js}"></script>
+    <script type="module" th:src="@{/2d-sim/moving.js}"></script>
     <script type="module" th:src="@{/2d-sim/script.js}"></script>
     <script th:src="@{/2d-sim/sim.js}"></script>
     <script th:src="@{/2d-sim/speed.js}"></script>
-    <script th:src="@{/2d-sim/controls.js}"></script>
+    <script type="module" th:src="@{/2d-sim/controls.js}"></script>
     <script type="module" th:src="@{/2d-sim/prop.js}"></script>
     <!-- Lucide icons initialization -->
     <script>
