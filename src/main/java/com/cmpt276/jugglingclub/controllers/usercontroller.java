@@ -95,12 +95,12 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
         if(vailduser == null){
             model.addAttribute("message","username or password dont match, log in failed");
-            return "users/result";
+            return "users/userlogin";
         }
         if(!passwordEncoder.matches(password, vailduser.getPassword())){
 
             model.addAttribute("message","username or password dont match, log in failed");
-            return "users/result";
+            return "users/userlogin";
         }
         
        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -133,8 +133,18 @@ public class usercontroller{
         user vailduser = userREPO.findByName(username).orElse(null);
 
         if (vailduser != null) {
+            
+            model.addAttribute("username", username);
+            model.addAttribute("email", email);
+            model.addAttribute("favcolor", favcolor);
+            model.addAttribute("mothername", mothername);
+            model.addAttribute("favplace", favplace);
+            model.addAttribute("favsubject", favsubject);
+            model.addAttribute("hometown", hometown);
+            model.addAttribute("favgame", favgame);
+
             model.addAttribute("message", "user name taken, try again");
-            return "users/result";
+            return "users/createaccount";
         }
 
         email = email.trim();
