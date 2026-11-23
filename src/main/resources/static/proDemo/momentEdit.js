@@ -6,7 +6,7 @@
     const SYNCHRO_DRAFT_KEY = 'synchroMomentsDraft';
     const MOMENT_RESULT_KEY = 'synchroMomentDesignResult';
     const RETURNING_FROM_3D_KEY = 'synchroReturningFrom3D';
-    const AudioStore = window.JesterAudioStorage; // không đặt tên là Audio (che constructor của trình duyệt)
+    const AudioStore = window.JesterAudioStorage;
     let pendingBounds = null;
 
     async function restoreMusicFromDB() {
@@ -378,6 +378,10 @@
         const moment = state.moments.find((m) => m.id === state.selectedMomentId);
         if (!moment) return;
         persistMomentsDraft();
+        if (window.SynchroAPI && typeof window.SynchroAPI.openMomentEditor === 'function') {
+            window.SynchroAPI.openMomentEditor(core.clone(moment));
+            return;
+        }
         sessionStorage.setItem(RETURNING_FROM_3D_KEY, '1');
         if (window.Moment3DBridge && typeof window.Moment3DBridge.openMomentIn3D === 'function') {
             window.Moment3DBridge.openMomentIn3D(moment, target3DUrl, returnUrl);

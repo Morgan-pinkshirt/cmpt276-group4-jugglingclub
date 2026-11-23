@@ -370,7 +370,13 @@
             const btn = document.getElementById('btnSaveMomentDesign');
             if (!btn) return;
 
+            const embedMode = new URLSearchParams(window.location.search).get('embed');
+
             function syncMomentSaveButton() {
+                if (embedMode) {
+                    btn.style.display = embedMode === 'edit' ? 'block' : 'none';
+                    return;
+                }
                 const rawPending = sessionStorage.getItem('synchroPendingMomentTarget');
                 let isMomentFlow = false;
                 if (rawPending) {

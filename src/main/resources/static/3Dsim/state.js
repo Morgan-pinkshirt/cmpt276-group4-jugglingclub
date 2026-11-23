@@ -34,17 +34,16 @@ function saveStateAndRedirect(event, targetUrl) {
     window.location.href = targetUrl;
 }
 
-function restoreFromSessionStorage() {
-    const savedTempData = sessionStorage.getItem('tempSelection');
-    if (!savedTempData) return;
+// --- EMBED MODE (?embed=1 stage only, ?embed=edit editor inside synchro) ---
+const JESTER_EMBED = new URLSearchParams(window.location.search).get('embed');
+const JESTER_IS_FRAMED = window.parent && window.parent !== window;
 
-    let data = null;
-    try {
-        data = JSON.parse(savedTempData);
-    } catch (err) {
-        console.error('Failed to parse tempSelection:', err);
-        return;
-    }
+if (JESTER_EMBED) {
+    document.addEventListener('DOMContentLoaded', () => document.body.classList.add('embed-' + JESTER_EMBED));
+}
+
+function applyDesignTo3D(data) {
+    if (!data || typeof data !== 'object') return;
 
     const setField = (ids, value) => {
         if (value === undefined || value === null || value === '') return;
@@ -76,7 +75,6 @@ function restoreFromSessionStorage() {
     setField(['bodyColor'], data.bodyColor);
     setField(['ballColor'], data.ballColor);
 
-    // Staff: đặt knobType trước để mesh được tạo đúng kiểu, rồi mới đặt màu
     setField(['knobType'], data.knobType);
     setField(['knob1Color'], data.colorKnob1);
     setField(['knob2Color'], data.colorKnob2);
@@ -124,13 +122,29 @@ function restoreFromSessionStorage() {
         }
     }
 
-    sessionStorage.removeItem('tempSelection');
-    console.log('Restored temporary selection successfully in 3D:', data);
-
     if (typeof updateProduct === 'function') updateProduct();
     setTimeout(() => {
         if (typeof updateEffect === 'function') updateEffect();
     }, 50);
+}
+
+function restoreFromSessionStorage() {
+    if (JESTER_EMBED === '1') return;
+
+    const savedTempData = sessionStorage.getItem('tempSelection');
+    if (!savedTempData) return;
+
+    let data = null;
+    try {
+        data = JSON.parse(savedTempData);
+    } catch (err) {
+        console.error('Failed to parse tempSelection:', err);
+        return;
+    }
+
+    applyDesignTo3D(data);
+    sessionStorage.removeItem('tempSelection');
+    console.log('Restored temporary selection successfully in 3D:', data);
 }
 
 // --- MOMENT <-> 3D BRIDGE ---
@@ -293,15 +307,52 @@ function restoreFromSessionStorage() {
         };
     }
 
+    const STAGE_DEFAULTS = {
+        productType: 'club',
+        productColor: '#ff5733',
+        handleColor: '#ff5733',
+        bodyColor: '#ffffff',
+        ballColor: '#ff5733',
+        brightness: 1.0,
+        saturation: 1.0,
+        knobType: 'ball',
+        colorKnob1: '#222222',
+        colorKnob2: '#222222',
+        colorStaff: '#cccccc',
+        effect: 'none'
+    };
+
     function saveMomentAndReturn(event) {
         if (event && typeof event.preventDefault === 'function') event.preventDefault();
+        if (JESTER_EMBED === 'edit' && JESTER_IS_FRAMED) {
+            const momentId = new URLSearchParams(window.location.search).get('moment');
+            window.parent.postMessage(
+                { type: 'saveMoment', momentId, options: collect3DDesignOptions() },
+                window.location.origin
+            );
+            return;
+        }
         window.location.href = commitMomentDesignFrom3D();
     }
+    window.addEventListener('message', (e) => {
+        if (e.origin !== window.location.origin) return;
+        const msg = e.data;
+        if (!msg || msg.type !== 'applyMoment') return;
+        const opts = msg.options && typeof msg.options === 'object' ? msg.options : {};
+        applyDesignTo3D({ ...STAGE_DEFAULTS, ...opts });
+    });
+
+    window.addEventListener('load', () => {
+        if (JESTER_EMBED && JESTER_IS_FRAMED) {
+            window.parent.postMessage({ type: 'stageReady' }, window.location.origin);
+        }
+    });
 
     window.JesterStateBridge = {
         collect3DDesignOptions,
         commitMomentDesignFrom3D,
         saveMomentAndReturn,
+        applyDesignTo3D,
         restoreFromSessionStorage
     };
 })();

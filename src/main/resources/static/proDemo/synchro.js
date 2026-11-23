@@ -25,6 +25,114 @@
         simProductStatus: document.getElementById('simProductStatus')
     };
 
+    // ---------- 3D stage = iframe view.html?embed=1 ----------
+    const STAGE_URL = window.JESTER_3D_URL || 'view.html';
+    const stage = {
+        frame: document.getElementById('stageFrame'),
+        ready: false,
+        pending: null,
+        lastKey: null
+    };
+
+    function sendToStage(options, force) {
+        const win = stage.frame?.contentWindow;
+        if (!win) return;
+        const key = JSON.stringify(options || {});
+        if (!force && key === stage.lastKey) return;
+        stage.lastKey = key;
+        win.postMessage({ type: 'applyMoment', options: options || {} }, window.location.origin);
+    }
+
+    window.applyMomentOptions = function (options) {
+        stage.pending = options || {};
+        if (stage.ready) sendToStage(stage.pending, false);
+    };
+
+    function markStageReady() {
+        stage.ready = true;
+        if (stage.pending) sendToStage(stage.pending, true);
+    }
+
+    if (stage.frame) {
+        stage.frame.addEventListener('load', markStageReady);
+        stage.frame.src = `${STAGE_URL}?embed=1`;
+    }
+    
+    const editor = { overlay: null, frame: null, momentId: null, options: null };
+
+    function closeMomentEditor() {
+        editor.overlay?.remove();
+        editor.overlay = null;
+        editor.frame = null;
+        editor.momentId = null;
+        editor.options = null;
+    }
+
+    function openMomentEditor(moment) {
+        if (!moment || !moment.id || editor.overlay) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'design-modal';
+
+        const box = document.createElement('div');
+        box.className = 'design-modal-box';
+
+        const head = document.createElement('div');
+        head.className = 'design-modal-head';
+        const title = document.createElement('span');
+        title.textContent = `Edit design: ${moment.title || ''}`;
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 't-btn';
+        closeBtn.textContent = 'Close';
+        closeBtn.addEventListener('click', closeMomentEditor);
+        head.append(title, closeBtn);
+
+        const frame = document.createElement('iframe');
+        frame.className = 'design-modal-frame';
+        frame.title = '3D editor';
+        frame.src = `${STAGE_URL}?embed=edit&moment=${encodeURIComponent(moment.id)}`;
+
+        box.append(head, frame);
+        overlay.append(box);
+        document.body.append(overlay);
+
+        editor.overlay = overlay;
+        editor.frame = frame;
+        editor.momentId = moment.id;
+        editor.options = moment.options || {};
+    }
+
+    window.addEventListener('message', (e) => {
+        if (e.origin !== window.location.origin) return;
+        const msg = e.data;
+        if (!msg || typeof msg.type !== 'string') return;
+
+        if (msg.type === 'stageReady') {
+            if (e.source === stage.frame?.contentWindow) {
+                markStageReady();
+            } else if (editor.frame && e.source === editor.frame.contentWindow) {
+                editor.frame.contentWindow.postMessage(
+                    { type: 'applyMoment', options: editor.options || {} },
+                    window.location.origin
+                );
+            }
+            return;
+        }
+
+        if (msg.type === 'saveMoment') {
+            if (!editor.frame || e.source !== editor.frame.contentWindow) return;
+            if (!msg.momentId || msg.momentId !== editor.momentId) return;
+            const id = editor.momentId;
+            closeMomentEditor();
+            const updated = window.MusicEditorAPI?.updateMoment?.(id, { options: msg.options || {} });
+            if (updated) {
+                state.currentMoment = updated;
+                renderStage(`Saved design for "${updated.title}"`);
+            }
+        }
+    });
+
     const STORAGE_KEYS = ['savingProducts', 'savedProducts', 'myProducts', 'products'];
 
     function setPanelCollapsed(collapsed) {
@@ -232,6 +340,7 @@
     });
 
     window.SynchroAPI = {
+        openMomentEditor,
         setSavedProducts(list) {
             state.savedProducts = Array.isArray(list)
                 ? list.map((p, i) => ({

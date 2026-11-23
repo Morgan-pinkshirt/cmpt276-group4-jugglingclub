@@ -231,3 +231,13 @@ input[type="range"] {
 .left-panels::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.35);
 }
+
+body.embed-1 .left-panels,
+body.embed-1 .user-panel {
+    display: none !important;
+}
+
+body.embed-edit .user-panel > div:first-child,
+body.embed-edit #savingform {
+    display: none !important;
+}

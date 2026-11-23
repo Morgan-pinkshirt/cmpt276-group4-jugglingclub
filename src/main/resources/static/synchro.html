@@ -85,11 +85,8 @@
 
         <!-- Center 3D Stage -->
         <div id="synchro-viewport" class="stage-canvas-wrap">
+            <iframe id="stageFrame" class="stage-frame" title="3D Stage" scrolling="no"></iframe>
             <div class="grid-overlay"></div>
-            <div id="simStageCard" class="stage-center-card" style="pointer-events: none; z-index: 2;">
-                <div class="stage-kicker">3D Stage Preview</div>
-                <div id="simProductStatus" class="stage-main-text">Standard Club (Default)</div>
-            </div>
         </div>
     </section>
 
@@ -170,11 +167,9 @@
         </div>
     </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="./proDemo/musicStore.js"></script>
     <script src="./proDemo/musicEditor.js"></script>
     <script src="./proDemo/musicPlayer.js"></script>
-    <script src="./proDemo/syncSim.js"></script>
     <script src="./proDemo/momentEdit.js"></script>
     <script src="./proDemo/synchro.js"></script>
 </body>
