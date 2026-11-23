@@ -356,8 +356,38 @@
                 <button type="button" onclick="adjustSpeed(1)" class="control-btn"
                     style="flex: 1; font-weight: bold; font-size: 1rem;">+</button>
             </div>
+
+            <button type="button" id="btnSaveMomentDesign" class="save-btn"
+                style="display: none; margin-top: 8px; width: 100%; background-color: #2e7d32;"
+                onclick="window.JesterStateBridge.saveMomentAndReturn(event)">
+                Save to Moment
+            </button>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('btnSaveMomentDesign');
+            if (!btn) return;
+
+            function syncMomentSaveButton() {
+                const rawPending = sessionStorage.getItem('synchroPendingMomentTarget');
+                let isMomentFlow = false;
+                if (rawPending) {
+                    try {
+                        const parsed = JSON.parse(rawPending);
+                        isMomentFlow = Boolean(parsed && parsed.momentId);
+                    } catch (_) {
+                        isMomentFlow = false;
+                    }
+                }
+                btn.style.display = isMomentFlow ? 'block' : 'none';
+            }
+
+            syncMomentSaveButton();
+            window.addEventListener('pageshow', syncMomentSaveButton);
+        })();
+    </script>
 
     <!-- Three.js 3D Render Canvas Container -->
     <div id="canvas-container"></div>

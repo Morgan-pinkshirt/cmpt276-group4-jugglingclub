@@ -193,7 +193,7 @@ function updateStaffProduct() {
     const colorKnob1 = document.getElementById('knob1Color')?.value || '#222222';
     const colorKnob2 = document.getElementById('knob2Color')?.value || '#222222';
     const colorStaff = document.getElementById('staffColor')?.value || '#cccccc';
-    const knobType   = document.getElementById('knobType')?.value || 'ball';
+    const knobType = document.getElementById('knobType')?.value || 'ball';
 
     const prevKnobType = currentMesh?.userData?.knobType;
 
