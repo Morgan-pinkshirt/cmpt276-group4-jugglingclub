@@ -53,7 +53,7 @@ propBtn.addEventListener('click', function () {
         svgStill.style.display = "none";
         movingSection.style.display = "none";
         handleButton.style.display = "none";
-        bodyButton.syle.display = "none";
+        bodyButton.style.display = "none";
     }
     if (prop === "ball") {
         console.log("juggling balls");
@@ -71,6 +71,8 @@ propBtn.addEventListener('click', function () {
         hidding(current, stillRingSvg);
         // current = window.stillRingSvg;
     }
+    document.getElementById("view-button").click();
+     // this should makes the apply effect function run after switching.
 });
 
 export { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill };

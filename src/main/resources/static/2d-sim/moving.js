@@ -184,6 +184,40 @@ clickedButton.addEventListener('click', function () {
 	const mode = document.getElementById("options").value;
     const prop = document.getElementById("prop-options").value;
     let i = 5;
+    if(mode == "none"){
+        canvasStill.style.display = "none";
+        canvasMov.style.display = "none";
+        canvasRing.style.display = "none";
+        canvasPoi.style.display = "none";
+        canvasBall.style.display = "none";
+        stillBallSvg.style.display = "none";
+        stillPoiSvg.style.display = "none";
+        stillRingSvg.style.display = "none";
+        svgStill.style.display = "none";
+        svgMov.style.display = "none";
+        //set them all to none here.
+        
+        if(prop === "club"){
+            svgStill.style.display = "block";
+            svgMov.style.display = "block";
+        }else
+        if(prop === "ball"){
+            stillBallSvg.style.display = "block";
+        }else
+
+        if(prop === "ring"){
+            stillRingSvg.style.display = "block";
+        }else
+        if(prop === "poi"){
+            stillPoiSvg.style.display = "block";
+        }
+
+        
+        modeName.style.visibility = "hidden";
+        console.log("reached reutrn");
+        return;
+        
+    }
     if (mode[1] == 1 && mode[2] != 3) {
         modeName.innerHTML = `Page 1 - #${mode[3]}`;
         i = numberTen(mode);
