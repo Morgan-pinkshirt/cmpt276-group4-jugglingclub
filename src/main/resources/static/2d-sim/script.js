@@ -96,7 +96,7 @@ slider.addEventListener("input", function () {
     toggleColor(prop);
     if (prop === "club") {
         changeColor(club, handle);
-        changeColor(clubMov, handleMov);document.getElementById("view-button");
+        changeColor(clubMov, handleMov);
         changeVisibilityColor();
        
         
