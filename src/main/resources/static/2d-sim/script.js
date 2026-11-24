@@ -96,12 +96,15 @@ slider.addEventListener("input", function () {
     toggleColor(prop);
     if (prop === "club") {
         changeColor(club, handle);
-        changeColor(clubMov, handleMov);
+        changeColor(clubMov, handleMov);document.getElementById("view-button");
         changeVisibilityColor();
+       
+        
     } else {
         changeColorSingle(document.getElementById(`${prop}-color`));
         console.log(current);
         toggleColor(current);
+        
         // current = newDisplay;
     }
 
@@ -166,8 +169,9 @@ function hexToHSL(hex) {
     return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
 }
 
-function saveStateAndRedirect(event, targetUrl) {
+window.saveStateAndRedirect = function saveStateAndRedirect(event, targetUrl) {
     event.preventDefault();
+    
     const bodyHex = hslToHex(parseFloat(typeof bodyColour !== 'undefined' ? bodyColour : 0), 100, 50);
     const handleHex = hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50);
 
@@ -270,6 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         sessionStorage.removeItem('tempSelection');
         console.log("Restored temporary selection successfully in 2D:", data);
+        document.getElementById("view-button").click();
     }
 });
 
