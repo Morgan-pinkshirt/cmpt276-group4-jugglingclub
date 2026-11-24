@@ -1,5 +1,3 @@
-
-
 const typeElems = document.getElementById('hproductType');
 const colorElems = document.getElementById('hproductColor');
 const bodyColorElems = document.getElementById('hbodyColor');

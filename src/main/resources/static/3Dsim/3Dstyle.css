@@ -1,0 +1,275 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #1a1a1a;
+    color: white;
+    font-family: system-ui, sans-serif;
+}
+
+#canvas-container {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    touch-action: none;
+}
+
+.left-panels {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1050;
+    width: 270px;
+    max-width: calc(100vw - 340px);
+    overflow: visible;
+}
+/* Panel Effect Patterns */
+.effect-panel {
+    position: relative;
+    color: white;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    overflow: visible;
+}
+
+/* Panel Color & Adjustments */
+.ui-panel {
+    color: white;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+#customDropdownList {
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+/* Top-right user and navigation panel styling */
+.user-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    padding: 14px 16px;
+    border-radius: 8px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 280px;
+}
+
+/* Go back button & Save button */
+.home-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.home-btn:hover {
+    background-color: #0056b3;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+
+.save-btn:hover {
+    background-color: #218838;
+}
+
+h3 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 4px;
+}
+
+label {
+    font-size: 0.9rem;
+}
+
+select,
+input[type="color"],
+input[type="text"] {
+    padding: 5px 8px;
+    margin-top: 3px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+}
+
+input[type="color"] {
+    height: 32px;
+    padding: 2px;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin-top: 3px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Control buttons for speed & views */
+.control-btn {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+    flex: 1;
+    text-align: center;
+}
+
+.control-btn:hover {
+    background: #444;
+}
+
+.control-btn.active {
+    background: #007bff;
+    border-color: #0056b3;
+}
+
+.nav-btn {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-btn.primary {
+    background: #2563eb;
+    color: white;
+}
+
+/* Inline color picker paired with the "Same Color" sync button */
+.staff-sync-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 3px;
+    margin-bottom: 8px;
+}
+
+.staff-sync-row input[type="color"] {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+
+.staff-sync-btn {
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 10px;
+    white-space: nowrap;
+}
+
+/* Subtle dark scrollbar when left panels exceed viewport height */
+.left-panels::-webkit-scrollbar {
+    width: 6px;
+}
+
+.left-panels::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.left-panels::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 3px;
+}
+
+.left-panels::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* ---- Embed mode: view.html embedded inside synchro ---- */
+/* ?embed=1 : keep only the product canvas */
+body.embed-1 .left-panels,
+body.embed-1 .user-panel {
+    display: none !important;
+}
+
+/* ?embed=edit : design editor modal, hide navigation and the project save form */
+body.embed-edit .user-panel > div:first-child,
+body.embed-edit #savingform {
+    display: none !important;
+}
+
+/* ---- Theme (images live in /3Dsim/3Dimg; change the file names/extensions here) ---- */
+body {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.6)),
+        url('/3Dsim/3Dimg/background.jpg') center / cover no-repeat fixed,
+        #1a1a1a;
+}
+
+body.embed-1 {
+    background: transparent;
+}
+
+html:has(body.embed-1) {
+    background: transparent;
+}
+
+.ui-panel,
+.effect-panel {
+    background:
+        linear-gradient(rgba(10, 10, 14, 0.78), rgba(10, 10, 14, 0.78)),
+        url('/3Dsim/3Dimg/leftpanel.jpg') center / cover no-repeat;
+}
+
+.user-panel {
+    background:
+        linear-gradient(rgba(10, 10, 14, 0.86), rgba(10, 10, 14, 0.86)),
+        url('/3Dsim/3Dimg/rightpanel.jpg') center / cover no-repeat;
+}
