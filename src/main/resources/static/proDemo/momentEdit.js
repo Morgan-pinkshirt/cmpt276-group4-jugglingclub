@@ -6,7 +6,7 @@
     const SYNCHRO_DRAFT_KEY = 'synchroMomentsDraft';
     const MOMENT_RESULT_KEY = 'synchroMomentDesignResult';
     const RETURNING_FROM_3D_KEY = 'synchroReturningFrom3D';
-    const AudioStore = window.JesterAudioStorage;
+    const AudioStore = window.JesterAudioStorage; // not named Audio, which would shadow the browser constructor
     let pendingBounds = null;
 
     async function restoreMusicFromDB() {
@@ -175,6 +175,73 @@
         positionAnchors();
     }
 
+    const OVERLAP_EPS = 0.001;
+    const MIN_MOMENT_LEN = 0.1;
+
+    function otherMoments(excludeId) {
+        return state.moments
+            .filter((m) => m.id !== excludeId)
+            .sort((a, b) => a.start - b.start);
+    }
+
+    // The moment being edited = the selected moment whose range matches the two anchors
+    function getEditingMoment() {
+        const m = state.moments.find((item) => item.id === state.selectedMomentId);
+        if (!m) return null;
+        const same =
+            Math.abs(m.start - state.momentStart) < 0.011 &&
+            Math.abs(m.end - state.momentEnd) < 0.011;
+        return same ? m : null;
+    }
+
+    // The free gap around the two anchors, so they never overlap another moment
+    function getGapBounds(excludeId) {
+        let lo = state.musicStart;
+        let hi = state.musicEnd;
+        otherMoments(excludeId).forEach((o) => {
+            if (o.end <= state.momentStart + OVERLAP_EPS) lo = Math.max(lo, o.end);
+            if (o.start >= state.momentEnd - OVERLAP_EPS) hi = Math.min(hi, o.start);
+        });
+        return { lo, hi };
+    }
+
+    function overlapsOthers(start, end, excludeId) {
+        return otherMoments(excludeId).some(
+            (o) => start < o.end - OVERLAP_EPS && end > o.start + OVERLAP_EPS
+        );
+    }
+
+    // Find the first free range (from start) that can hold span seconds
+    function findFreeRange(start, span) {
+        const sorted = otherMoments(null);
+        let s = Math.max(state.musicStart, start);
+        for (let pass = 0; pass <= sorted.length; pass++) {
+            let moved = false;
+            for (const o of sorted) {
+                if (s < o.end - OVERLAP_EPS && s + span > o.start + OVERLAP_EPS) {
+                    s = o.end;
+                    moved = true;
+                }
+            }
+            if (!moved) break;
+        }
+        const e = Math.min(state.musicEnd, s + span);
+        if (e - s < MIN_MOMENT_LEN) return null;
+        return { start: Number(s.toFixed(2)), end: Number(e.toFixed(2)) };
+    }
+
+    function relocateAnchorsToFreeGap() {
+        const span = Math.max(0.5, state.momentEnd - state.momentStart);
+        const free = findFreeRange(state.momentStart, span);
+        if (free) {
+            state.momentStart = free.start;
+            state.momentEnd = free.end;
+        } else {
+            state.momentStart = state.musicEnd;
+            state.momentEnd = state.musicEnd;
+        }
+    }
+
     function applyAnchorTime(anchorType, rawSec) {
         if (!state.duration) return;
         const sec = Number(Math.max(0, Math.min(state.duration, rawSec)).toFixed(2));
@@ -187,11 +254,25 @@
             const nextEnd = Math.max(sec, state.musicStart);
             state.musicEnd = nextEnd;
             player.setMusicBounds?.(state.musicStart, state.musicEnd);
-        } else if (anchorType === 'momentStart') {
-            state.momentStart = Math.max(state.musicStart, Math.min(sec, state.momentEnd));
-            player.seekTo?.(state.momentStart);
-        } else if (anchorType === 'momentEnd') {
-            state.momentEnd = Math.min(state.musicEnd, Math.max(sec, state.momentStart));
+        } else if (anchorType === 'momentStart' || anchorType === 'momentEnd') {
+            const editing = getEditingMoment();
+            const { lo, hi } = getGapBounds(editing ? editing.id : null);
+            const minLen = editing ? MIN_MOMENT_LEN : 0;
+
+            if (anchorType === 'momentStart') {
+                state.momentStart = Math.max(lo, Math.min(sec, state.momentEnd - minLen));
+                player.seekTo?.(state.momentStart);
+            } else {
+                state.momentEnd = Math.min(hi, Math.max(sec, state.momentStart + minLen));
+            }
+
+            // Dragging an anchor while a moment is selected also updates that moment's start/end
+            if (editing) {
+                editing.start = Number(state.momentStart.toFixed(2));
+                editing.end = Number(state.momentEnd.toFixed(2));
+                renderMoments();
+                core.emit('momentsUpdated', { moments: getMoments() });
+            }
         }
 
         syncRangeVisuals();
@@ -254,6 +335,14 @@
         }
         if (end <= start) return;
 
+        // A new moment must not overlap an existing one: move it to the nearest free gap
+        if (overlapsOthers(start, end, null)) {
+            const free = findFreeRange(start, Math.max(0.5, end - start));
+            if (!free) return;
+            start = free.start;
+            end = free.end;
+        }
+
         const idx = state.moments.length + 1;
         const title = dom.momentTitleInput?.value.trim() || `Moment ${idx}`;
         const moment = {
@@ -272,6 +361,7 @@
         const span = Math.max(0.5, moment.end - moment.start);
         state.momentStart = Math.min(state.musicEnd, moment.end);
         state.momentEnd = Math.min(state.musicEnd, Number((state.momentStart + span).toFixed(2)));
+        relocateAnchorsToFreeGap();
 
         syncRangeVisuals();
         renderMoments();
@@ -378,6 +468,7 @@
         const moment = state.moments.find((m) => m.id === state.selectedMomentId);
         if (!moment) return;
         persistMomentsDraft();
+        // Prefer the modal inside synchro (no page navigation, so music and moments are kept)
         if (window.SynchroAPI && typeof window.SynchroAPI.openMomentEditor === 'function') {
             window.SynchroAPI.openMomentEditor(core.clone(moment));
             return;
@@ -579,6 +670,8 @@
     dom.btnEditMomentIn3D?.addEventListener('click', () => editSelectedMomentIn3D());
 
     dom.momentsTrackLane?.addEventListener('click', (e) => {
+        // Releasing the mouse after dragging an anchor fires a click: do not treat it as deselecting the moment
+        if (e.target.closest('.timeline-anchor')) return;
         const clip = e.target.closest('.moment-clip');
         if (clip) {
             const momentTitle = clip.dataset.title;
@@ -586,6 +679,8 @@
         } else {
             state.selectedMomentId = null;
             state.focusTarget = state.duration > 0 ? 'music' : null;
+            relocateAnchorsToFreeGap();
+            syncRangeVisuals();
             renderMoments();
             persistMomentsDraft();
             core.setActiveDisplayName(core.getCurrentMusicName());

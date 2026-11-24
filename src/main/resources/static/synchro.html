@@ -32,7 +32,7 @@
             <div class="panel-header">
                 <span class="panel-title">Moment Edit</span>
                 <button id="btnTogglePanel" class="panel-arrow-btn" type="button" title="Collapse Moment Edit">
-                    &#9664;
+                    <img src="./proDemo/editorImg/closemenu.jpg" alt="Collapse" />
                 </button>
             </div>
 
@@ -49,13 +49,11 @@
                 </div>
 
                 <div class="panel-field">
-                    <label class="panel-label" for="savedProductSelect">Saving Product</label>
-                    <div class="panel-inline">
-                        <select id="savedProductSelect">
-                            <option value="">-- Saving Product --</option>
-                        </select>
-                        <button id="btnRefreshProducts" class="t-btn" type="button">Reload</button>
-                    </div>
+                    <label class="panel-label">Saving Product</label>
+                    <button id="btnChooseSavedProduct" class="t-btn full-w" type="button" disabled>
+                        Choose Saved Product
+                    </button>
+                    <span id="savedProductLabel" class="panel-label">No project linked</span>
                 </div>
 
                 <button id="btnEditMomentIn3D" class="t-btn full-w" type="button" disabled>
@@ -80,7 +78,7 @@
 
         <!-- Expand Button shown when Left Panel is collapsed -->
         <button id="btnExpandPanel" class="panel-expand-tab is-hidden" type="button" title="Expand Moment Edit">
-            &#9654;
+            <img src="./proDemo/editorImg/openmenu.jpg" alt="Expand" />
         </button>
 
         <!-- Center 3D Stage -->
@@ -151,10 +149,10 @@
 
                         <div id="momentStartAnchor" class="timeline-anchor anchor-moment"
                             title="Drag Moment Start Anchor">
-                            <span>|</span>
+                            <span><img src="./proDemo/editorImg/startmoment.png" alt="" /></span>
                         </div>
                         <div id="momentEndAnchor" class="timeline-anchor anchor-moment" title="Drag Moment End Anchor">
-                            <span>|</span>
+                            <span><img src="./proDemo/editorImg/endmoment.png" alt="" /></span>
                         </div>
                     </div>
                 </div>

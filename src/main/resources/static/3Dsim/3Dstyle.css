@@ -232,12 +232,44 @@ input[type="range"] {
     background: rgba(255, 255, 255, 0.35);
 }
 
+/* ---- Embed mode: view.html embedded inside synchro ---- */
+/* ?embed=1 : keep only the product canvas */
 body.embed-1 .left-panels,
 body.embed-1 .user-panel {
     display: none !important;
 }
 
+/* ?embed=edit : design editor modal, hide navigation and the project save form */
 body.embed-edit .user-panel > div:first-child,
 body.embed-edit #savingform {
     display: none !important;
+}
+
+/* ---- Theme (images live in /3Dsim/3Dimg; change the file names/extensions here) ---- */
+body {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.6)),
+        url('/3Dsim/3Dimg/background.jpg') center / cover no-repeat fixed,
+        #1a1a1a;
+}
+
+body.embed-1 {
+    background: transparent;
+}
+
+html:has(body.embed-1) {
+    background: transparent;
+}
+
+.ui-panel,
+.effect-panel {
+    background:
+        linear-gradient(rgba(10, 10, 14, 0.78), rgba(10, 10, 14, 0.78)),
+        url('/3Dsim/3Dimg/leftpanel.jpg') center / cover no-repeat;
+}
+
+.user-panel {
+    background:
+        linear-gradient(rgba(10, 10, 14, 0.86), rgba(10, 10, 14, 0.86)),
+        url('/3Dsim/3Dimg/rightpanel.jpg') center / cover no-repeat;
 }

@@ -1,7 +1,5 @@
 (function () {
     const state = {
-        savedProducts: [],
-        selectedProductId: '',
         moments: [],
         currentMoment: null,
         activePlayingMoment: null
@@ -13,8 +11,8 @@
         btnExpandPanel: document.getElementById('btnExpandPanel'),
 
         momentTitleEdit: document.getElementById('momentEditTitleInput'),
-        productSelect: document.getElementById('savedProductSelect'),
-        btnRefresh: document.getElementById('btnRefreshProducts'),
+        btnChooseProduct: document.getElementById('btnChooseSavedProduct'),
+        savedProductLabel: document.getElementById('savedProductLabel'),
         btnEditIn3D: document.getElementById('btnEditMomentIn3D'),
         btnApply: document.getElementById('btnApplyMomentBinding'),
 
@@ -43,6 +41,7 @@
         win.postMessage({ type: 'applyMoment', options: options || {} }, window.location.origin);
     }
 
+    // momentEdit.js calls this whenever a moment is selected, entered or updated
     window.applyMomentOptions = function (options) {
         stage.pending = options || {};
         if (stage.ready) sendToStage(stage.pending, false);
@@ -57,7 +56,8 @@
         stage.frame.addEventListener('load', markStageReady);
         stage.frame.src = `${STAGE_URL}?embed=1`;
     }
-    
+
+    // ---------- Design editor modal (iframe view.html?embed=edit) ----------
     const editor = { overlay: null, frame: null, momentId: null, options: null };
 
     function closeMomentEditor() {
@@ -133,8 +133,6 @@
         }
     });
 
-    const STORAGE_KEYS = ['savingProducts', 'savedProducts', 'myProducts', 'products'];
-
     function setPanelCollapsed(collapsed) {
         if (!dom.panel || !dom.btnExpandPanel) return;
         dom.panel.classList.toggle('is-collapsed', collapsed);
@@ -142,44 +140,126 @@
         setTimeout(() => window.dispatchEvent(new Event('resize')), 210);
     }
 
-    function loadProducts() {
-        let list = [];
-        for (const key of STORAGE_KEYS) {
-            const raw = localStorage.getItem(key);
-            if (!raw) continue;
-            try {
-                const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed) && parsed.length) {
-                    list = parsed.map((p, i) => ({
-                        id: String(p.id ?? p.name ?? `prod_${i}`),
-                        name: p.name || p.title || `Product #${i + 1}`,
-                        type: p.type || p.productType || 'club',
-                        raw: p
-                    }));
-                    break;
-                }
-            } catch (_) { }
-        }
-        state.savedProducts = list;
-        renderProductSelect();
-        renderStage();
+    // ---------- Saved project picker (saves table on the server) ----------
+    const SAVED_PROJECTS_URL = '/api/saved-projects';
+    let savedPicker = null;
+
+    function projectToOptions(p) {
+        const color = p.productColor || '#ff5733';
+        const bright = Number(p.brightness);
+        const sat = Number(p.saturation);
+        return {
+            productType: p.productType || 'club',
+            productColor: color,
+            handleColor: color,
+            bodyColor: p.bodyColor || '#ffffff',
+            ballColor: color,
+            brightness: Number.isFinite(bright) ? bright : 1.0,
+            saturation: Number.isFinite(sat) ? sat : 1.0,
+            effect: p.effect || 'none'
+        };
     }
 
-    function renderProductSelect() {
-        if (!dom.productSelect) return;
-        const prev = state.selectedProductId;
-        dom.productSelect.innerHTML = '<option value="">-- Saving Product --</option>';
-        state.savedProducts.forEach((p) => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = `${p.name} (${p.type})`;
-            dom.productSelect.appendChild(opt);
+    function closeSavedPicker() {
+        savedPicker?.remove();
+        savedPicker = null;
+    }
+
+    function chooseSavedProject(p) {
+        const target = state.currentMoment;
+        if (!target || !window.MusicEditorAPI?.updateMoment) return;
+        const updated = window.MusicEditorAPI.updateMoment(target.id, {
+            options: projectToOptions(p),
+            synchro: { ...(target.synchro || {}), productId: p.uid, projectName: p.projectname }
         });
-        if (state.savedProducts.some((p) => p.id === prev)) {
-            dom.productSelect.value = prev;
-        } else if (state.savedProducts.length) {
-            state.selectedProductId = state.savedProducts[0].id;
-            dom.productSelect.value = state.selectedProductId;
+        closeSavedPicker();
+        if (updated) {
+            state.currentMoment = updated;
+            syncFormToMoment(updated);
+            renderStage(`Applied "${p.projectname}" to "${updated.title}"`);
+        }
+    }
+
+    async function openSavedPicker() {
+        if (savedPicker || !state.currentMoment) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'design-modal';
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeSavedPicker();
+        });
+
+        const box = document.createElement('div');
+        box.className = 'design-modal-box saved-picker-box';
+
+        const head = document.createElement('div');
+        head.className = 'design-modal-head';
+        const title = document.createElement('span');
+        title.textContent = 'Choose a saved project';
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 't-btn';
+        closeBtn.textContent = 'Close';
+        closeBtn.addEventListener('click', closeSavedPicker);
+        head.append(title, closeBtn);
+
+        const list = document.createElement('div');
+        list.className = 'saved-picker-list';
+        const note = document.createElement('div');
+        note.className = 'moment-list-empty';
+        note.textContent = 'Loading...';
+        list.append(note);
+
+        box.append(head, list);
+        overlay.append(box);
+        document.body.append(overlay);
+        savedPicker = overlay;
+
+        try {
+            const res = await fetch(SAVED_PROJECTS_URL, {
+                credentials: 'same-origin',
+                headers: { Accept: 'application/json' }
+            });
+            if (res.status === 401) throw new Error('Please log in first.');
+            if (!res.ok) throw new Error(`Server error (${res.status})`);
+            const projects = await res.json();
+            if (!savedPicker) return;
+
+            list.innerHTML = '';
+            if (!Array.isArray(projects) || !projects.length) {
+                note.textContent = 'No saved projects yet.';
+                list.append(note);
+                return;
+            }
+            projects.forEach((p) => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'saved-picker-item';
+
+                const name = document.createElement('span');
+                name.className = 'saved-picker-name';
+                name.textContent = p.projectname || `Project ${p.uid}`;
+
+                const meta = document.createElement('span');
+                meta.className = 'saved-picker-meta';
+                meta.textContent = `${p.productType || 'club'} · ${p.effect || 'none'}`;
+
+                const sw1 = document.createElement('span');
+                sw1.className = 'saved-picker-swatch';
+                sw1.style.background = p.productColor || '#ffffff';
+                const sw2 = document.createElement('span');
+                sw2.className = 'saved-picker-swatch';
+                sw2.style.background = p.bodyColor || '#ffffff';
+
+                item.append(name, meta, sw1, sw2);
+                item.addEventListener('click', () => chooseSavedProject(p));
+                list.append(item);
+            });
+        } catch (err) {
+            if (!savedPicker) return;
+            list.innerHTML = '';
+            note.textContent = `Could not load projects: ${err.message}`;
+            list.append(note);
         }
     }
 
@@ -188,17 +268,19 @@
         if (dom.momentTitleEdit) dom.momentTitleEdit.disabled = !hasMoment;
         if (dom.btnApply) dom.btnApply.disabled = !hasMoment;
         if (dom.btnEditIn3D) dom.btnEditIn3D.disabled = !hasMoment;
+        if (dom.btnChooseProduct) dom.btnChooseProduct.disabled = !hasMoment;
 
         if (!m) {
             if (dom.momentTitleEdit) dom.momentTitleEdit.value = '';
+            if (dom.savedProductLabel) dom.savedProductLabel.textContent = 'No project linked';
             return;
         }
 
         if (dom.momentTitleEdit) dom.momentTitleEdit.value = m.title || '';
-        const prodId = m.synchro?.productId;
-        if (prodId && dom.productSelect && state.savedProducts.some((p) => p.id === prodId)) {
-            state.selectedProductId = prodId;
-            dom.productSelect.value = prodId;
+        if (dom.savedProductLabel) {
+            dom.savedProductLabel.textContent = m.synchro?.projectName
+                ? `Linked: ${m.synchro.projectName}`
+                : 'No project linked';
         }
     }
 
@@ -233,11 +315,7 @@
     function applyToCurrentMoment() {
         if (!state.currentMoment || !window.MusicEditorAPI?.updateMoment) return;
         const updated = window.MusicEditorAPI.updateMoment(state.currentMoment.id, {
-            title: dom.momentTitleEdit?.value,
-            synchro: {
-                ...(state.currentMoment.synchro || {}),
-                productId: state.selectedProductId || null
-            }
+            title: dom.momentTitleEdit?.value
         });
         if (updated) {
             state.currentMoment = updated;
@@ -246,16 +324,13 @@
     }
 
     function renderStage(note) {
-        const prod = state.savedProducts.find((p) => p.id === state.selectedProductId);
         const mom = state.activePlayingMoment || state.currentMoment;
 
         if (dom.simProductStatus) {
             if (mom?.options?.productType) {
                 dom.simProductStatus.textContent = `3D Design: ${mom.options.productType} (${mom.options.effect || 'none'})`;
-            } else if (prod) {
-                dom.simProductStatus.textContent = `Product: ${prod.name} (${prod.type})`;
             } else {
-                dom.simProductStatus.textContent = 'No Saving Product selected';
+                dom.simProductStatus.textContent = 'No design yet';
             }
         }
 
@@ -269,7 +344,9 @@
 
         const payload = {
             note: note || undefined,
-            product: prod ? { id: prod.id, name: prod.name, type: prod.type } : null,
+            product: mom.synchro?.projectName
+                ? { id: mom.synchro.productId, name: mom.synchro.projectName }
+                : null,
             moment: {
                 id: mom.id,
                 title: mom.title,
@@ -288,12 +365,7 @@
     dom.btnTogglePanel?.addEventListener('click', () => setPanelCollapsed(true));
     dom.btnExpandPanel?.addEventListener('click', () => setPanelCollapsed(false));
 
-    dom.productSelect?.addEventListener('change', (e) => {
-        state.selectedProductId = e.target.value;
-        renderStage();
-    });
-
-    dom.btnRefresh?.addEventListener('click', loadProducts);
+    dom.btnChooseProduct?.addEventListener('click', openSavedPicker);
     dom.btnApply?.addEventListener('click', applyToCurrentMoment);
 
     window.addEventListener('musicEditor:momentsUpdated', (e) => {
@@ -340,21 +412,8 @@
     });
 
     window.SynchroAPI = {
-        openMomentEditor,
-        setSavedProducts(list) {
-            state.savedProducts = Array.isArray(list)
-                ? list.map((p, i) => ({
-                    id: String(p.id ?? p.name ?? `prod_${i}`),
-                    name: p.name || p.title || `Product #${i + 1}`,
-                    type: p.type || p.productType || 'club',
-                    raw: p
-                }))
-                : [];
-            renderProductSelect();
-            renderStage();
-        }
+        openMomentEditor
     };
 
     syncFormToMoment(null);
-    loadProducts();
 })();
