@@ -71,10 +71,18 @@
                             </select>
                             <input type="button" id="prop-button" value="VIEW">
                         </form>
+                        <form id="staff-shape" class="mode-form" onsubmit="return false">
+                            <label>Choose a "knob"</label>
+                            <select id="staff-option">
+                                <option value="ball">Ball</option>
+                                <option value="cylinder">Cylinder</option>
+                            </select>
+                            <input type="button" id="staff-button" value="CHANGE">
+                        </form>
                     </div>
                 </div>
-                <div class="universal-section">
-                    <span class="control-title">
+                <div id="change-color" class="universal-section">
+                    <span id="club-part" class="control-title">
                         <i data-lucide="mouse-pointer-2"></i>
                         Club Part
                     </span>
@@ -87,6 +95,16 @@
                             <!-- Juggling Club Handle -->
                             Prop Handle
                         </button>
+                        <button type="button" id="bodyButton2">
+                            <!-- Juggling Club Handle -->
+                            Prop Body - 2
+                        </button>
+                        <br>
+
+                    </div>
+                    <div id="checkboxDiv">
+                        <input type="checkbox" id="dependently">
+                        <label id="label_checkbox" for="dependently">Change both ends simultaneously</label>
                     </div>
                 </div>
                 <div class="universal-section">
@@ -328,10 +346,15 @@
                                         <circle id="poi-color" r="30" cx="50" cy="250" fill="blue"></circle>
                                         <line x1="50" x2="50" y1="220" y2="100" style="stroke:white;stroke-width:4"></line>
                                     </svg>
-                                    <svg id="staff_still" width="150" height="300"viewBox="0 0 150 300">
-                                        <circle id="staff-top" r="25" cx="50" cy="25" fill="red"></circle>
-                                        <rect id="staff-handle" x="45" y="50" width="10" height="200" fill="grey"></rect>
-                                        <circle id="staff-bottom" r="25" cx="50" cy="275" fill="red"></circle>
+                                    <svg id="staff_still_ball" width="150" height="300"viewBox="0 0 150 300">
+                                        <circle id="staff-top_b" r="25" cx="50" cy="25" fill="red"></circle>
+                                        <rect id="staff-handle_b" x="45" y="50" width="10" height="200" fill="grey"></rect>
+                                        <circle id="staff-bottom_b" r="25" cx="50" cy="275" fill="red"></circle>
+                                    </svg>
+                                    <svg id="staff_still_cylinder" width="150" height="300"viewBox="0 0 150 300">
+                                        <rect id="staff-top_c" x="37" y="5" width="25" height="50" fill="red"></rect>
+                                        <rect id="staff-handle_c" x="45" y="55" width="10" height="200" fill="grey"></rect>
+                                        <rect id="staff-bottom_c" x="37" y="250" width="25" height="50" fill="red"></rect>
                                     </svg>
                                     <canvas id="canvas_still" width="200" height="400">
                                     </canvas>
@@ -341,7 +364,9 @@
                                     </canvas>
                                     <canvas id="canvas_poi" width="200" height="400">
                                     </canvas>
-                                    <canvas id="canvas_staff" width="200" height="400">
+                                    <canvas id="canvas_staff_ball" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_staff_cylinder" width="200" height="400">
                                     </canvas>
                                 </div>
                             </div>

@@ -89,7 +89,11 @@ button.active {
     display: none;
 }
 
-#staff_still {
+#staff_still_ball {
+    display: none;
+}
+
+#staff_still_cylinder {
     display: none;
 }
 
@@ -105,6 +109,26 @@ button.active {
     display: none;
 }
 
-#canvas_staff {
+#canvas_staff_ball {
+    display: none;
+}
+
+#canvas_staff_cylinder {
+    display: none;
+}
+
+#change-color {
+    visibility: visible;
+}
+
+#staffExtraOption {
+    display: none;
+}
+
+#bodyButton2 {
+    display: block;
+}
+
+#staff-shape {
     display: none;
 }

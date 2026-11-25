@@ -1,6 +1,6 @@
 // import { current, hidding } from './prop.js';
-import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, canvasStaff } from './moving.js';
-import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffSvg } from './prop.js';
+import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, canvasStaffBall, canvasStaffCylinder, staffOption } from './moving.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffBallSvg, stillStaffCylinderSvg, staffEndColor } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
 // type="module"
 
@@ -12,7 +12,16 @@ const handleMov = document.getElementById("HandleMov");
 
 const slider = document.getElementById("colourSlider");
 const bodyButton = document.getElementById("bodyButton");
+const bodyButton2 = document.getElementById("bodyButton2");
 const handleButton = document.getElementById("handleButton");
+
+const staffTopBall = document.getElementById("staff-top_b");
+const staffHandleBall = document.getElementById("staff-handle_b");
+const staffBottomBall = document.getElementById("staff-bottom_b");
+
+const staffTopCylinder = document.getElementById("staff-top_c");
+const staffHandleCylinder = document.getElementById("staff-handle_c");
+const staffBottomCylinder = document.getElementById("staff-bottom_c");
 
 // const ballColor = document.getElementById("ball-color");
 
@@ -21,6 +30,7 @@ const svgMov = document.getElementById("svg_moving");
 
 let selectedPart = "body";
 let bodyColour = 0;
+let bodyColour2 = 0;
 let handleColour = 0;
 
 
@@ -60,8 +70,10 @@ function toggleColor(prop) {
         oppositeMode = stillRingSvg;
     } else if (prop === "poi") {
         oppositeMode = stillPoiSvg;
-    } else if (prop === "staff") {
-        oppositeMode = stillStaffSvg;
+    } else if (prop === "staff" && staffOption.value === "ball") {
+        oppositeMode = stillStaffBallSvg;
+    } else if (prop === "staff" && staffOption.value === "cylinder") {
+        oppositeMode = stillStaffCylinderSvg;
     } else {
         oppositeMode = current;
     }
@@ -78,6 +90,19 @@ bodyButton.addEventListener("click", function () {
     // toggleColor(current);
 
     bodyButton.classList.add("active");
+    bodyButton2.classList.remove("active");
+    handleButton.classList.remove("active");
+});
+
+bodyButton2.addEventListener("click", function () {
+    selectedPart = "body2";
+    slider.value = bodyColour2;
+    // changeVisibilityColor();
+    // hidding(current)
+    // toggleColor(current);
+
+    bodyButton2.classList.add("active");
+    bodyButton.classList.remove("active");
     handleButton.classList.remove("active");
 });
 
@@ -88,6 +113,7 @@ handleButton.addEventListener("click", function () {
     // hidding(currentt, )
 
     handleButton.classList.add("active");
+    bodyButton2.classList.remove("active");
     bodyButton.classList.remove("active");
 });
 
@@ -101,25 +127,21 @@ slider.addEventListener("input", function () {
         changeColor(clubMov, handleMov);
         changeVisibilityColor();
     } else if (prop === "staff") {
-        changeColorStaff(document.getElementById(`staff-top`), document.getElementById(`staff-bottom`), document.getElementById(`staff-handle`));
-        console.log(current);
-        toggleColor(current);
+        changeColorStaff(staffTopBall, staffBottomBall, staffHandleBall, staffEndColor);
+        changeColorStaff(staffTopCylinder, staffBottomCylinder, staffHandleCylinder, staffEndColor);
+        // console.log(current);
+        // toggleColor(current);
         // current = newDisplay;
     } else {
         changeColorSingle(document.getElementById(`${prop}-color`));
-        console.log(current);
-        toggleColor(current);
+        // console.log(current);
+        // toggleColor(current);
         // current = newDisplay;
     }
 
 });
 
-// export function changeCurrent(newCurrent) {
-//     current = newCurrent;
-// }
-
 function changeColor(body, handle) {
-    // toggleColor(current);
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
         body.setAttribute("fill", colour);
@@ -137,13 +159,17 @@ function changeColorSingle(body) {
     bodyColour = slider.value;
 }
 
-function changeColorStaff(knob1, knob2, handle) {
-    // toggleColor(current);
+function changeColorStaff(knob1, knob2, handle, option) {
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
         knob1.setAttribute("fill", colour);
-        knob2.setAttribute("fill", colour);
+        if (option.checked === true) {
+            knob2.setAttribute("fill", colour);
+        }
         bodyColour = slider.value;
+    } else if (selectedPart === "body2") {
+        knob2.setAttribute("fill", colour);
+        bodyColour2 = slider.value;
     } else {
         handle.setAttribute("fill", colour);
         handleColour = slider.value;
@@ -298,4 +324,4 @@ if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
 
-export { svgStill, svgMov, handleButton, bodyButton };
+export { svgStill, svgMov, handleButton, bodyButton, bodyButton2 };
