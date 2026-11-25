@@ -89,6 +89,10 @@ button.active {
     display: none;
 }
 
+#staff_still {
+    display: none;
+}
+
 #canvas_ball {
     display: none;
 }
@@ -98,5 +102,9 @@ button.active {
 }
 
 #canvas_poi {
+    display: none;
+}
+
+#canvas_staff {
     display: none;
 }

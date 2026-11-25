@@ -14,6 +14,7 @@ const staticDiv = document.getElementById("static-transform");
 const stillBallSvg = document.getElementById("ball_still");
 const stillRingSvg = document.getElementById("ring_still");
 const stillPoiSvg = document.getElementById("poi_still");
+const stillStaffSvg = document.getElementById("staff_still");
 
 // const stillBallSvg = document.createElement("svg");
 // stillBallSvg.id = "ball-still";
@@ -53,7 +54,7 @@ propBtn.addEventListener('click', function () {
         svgStill.style.display = "none";
         movingSection.style.display = "none";
         handleButton.style.display = "none";
-        bodyButton.syle.display = "none";
+        bodyButton.style.display = "none";
     }
     if (prop === "ball") {
         console.log("juggling balls");
@@ -70,7 +71,12 @@ propBtn.addEventListener('click', function () {
         console.log("ring");
         hidding(current, stillRingSvg);
         // current = window.stillRingSvg;
+    } else if (prop === "staff") {
+        handleButton.style.display = "block";
+        bodyButton.style.display = "block";
+        console.log("staff");
+        hidding(current, stillStaffSvg);
     }
 });
 
-export { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill };
+export { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill, stillStaffSvg };

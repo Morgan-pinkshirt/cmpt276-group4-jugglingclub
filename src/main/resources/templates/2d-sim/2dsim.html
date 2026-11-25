@@ -63,10 +63,11 @@
                         <h2>Choose a prop</h2>
                         <form class="mode-form" onsubmit="return false">
                             <select id="prop-options">
-                                <option value="club">Juggling Club</option>
-                                <option value="ball">Juggling Ball</option>
-                                <option value="ring">Juggling Ring</option>
+                                <option value="club">Club</option>
+                                <option value="ball">Ball</option>
+                                <option value="ring">Ring</option>
                                 <option value="poi">Poi</option>
+                                <option value="staff">Staff</option>
                             </select>
                             <input type="button" id="prop-button" value="VIEW">
                         </form>
@@ -327,6 +328,11 @@
                                         <circle id="poi-color" r="30" cx="50" cy="250" fill="blue"></circle>
                                         <line x1="50" x2="50" y1="220" y2="100" style="stroke:white;stroke-width:4"></line>
                                     </svg>
+                                    <svg id="staff_still" width="150" height="300"viewBox="0 0 150 300">
+                                        <circle id="staff-top" r="25" cx="50" cy="25" fill="red"></circle>
+                                        <rect id="staff-handle" x="45" y="50" width="10" height="200" fill="grey"></rect>
+                                        <circle id="staff-bottom" r="25" cx="50" cy="275" fill="red"></circle>
+                                    </svg>
                                     <canvas id="canvas_still" width="200" height="400">
                                     </canvas>
                                     <canvas id="canvas_ball" width="200" height="400">
@@ -334,6 +340,8 @@
                                     <canvas id="canvas_ring" width="200" height="400">
                                     </canvas>
                                     <canvas id="canvas_poi" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_staff" width="200" height="400">
                                     </canvas>
                                 </div>
                             </div>

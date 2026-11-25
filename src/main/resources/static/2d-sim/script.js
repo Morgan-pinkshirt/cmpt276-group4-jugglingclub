@@ -1,6 +1,6 @@
 // import { current, hidding } from './prop.js';
-import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill } from './moving.js';
-import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg } from './prop.js';
+import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, canvasStaff } from './moving.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffSvg } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
 // type="module"
 
@@ -60,6 +60,8 @@ function toggleColor(prop) {
         oppositeMode = stillRingSvg;
     } else if (prop === "poi") {
         oppositeMode = stillPoiSvg;
+    } else if (prop === "staff") {
+        oppositeMode = stillStaffSvg;
     } else {
         oppositeMode = current;
     }
@@ -98,6 +100,11 @@ slider.addEventListener("input", function () {
         changeColor(club, handle);
         changeColor(clubMov, handleMov);
         changeVisibilityColor();
+    } else if (prop === "staff") {
+        changeColorStaff(document.getElementById(`staff-top`), document.getElementById(`staff-bottom`), document.getElementById(`staff-handle`));
+        console.log(current);
+        toggleColor(current);
+        // current = newDisplay;
     } else {
         changeColorSingle(document.getElementById(`${prop}-color`));
         console.log(current);
@@ -128,6 +135,20 @@ function changeColorSingle(body) {
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     body.setAttribute("fill", colour);
     bodyColour = slider.value;
+}
+
+function changeColorStaff(knob1, knob2, handle) {
+    // toggleColor(current);
+    let colour = "hsl(" + slider.value + ", 100%, 50%)";
+    if (selectedPart === "body") {
+        knob1.setAttribute("fill", colour);
+        knob2.setAttribute("fill", colour);
+        bodyColour = slider.value;
+    } else {
+        handle.setAttribute("fill", colour);
+        handleColour = slider.value;
+    }
+
 }
 
 

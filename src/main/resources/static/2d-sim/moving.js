@@ -1,6 +1,6 @@
 // https://zetcode.com/canvas-api/rotate/. 31/10/26
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
-import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg } from './prop.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffSvg } from './prop.js';
 import { svgStill, svgMov } from './script.js';
 
 const canvasMov = document.getElementById('canvas_moving');
@@ -17,6 +17,9 @@ const ctxRing = canvasRing.getContext('2d');
 
 const canvasPoi = document.getElementById("canvas_poi");
 const ctxPoi = canvasPoi.getContext('2d');
+
+const canvasStaff = document.getElementById("canvas_staff");
+const ctxStaff = canvasStaff.getContext('2d');
 
 const clickedButton = document.getElementById("view-button");
 
@@ -165,12 +168,42 @@ function drawPoi(ctx, angle) {
     requestAnimationFrame(() => drawPoi(ctx, angle));
 }
 
+function drawStaff(ctx, angle) {
+    const img = document.getElementById("img");
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(75, 70, 25, 0, 2 * Math.PI);
+    ctx.fillRect(70, 95, 10, 200);
+    ctx.arc(75, 320, 25, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle);
+    ctx.translate(-centerX, -centerY);	
+
+    if (img.complete) {
+        ctx.drawImage(img, -230, 120);
+    }
+    ctx.restore();
+    // Increase angle for next frame
+    angle += 0.0075;
+    if (angle > Math.PI * 2) {
+        angle = 0;
+        // counter = 0;
+    }
+    // Request next animation frame
+    requestAnimationFrame(() => drawStaff(ctx, angle));
+}
+
 // Start animation
 drawClub(ctxMov, angleMov, "moving");
 drawClub(ctxStill, angleStill, "still");
 drawBall(ctxBall, angleStill);
 drawRing(ctxRing, angleStill);
 drawPoi(ctxPoi, angleStill);
+drawStaff(ctxStaff, angleStill);
 
 function numberTen(mode) {
     if (mode[4] != "_") {
@@ -224,6 +257,7 @@ clickedButton.addEventListener('click', function () {
         canvasMov.style.display = "block";
         // window.svgStill.style.display = "none";
         canvasStill.style.display = "block";
+        canvasStaff.style.display = "none";
         canvasPoi.style.display = "none";
         // window.modeName.style.visibility = "visible";
     } else if (prop === "ball") {
@@ -231,21 +265,31 @@ clickedButton.addEventListener('click', function () {
         canvasRing.style.display = "none";
         // window.stillBallSvg.style.display = "none";
         canvasPoi.style.display = "none";
+        canvasStaff.style.display = "none";
         canvasBall.style.display = "block";
     } else if (prop === "ring") {
         hidding(stillRingSvg, canvasRing);
         // window.stillRingSvg.style.display = "none";
         canvasBall.style.display = "none";
         canvasPoi.style.display = "none";
+        canvasStaff.style.display = "none";
         canvasRing.style.display = "block";
     } else if (prop === "poi") {
         hidding(stillPoiSvg, canvasPoi);
         canvasRing.style.display = "none";
         canvasBall.style.display = "none";
+        canvasStaff.style.display = "none";
         // window.stillPoiSvg.style.display = "none";
         canvasPoi.style.display = "block";
+    } else if (prop === "staff") {
+        hidding(stillStaffSvg, canvasStaff);
+        canvasRing.style.display = "none";
+        canvasBall.style.display = "none";
+        canvasPoi.style.display = "none";
+        // window.stillPoiSvg.style.display = "none";
+        canvasStaff.style.display = "block";
     }
 });
 
 // export { clickedButton, angleMov, angleStill }
-export { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill }
+export { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, canvasStaff }
