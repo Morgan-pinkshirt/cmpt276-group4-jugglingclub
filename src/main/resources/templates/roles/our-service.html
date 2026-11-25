@@ -1,168 +1,297 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Service | TheJestersClub</title>
-    <link rel="stylesheet" th:href="@{/css/our-service.css}">
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"defer></script>
-</head>
-<body class="service-page">
-    <header class="service-header">
-        <div class="service-brand">
-            <i data-lucide="drama"></i>
-            <span>The Jester Club</span>
-        </div>
-        <a class="service-back" th:href="@{/home}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Our Service | The Jesters Club</title>
+        <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+        <link rel="stylesheet" th:href="@{/css/our-service.css}">
+    </head>
+<body class="mc-page mc-service">
+    <header class="mc-header">
+        <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+        <a class="mc-button mc-outline" th:href="@{/home}">
             <i data-lucide="arrow-left"></i>
-            Back to Guest Lobby
+            Back to Lobby
         </a>
     </header>
-    <main class="service-main">
-        <section class="service-hero">
-            <div class="service-hero-text">
+    <main class="mc-service-main" id="main">
+        <section class="mc-hero mc-service-hero">
+            <div class="mc-hero-copy">
+                <div class="mc-hero-label">
+                    <i data-lucide="sparkles"></i>
+                    <span class="mc-eyebrow">
+                        DISCOVER OUR SERVICE
+                    </span>
+                    <i data-lucide="sparkles"></i>
+                </div>
                 <h1>
-                    Discover
-                    <span>TheJestersClub</span>
+                    Your Imagination. Your Stage.
                 </h1>
-                <p class="service-subtitle">
-                    A customization and preview service
-                    for LED juggling clubs.
-                </p>
-                <p class="service-description">
-                    Design your own LED juggling club,
-                    explore a range of lighting effects,
-                    and see how your design looks in
-                    real time.
+                <p>
+                    Design illuminated juggling props,
+                    explore creative lighting effects
+                    and bring your performances to life
+                    through music and motion.
                 </p>
             </div>
-            <div class="service-hero-image">
-                <img
-                    th:src="@{/img/guest/led-clubs.jpg}"
-                    alt="Colourful LED juggling clubs">
+        </section>
+        <section aria-labelledby="props-title">
+            <div th:replace="~{fragments/lobby-cards :: heading(
+                'props-title',
+                'shapes',
+                'Explore Our Props',
+                'More shapes available in simulators for endless creative possibilities.'
+            )}">
+            </div>
+            <div class="mc-mini-grid mc-service-grid">
+                <article class="mc-card mc-cyan">
+                    <div th:replace="~{fragments/lobby-cards :: art('club.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>Juggling Club</h3>
+                        <p>
+                            Customize the colours of your LED
+                            juggling club and experiment with
+                            lighting effects.
+                        </p>
+                        <div class="mc-service-tags">
+                            <span>
+                                <i data-lucide="square"></i>
+                                2D Simulator
+                            </span>
+                            <span>
+                                <i data-lucide="box"></i>
+                                3D Simulator
+                            </span>
+                        </div>
+                    </div>
+                </article>
+                <article class="mc-card mc-purple">
+                    <div th:replace="~{fragments/lobby-cards :: art('ball.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>Juggling Ball</h3>
+                        <p>
+                            Explore illuminated spherical
+                            props with custom colours and
+                            dynamic lighting effects.
+                        </p>
+                        <div class="mc-service-tags">
+                            <span>
+                                <i data-lucide="square"></i>
+                                2D Simulator
+                            </span>
+                            <span>
+                                <i data-lucide="box"></i>
+                                3D Simulator
+                            </span>
+                        </div>
+                    </div>
+                </article>
+                <article class="mc-card mc-blue">
+                    <div th:replace="~{fragments/lobby-cards :: art('staff.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>Performance Staff</h3>
+                        <p>
+                            Design illuminated performance
+                            staffs and explore creative
+                            combinations of light and colour.
+                        </p>
+                        <div class="mc-service-tags">
+                            <span>
+                                <i data-lucide="square"></i>
+                                2D Simulator
+                            </span>
+                            <span>
+                                <i data-lucide="box"></i>
+                                3D Simulator
+                            </span>
+                        </div>
+                    </div>
+                </article>
             </div>
         </section>
-        <div class="service-top-grid">
-            <section class="service-panel about-panel">
-                <div class="about-icon">
-                    <i data-lucide="info"></i>
-                </div>
-                <div class="about-text">
-                    <h2>What Is the Service?</h2>
-                    <p>
-                        TheJestersClub is an online platform
-                        that lets you customize and preview
-                        LED juggling clubs.
-                    </p>
-                    <p>
-                        It helps jugglers, performers, and
-                        enthusiasts experiment with colours,
-                        lighting effects, and different
-                        settings to create a design that
-                        suits their style.
-                    </p>
-                </div>
-            </section>
-            <section class="service-panel steps-panel">
-                <h2>How It Works</h2>
-                <div class="service-steps">
-                    <div class="service-step">
-                        <span class="step-number">1</span>
-                        <i data-lucide="palette"></i>
-                        <h3>Customize</h3>
+        <section aria-labelledby="tools-title">
+            <div th:replace="~{fragments/lobby-cards :: heading(
+                'tools-title',
+                'sparkles',
+                'The Creative Toolkit',
+                'Design. Synchronize. Perform.'
+            )}">
+            </div>
+            <div class="mc-grid mc-service-grid">
+                <article class="mc-card mc-cyan">
+                    <div th:replace="~{fragments/lobby-cards :: art('product.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>
+                            <i data-lucide="box"></i>
+                            2D &amp; 3D Simulators
+                        </h3>
                         <p>
-                            Choose your club's colours,
-                            parts, and lighting effects.
+                            Bring your prop designs to life
+                            with interactive previews.
+                            Experiment with colours,
+                            brightness, saturation and
+                            lighting effects.
                         </p>
+                        <ul class="mc-service-features">
+                            <li>
+                                <i data-lucide="check"></i>
+                                Real-time customization
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Interactive 2D club previews
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Multiple 3D prop shapes
+                            </li>
+                        </ul>
                     </div>
-                    <div class="step-arrow">
-                        <i data-lucide="arrow-right"></i>
-                    </div>
-                    <div class="service-step">
-                        <span class="step-number">2</span>
-                        <i data-lucide="monitor-play"></i>
-                        <h3>Preview</h3>
+                </article>
+                <article class="mc-card mc-purple">
+                    <div th:replace="~{fragments/lobby-cards :: art('moment.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>
+                            <i data-lucide="audio-lines"></i>
+                            Music Synchronization
+                        </h3>
                         <p>
-                            See your design in rotating
-                            view, static view, or 3D.
+                            Create moments where music and
+                            lighting come together. Build
+                            performance timelines and arrange
+                            lighting effects around your music.
                         </p>
+                        <ul class="mc-service-features">
+                            <li>
+                                <i data-lucide="check"></i>
+                                Music synchronization
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Performance timelines
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Creative lighting sequences
+                            </li>
+                        </ul>
                     </div>
-                    <div class="step-arrow">
-                        <i data-lucide="arrow-right"></i>
-                    </div>
-                    <div class="service-step">
-                        <span class="step-number">3</span>
-                        <i data-lucide="sliders-horizontal"></i>
-                        <h3>Adjust and Save</h3>
+                </article>
+                <article class="mc-card mc-blue">
+                    <div th:replace="~{fragments/lobby-cards :: art('saved.webp')}"></div>
+                    <div class="mc-card-body">
+                        <h3>
+                            <i data-lucide="folder-open"></i>
+                            Saved Projects
+                        </h3>
                         <p>
-                            Fine-tune brightness,
-                            saturation, and rotation speed before
-                            saving your custom presets.
+                            Build your own collection of
+                            custom prop designs. Revisit
+                            previous projects and continue
+                            refining your creative ideas.
                         </p>
+                        <ul class="mc-service-features">
+                            <li>
+                                <i data-lucide="check"></i>
+                                Personal project collection
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Save custom prop designs
+                            </li>
+                            <li>
+                                <i data-lucide="check"></i>
+                                Reopen and refine projects
+                            </li>
+                        </ul>
                     </div>
-                </div>
-            </section>
-        </div>
-        <section class="service-benefits">
-            <h2>Why Use The Jester Club?</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <i data-lucide="paintbrush"></i>
-                    <div>
-                        <h3>Be Creative</h3>
-                        <p>
-                            Experiment with colour
-                            combinations and lighting
-                            effects to find a look you like.
-                        </p>
-                    </div>
-                </div>
-                <div class="benefit-card">
-                    <i data-lucide="zap"></i>
-                    <div>
-                        <h3>Real-Time Previews</h3>
-                        <p>
-                            See your club design in motion
-                            and up close using our 2D and 3D
-                            simulators.
-                        </p>
-                    </div>
-                </div>
-                <div class="benefit-card">
-                    <i data-lucide="graduation-cap"></i>
-                    <div>
-                        <h3>Learn & Plan</h3>
-                        <p>
-                            Explore what LED juggling clubs
-                            can do and plan your design
-                            before making a decision.
-                        </p>
-                    </div>
-                </div>
+                </article>
             </div>
         </section>
-        <section class="service-register">
-            <h2>Ready to Get Started?</h2>
+        <section class="mc-service-workflow">
+            <div th:replace="~{fragments/lobby-cards :: heading(
+                'workflow-title',
+                'route',
+                'How it works',
+                'From your first idea to your next performance'
+            )}">
+            </div>
+            <div class="mc-service-steps">
+                <article class="mc-service-step">
+                    <span class="mc-step-number">01</span>
+                    <i data-lucide="shapes"></i>
+                    <h3>Choose</h3>
+                    <p>
+                        Select your preferred prop
+                        and simulator.
+                    </p>
+                </article>
+                <article class="mc-service-step">
+                    <span class="mc-step-number">02</span>
+                    <i data-lucide="palette"></i>
+                    <h3>Customize</h3>
+                    <p>
+                        Experiment with colours,
+                        lighting and visual effects.
+                    </p>
+                </article>
+                <article class="mc-service-step">
+                    <span class="mc-step-number">03</span>
+                    <i data-lucide="monitor-play"></i>
+                    <h3>Preview</h3>
+                    <p>
+                        See your design in action
+                        using interactive simulators.
+                    </p>
+                </article>
+                <article class="mc-service-step">
+                    <span class="mc-step-number">04</span>
+                    <i data-lucide="audio-lines"></i>
+                    <h3>Synchronize</h3>
+                    <p>
+                        Explore performance timelines
+                        and music with Synchro.
+                    </p>
+                </article>
+                <article class="mc-service-step">
+                    <span class="mc-step-number">05</span>
+                    <i data-lucide="save"></i>
+                    <h3>Save</h3>
+                    <p>
+                        Keep your prop designs
+                        for future projects.
+                    </p>
+                </article>
+            </div>
+        </section>
+        <section class="mc-service-cta">
+            <div class="mc-service-cta-icon">
+                <i data-lucide="sparkles"></i>
+            </div>
+            <h2>
+                Every Performance Starts with an Idea
+            </h2>
             <p>
-                Create an account to begin customizing
-                your own juggling club.
+                Join The Jesters Club and begin
+                creating your own designs, lighting
+                effects and synchronized moments.
             </p>
-            <a class="register-button" th:href="@{/userregister}">
-                <i data-lucide="user-round-plus"></i>
-                Register Now
-                <i data-lucide="arrow-right"></i>
-            </a>
+            <div class="mc-service-cta-actions">
+                <a class="mc-button" th:href="@{/userregister}">
+                    <i data-lucide="user-plus"></i>
+                    Join The Jesters Club
+                    <i data-lucide="arrow-right"></i>
+                </a>
+                <a class="mc-button mc-outline" th:href="@{/userlogin}">
+                    <i data-lucide="log-in"></i>
+                    Sign In
+                </a>
+            </div>
         </section>
     </main>
-    <footer class="service-footer">
-        <p>The Jester Club - CMPT 276 Group 4</p>
-    </footer>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-        });
-    </script>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
 </body>
 </html>
+

@@ -1401,3 +1401,31 @@
     );
 }
 
+.mc-service .mc-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.mc-service-main {
+    padding: 16px;
+    gap: 20px;
+}
+
+.mc-service .mc-service-grid {
+    grid-template-columns: 1fr;
+}
+
+.mc-service .mc-art {
+    height: 170px;
+}
+
+.mc-service-steps {
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+}
+
+.mc-service-workflow {
+    padding: 15px;
+}
+
