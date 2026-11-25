@@ -4,31 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="7;url=/userlogin">
-    <title>Settings Updated</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme} ?: 'light')}">
+    <title>Account Updated | The Jesters Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-settings.css}">
 </head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
+<body class="mc-page mc-login mc-auth">
+    <main class="mc-login-main" id="main">
+        <div class="mc-login-brand">
+            <img th:src="@{/img/midnight/jester.svg}" alt="The Jesters Club logo">
+            <span class="mc-eyebrow">
+                WELCOME TO
+            </span>
+            <h1>The Jesters Club</h1>
+            <p>Design. Synchronize. Perform.</p>
+        </div>
 
-        <main>
-            <section class="login-panel">
-                <h2>Account Updated Successfully!</h2>
-                <p>Your account information has been saved.</p>
-                
-
-                <div class="login-links">
-                    <a href="/userlogin">Back to Login</a>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
-    </div>
+        <section class="mc-login-panel mc-result-panel">
+            <div class="mc-result-icon mc-settings-success-icon">
+                <i data-lucide="check"></i>
+            </div>
+            <h2>Account Updated Successfully!</h2>
+            <p>Your account information has been saved successfully.</p>
+            <div class="mc-notice mc-notice-info">
+                <i data-lucide="shield-check"></i>
+                <span>
+                    For your security, please sign in again
+                    using your updated account credentials.
+                </span>
+            </div>
+            <div class="mc-result-actions">
+                <a class="mc-button" th:href="@{/userlogin}">
+                    <i data-lucide="log-in"></i>
+                    Return to Sign In
+                </a>
+            </div>
+            <div class="mc-settings-redirect">
+                <i data-lucide="timer"></i>
+                <span>
+                    Redirecting in
+                    <strong id="settingsCountdown">7</strong>
+                    seconds...
+                </span>
+            </div>
+            <div class="mc-settings-progress">
+                <div class="mc-settings-progress-fill"></div>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <script defer th:src="@{/js/midnight-settings.js}"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     initializeUsernameEditor();
+    initializeSettingsCountdown();
 });
 
 function initializeUsernameEditor() {
@@ -53,4 +54,26 @@ function refreshSettingsIcons() {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+}
+
+function initializeSettingsCountdown() {
+    const countdown = document.getElementById('settingsCountdown');
+    if (!countdown) {
+        return;
+    }
+    const duration = Number(countdown.textContent);
+    if (!Number.isFinite(duration) || duration <= 0) {
+        return;
+    }
+    const endTime = Date.now() + duration * 1000;
+    const timer = setInterval(() => {
+        const remaining = Math.max(
+            0,
+            Math.ceil((endTime - Date.now()) / 1000)
+        );
+        countdown.textContent = remaining;
+        if (remaining === 0) {
+            clearInterval(timer);
+        }
+    }, 100);
 }
