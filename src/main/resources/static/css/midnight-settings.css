@@ -318,3 +318,30 @@
     font-size: 13px;
     line-height: 1.6;
 }
+
+.mc-settings .mc-settings-secondary-wide {
+    width: min(100%, 760px);
+    padding: 28px;
+}
+
+.mc-settings .mc-questions-form {
+    display: grid;
+    gap: 20px;
+    margin-top: 22px;
+}
+
+.mc-settings .mc-settings-question-grid {
+    align-items: start;
+}
+
+.mc-settings .mc-settings-question-grid input {
+    min-height: 46px;
+}
+
+.mc-settings .mc-settings-question-grid label {
+    text-align: left;
+}
+
+.mc-settings .mc-questions-form .mc-settings-panel-actions {
+    margin-top: 4px;
+}
