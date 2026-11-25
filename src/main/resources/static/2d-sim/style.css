@@ -126,9 +126,13 @@ button.active {
 }
 
 #bodyButton2 {
-    display: block;
+    display: none;
 }
 
 #staff-shape {
+    display: none;
+}
+
+#checkboxDiv {
     display: none;
 }

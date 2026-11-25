@@ -37,3 +37,27 @@ fieldset {
 #svg_moving {
     display: block;
 }
+
+#poi_moving {
+    display: none;
+}
+
+#staff_moving_ball {
+    display: none;
+}
+
+#staff_moving_cylinder {
+    display: none;
+}
+
+#canvas_poi_moving {
+    display: none;
+}
+
+#canvas_staff_ball_moving {
+    display: none;
+}
+
+#canvas_staff_cylinder_moving {
+    display: none;
+}

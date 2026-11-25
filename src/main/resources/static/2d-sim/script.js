@@ -28,6 +28,10 @@ const staffBottomCylinder = document.getElementById("staff-bottom_c");
 const svgStill = document.getElementById("svg_still");
 const svgMov = document.getElementById("svg_moving");
 
+const svgMovPoi = document.getElementById("poi_moving");
+const svgMovStaffBall = document.getElementById("staff_moving_ball");
+const svgMovStaffCylinder = document.getElementById("staff_moving_cylinder");
+
 let selectedPart = "body";
 let bodyColour = 0;
 let bodyColour2 = 0;
@@ -313,4 +317,4 @@ if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
 
-export { svgStill, svgMov, handleButton, bodyButton, bodyButton2 };
+export { svgStill, svgMov, handleButton, bodyButton, bodyButton2, svgMovPoi, svgMovStaffBall, svgMovStaffCylinder };

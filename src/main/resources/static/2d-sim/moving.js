@@ -1,7 +1,7 @@
 // https://zetcode.com/canvas-api/rotate/. 31/10/26
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
-import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffBallSvg, stillStaffCylinderSvg } from './prop.js';
-import { svgStill, svgMov } from './script.js';
+import { current, currentMov, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffBallSvg, stillStaffCylinderSvg } from './prop.js';
+import { svgStill, svgMov, svgMovPoi, svgMovStaffBall, svgMovStaffCylinder } from './script.js';
 
 const canvasMov = document.getElementById('canvas_moving');
 const ctxMov = canvasMov.getContext('2d');
@@ -18,11 +18,20 @@ const ctxRing = canvasRing.getContext('2d');
 const canvasPoi = document.getElementById("canvas_poi");
 const ctxPoi = canvasPoi.getContext('2d');
 
+const canvasPoiMov = document.getElementById("canvas_poi_moving");
+const ctxPoiMov = canvasPoiMov.getContext('2d');
+
 const canvasStaffBall = document.getElementById("canvas_staff_ball");
 const ctxStaffBall = canvasStaffBall.getContext('2d');
 
 const canvasStaffCylinder = document.getElementById("canvas_staff_cylinder");
 const ctxStaffCylinder = canvasStaffCylinder.getContext('2d');
+
+const canvasStaffBallMov = document.getElementById("canvas_staff_ball_moving");
+const ctxStaffBallMov = canvasStaffBallMov.getContext('2d');
+
+const canvasStaffCylinderMov = document.getElementById("canvas_staff_cylinder_moving");
+const ctxStaffCylinderMov = canvasStaffCylinderMov.getContext('2d');
 
 const clickedButton = document.getElementById("view-button");
 const staffButton = document.getElementById("staff-button");
@@ -180,7 +189,7 @@ function drawStaffBall(ctx, angle) {
     ctx.save();
     ctx.beginPath();
     ctx.arc(75, 70, 25, 0, 2 * Math.PI);
-    ctx.fillRect(70, 95, 10, 200);
+    ctx.rect(70, 95, 10, 200);
     ctx.arc(75, 320, 25, 0, 2 * Math.PI);
     ctx.closePath();
     ctx.clip();
@@ -208,9 +217,9 @@ function drawStaffCylinder(ctx, angle) {
     const img = document.getElementById("img");
     ctx.save();
     ctx.beginPath();
-    ctx.fillRect(62, 45, 25, 50);
-    ctx.fillRect(70, 95, 10, 200);
-    ctx.fillRect(62, 290, 25, 50);
+    ctx.rect(62, 45, 25, 50);
+    ctx.rect(70, 95, 10, 200);
+    ctx.rect(62, 290, 25, 50);
     ctx.closePath();
     ctx.clip();
 
@@ -239,8 +248,11 @@ drawClub(ctxStill, angleStill, "still");
 drawBall(ctxBall, angleStill);
 drawRing(ctxRing, angleStill);
 drawPoi(ctxPoi, angleStill);
+drawPoi(ctxPoiMov, angleMov);
 drawStaffBall(ctxStaffBall, angleStill);
+drawStaffBall(ctxStaffBallMov, angleMov);
 drawStaffCylinder(ctxStaffCylinder, angleStill);
+drawStaffCylinder(ctxStaffCylinderMov, angleMov);
 
 function numberTen(mode) {
     if (mode[4] != "_") {
@@ -260,9 +272,11 @@ function changeStaff(current, shape) {
     // }
 
      if (shape === "ball") {
+        hidding(currentMov, svgMovStaffBall, true);
         hidding(current, stillStaffBallSvg);
         // canvasStaffBall.style.display = "block";
     } else {
+        hidding(currentMov, svgMovStaffCylinder, true);
         hidding(current, stillStaffCylinderSvg);
     }
 }
@@ -270,13 +284,35 @@ function changeStaff(current, shape) {
 clickedButton.addEventListener('click', function () {
 	const mode = document.getElementById("options").value;
     const prop = document.getElementById("prop-options").value;
+    const staffOption2 = document.getElementById("staff-option").value;
     let i = 5;
     if(mode == "none"){
-        window.svgStill.style.display = "block";
-        window.canvasStill.style.display = "none";
-        window.svgMov.style.display = "block";
-        window.canvasMov.style.display = "none";
-        window.modeName.style.visibility = "hidden";
+        if (prop === "club") {
+            svgStill.style.display = "block";
+            svgMov.style.display = "block";
+        } else if (prop === "poi") {
+            svgMov.style.display = "none";
+            stillPoiSvg.style.display = "block";
+            svgMovPoi.style.display = "block";
+        } else if (prop === "staff" && staffOption2 === "ball") {
+            svgMov.style.display = "none";
+            stillStaffBallSvg.style.display = "block";
+            svgMovStaffBall.style.display = "block";
+        } else if (prop === "staff" && staffOption2 === "cylinder") {
+            svgMov.style.display = "none";
+            stillStaffCylinderSvg.style.display = "block";
+            svgMovStaffCylinder.style.display = "block";
+        }
+
+        canvasStill.style.display = "none";
+        canvasMov.style.display = "none";
+        canvasPoi.style.display = "none";
+        canvasPoiMov.style.display = "none";
+        canvasStaffBall.style.display = "none";
+        canvasStaffBallMov.style.display = "none";
+        canvasStaffCylinder.style.display = "none";
+        canvasStaffCylinderMov.style.display = "none";
+        modeName.style.visibility = "hidden";
         return;
     }
 
@@ -320,7 +356,8 @@ clickedButton.addEventListener('click', function () {
         canvasMov.style.display = "block";
         // window.svgStill.style.display = "none";
         canvasStill.style.display = "block";
-        canvasStaff.style.display = "none";
+        canvasStaffBall.style.display = "none";
+        canvasStaffCylinder.style.display = "none";
         canvasPoi.style.display = "none";
         // window.modeName.style.visibility = "visible";
     } else if (prop === "ball") {
@@ -328,32 +365,42 @@ clickedButton.addEventListener('click', function () {
         canvasRing.style.display = "none";
         // window.stillBallSvg.style.display = "none";
         canvasPoi.style.display = "none";
-        canvasStaff.style.display = "none";
+        canvasStaffBall.style.display = "none";
+        canvasStaffCylinder.style.display = "none";
         canvasBall.style.display = "block";
     } else if (prop === "ring") {
         hidding(stillRingSvg, canvasRing);
         // window.stillRingSvg.style.display = "none";
         canvasBall.style.display = "none";
         canvasPoi.style.display = "none";
-        canvasStaff.style.display = "none";
+        canvasStaffBall.style.display = "none";
+        canvasStaffCylinder.style.display = "none";
         canvasRing.style.display = "block";
     } else if (prop === "poi") {
+        hidding(currentMov, canvasPoiMov, true);
         hidding(stillPoiSvg, canvasPoi);
+        svgMovPoi.style.display = "none";
         canvasRing.style.display = "none";
         canvasBall.style.display = "none";
-        canvasStaff.style.display = "none";
+        canvasStaffBall.style.display = "none";
+        canvasStaffCylinder.style.display = "none";
         // window.stillPoiSvg.style.display = "none";
         canvasPoi.style.display = "block";
+        canvasPoiMov.style.display = "block";
     } else if (prop === "staff") {
+        svgMovStaffBall.style.display = "none";
+        svgMovStaffCylinder.style.display = "none";
         // changeStaff(document.getElementById("staff-option").value);
-        const staffOption2 = document.getElementById("staff-option").value;
+        
         stillStaffBallSvg.style.display = "none";
         stillStaffCylinderSvg.style.display = "none";
         if (staffOption2 === "ball") {
             // stillStaffBallSvg.style.display = "none";
+            hidding(currentMov, canvasStaffBallMov, true);
             hidding(current, canvasStaffBall);
             canvasStaffBall.style.display = "block";
         } else {
+            hidding(currentMov, canvasStaffCylinderMov, true);
             hidding(current, canvasStaffCylinder);
             canvasStaffCylinder.style.display = "block";
         }

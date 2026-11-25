@@ -1,6 +1,6 @@
 // To share use a function and variable defined in the script in another script: https://www.w3schools.com/js/js_modules_export.asp
 
-import { svgStill, svgMov, handleButton, bodyButton, bodyButton2 } from './script.js';
+import { svgStill, svgMov, handleButton, bodyButton, bodyButton2, svgMovPoi, svgMovStaffBall, svgMovStaffCylinder } from './script.js';
 import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, staffButton, staffOption } from './moving.js';
 
 const changeColor = document.getElementById("change-color");
@@ -40,10 +40,15 @@ const staffShape = document.getElementById("staff-shape");
 // staticDiv.appendChild(stillBallSvg);
 
 let current = svgStill;
+let currentMov = svgStill;
 
-function hidding(currentDisplay, newDisplay) {
+function hidding(currentDisplay, newDisplay, moving = false) {
     currentDisplay.style.display = "none";
     newDisplay.style.display = "block";
+    if (moving) {
+        currentMov = newDisplay;
+        return;
+    }
     current = newDisplay;
 }
 
@@ -53,6 +58,11 @@ function hidding(currentDisplay, newDisplay) {
 //     }
 // }
 
+function hideClub() {
+    canvasMov.style.display = "none";
+    svgMov.style.display = "none";
+}
+
 propBtn.addEventListener('click', function () {
     const prop = document.getElementById("prop-options").value;
     if (prop === "club") {
@@ -60,11 +70,13 @@ propBtn.addEventListener('click', function () {
         // handleButton.style.display = "block";
         // bodyButton.style.display = "block";
         changeColor.style.visibility = "visible";
-        clubPart.innerHTML = "Club Part";
+        clubPart.innerHTML = "Club Parts";
+        bodyButton.innerHTML = "Club Body";
         
         // // window.svgStill.style.display = "block";
         // window.canvasStill.style.display = "block";
         // window.stillBallSvg.style.display="none";
+        hidding(currentMov, svgMov, true);
         hidding(current, svgStill);
         // current = window.canvasStill;
     }
@@ -87,6 +99,9 @@ propBtn.addEventListener('click', function () {
         hidding(current, stillBallSvg);
         // current = window.stillBallSvg;
     } else if (prop === "poi") {
+        movingSection.style.display = "block";
+        hideClub();
+        hidding(currentMov, svgMovPoi, true);
         hidding(current, stillPoiSvg);
         // current = stillPoiSvg;
 
@@ -95,18 +110,23 @@ propBtn.addEventListener('click', function () {
         hidding(current, stillRingSvg);
         // current = window.stillRingSvg;
     } else if (prop === "staff") {
+        movingSection.style.display = "block";
+        hideClub();
         // handleButton.style.display = "block";
         // bodyButton.style.display = "block";
         staffShape.style.display = "block";
         staffExtraOption.style.display = "block";
         changeColor.style.visibility = "visible";
-        clubPart.innerHTML = "Staff Part";
+        clubPart.innerHTML = "Staff Parts";
+        bodyButton.innerHTML = "Top End";
         console.log("staff");
         const staffOption = document.getElementById("staff-option").value;
         // if (staffOption.value === "ball") {
+            hidding(currentMov, svgMovStaffBall, true);
             hidding(current, stillStaffBallSvg);
         // } else {
-            // hidding(current, stillStaffCylinderSvg);
+        //     hidding(currentMov, svgMovStaffCylinder, true);
+        //     hidding(current, stillStaffCylinderSvg);
         // }
 
     }
@@ -121,4 +141,4 @@ staffEndColor.addEventListener('click', function () {
     }
 })
 
-export { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill, stillStaffBallSvg, stillStaffCylinderSvg, staffEndColor };
+export { current, currentMov, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, svgStill, stillStaffBallSvg, stillStaffCylinderSvg, staffEndColor };
