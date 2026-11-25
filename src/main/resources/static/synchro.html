@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jester Studio</title>
+    <link rel="stylesheet" href="./proDemo/synchro.css" />
+</head>
+
+<body class="editor-body">
+    <!-- Topbar -->
+    <header class="studio-topbar">
+        <div class="topbar-left">
+            <img class="studio-brand-icon" src="./proDemo/editorImg/studioicon.png" alt="Jester Studio Icon" />
+            <span class="app-title">Jester Studio</span>
+            <label class="file-pill" for="audioFileInput">
+                <span>Add Music</span>
+                <input id="audioFileInput" type="file" accept="audio/*" />
+            </label>
+        </div>
+
+        <div class="topbar-right">
+            <button id="btnExportMoments" class="t-btn" type="button">Export JSON</button>
+            <button id="btnExportSynchroZip" class="t-btn" type="button">Export ZIP</button>
+            <a href="/simulator" class="t-btn" style="text-decoration: none;">3D Editor</a>
+            <a href="/viewsavedprojects" class="t-btn" style="text-decoration: none;">Saved Projects</a>
+            <a href="/home" class="t-btn" style="text-decoration: none;">Home</a>
+        </div>
+    </header>
+
+    <!-- Upper Workspace: Collapsible Left "Moment Edit" Panel + 3D Stage -->
+    <section class="workspace-upper">
+        <!-- Left Collapsible Panel (Clipchamp style) -->
+        <aside id="momentEditPanel" class="moment-edit-panel">
+            <div class="panel-header">
+                <span class="panel-title">Moment Edit</span>
+                <button id="btnTogglePanel" class="panel-arrow-btn" type="button" title="Collapse Moment Edit">
+                    <img src="./proDemo/editorImg/closemenu.jpg" alt="Collapse" />
+                </button>
+            </div>
+
+            <div class="panel-body">
+                <div class="panel-badge-row">
+                    <span class="panel-label">Selected Moment</span>
+                    <span id="activeMomentBadge" class="moment-badge">None</span>
+                </div>
+
+                <div class="panel-field">
+                    <label class="panel-label" for="momentEditTitleInput">Moment Title</label>
+                    <input id="momentEditTitleInput" type="text" class="panel-input" placeholder="Select a moment..."
+                        disabled />
+                </div>
+
+                <div class="panel-field">
+                    <label class="panel-label">Saving Product</label>
+                    <button id="btnChooseSavedProduct" class="t-btn full-w" type="button" disabled>
+                        Choose Saved Product
+                    </button>
+                    <span id="savedProductLabel" class="panel-label">No project linked</span>
+                </div>
+
+                <button id="btnEditMomentIn3D" class="t-btn full-w" type="button" disabled>
+                    Edit Design in 3D
+                </button>
+
+                <button id="btnApplyMomentBinding" class="t-btn t-btn-accent full-w" type="button" disabled>
+                    Applying modifications to moment
+                </button>
+
+                <button id="btnSaveSynchro" class="t-btn t-btn-accent full-w" type="button">
+                    Save Synchro Changes
+                </button>
+
+                <button id="btnSaveAsNewSynchro" class="t-btn t-btn-accent full-w" type="button">
+                    Save as New Synchro
+                </button>
+
+                <div id="synchroSaveStatus" class="panel-label" role="status" aria-live="polite"></div>
+
+                <div class="panel-divider"></div>
+
+                <div class="panel-badge-row">
+                    <span class="panel-label">Moments List</span>
+                    <span id="panelMomentsCount" class="mono">0</span>
+                </div>
+                <div id="momentListContainer" class="moment-list">
+                    <div class="moment-list-empty">No moments created yet.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Expand Button shown when Left Panel is collapsed -->
+        <button id="btnExpandPanel" class="panel-expand-tab is-hidden" type="button" title="Expand Moment Edit">
+            <img src="./proDemo/editorImg/openmenu.jpg" alt="Expand" />
+        </button>
+
+        <!-- Center 3D Stage -->
+        <div id="synchro-viewport" class="stage-canvas-wrap">
+            <iframe id="stageFrame" class="stage-frame" title="3D Stage" scrolling="no"></iframe>
+            <div class="grid-overlay"></div>
+        </div>
+    </section>
+
+    <!-- Bottom Timeline Dock -->
+    <section class="timeline-dock">
+        <div class="timeline-toolbar">
+            <!-- Left side of Play button: Active music / moment name, ending 50px before Play button -->
+            <div class="toolbar-left-info">
+                <span id="audioFileName" class="active-track-label">No music loaded</span>
+            </div>
+
+            <!-- Centered Jester Play/Stop Button + Timecode -->
+            <div class="transport-group">
+                <button id="btnPlayStopToggle" class="jester-transport-btn is-stopped" type="button" title="Play"
+                    aria-label="Play" disabled>
+                    <img id="playStopIconImg" src="./proDemo/editorImg/playbutton.jpg" alt="Play" />
+                </button>
+                <span id="audioDurationLabel" class="mono">00:00.0 / 00:00.0</span>
+            </div>
+
+            <!-- Right Group: Create Moment -->
+            <div class="create-moment-group">
+                <div class="create-moment-left">
+                    <span class="cm-label">Create Moment</span>
+                    <input id="momentTitleInput" type="text" class="cm-input" placeholder="Moment name..." />
+                </div>
+                <span id="momentStartLabel" class="sr-only">0.0s</span>
+                <span id="momentEndLabel" class="sr-only">0.0s</span>
+                <div class="create-moment-actions">
+                    <button id="btnCreateMoment" class="t-btn t-btn-success" type="button" disabled>+ Create Moment</button>
+                    <button id="btnDeleteMoment" class="t-btn t-btn-danger" type="button" disabled>Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-tracks-container" id="timelineTracksContainer">
+            <div id="rulerBar" class="ruler-bar"></div>
+
+            <div class="tracks-body" id="tracksBody">
+                <!-- Track 1 (Top): Music clip + Start & End Anchors -->
+                <div class="track-row">
+                    <div class="track-lane" id="musicTrackLane">
+                        <canvas id="waveformCanvas" height="38"></canvas>
+                        <div id="trimOutsideLeft" class="trim-shade left-shade"></div>
+                        <div id="trimOutsideRight" class="trim-shade right-shade"></div>
+                        <div id="activeRangeBracket" class="active-range-bracket"></div>
+
+                        <div id="musicStartAnchor" class="timeline-anchor anchor-music" title="Drag Music Start Anchor">
+                            <span>[</span>
+                        </div>
+                        <div id="musicEndAnchor" class="timeline-anchor anchor-music" title="Drag Music End Anchor">
+                            <span>]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track 2 (Directly below Music, zero gap): Moments clips + Moment Start & End Anchors -->
+                <div class="track-row">
+                    <div class="track-lane" id="momentsTrackLane">
+                        <div id="momentRangePreview" class="moment-range-preview"></div>
+                        <div id="momentsOverlay" class="moments-overlay"></div>
+
+                        <div id="momentStartAnchor" class="timeline-anchor anchor-moment"
+                            title="Drag Moment Start Anchor">
+                            <span><img src="./proDemo/editorImg/startmoment.png" alt="" /></span>
+                        </div>
+                        <div id="momentEndAnchor" class="timeline-anchor anchor-moment" title="Drag Moment End Anchor">
+                            <span><img src="./proDemo/editorImg/endmoment.png" alt="" /></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vertical Playhead -->
+                <div id="playheadLine" class="playhead-line">
+                    <div class="playhead-knob"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <dialog id="audioErrorDialog" class="audio-error-dialog" aria-labelledby="audioErrorTitle"
+        aria-describedby="audioErrorMessage">
+        <div class="audio-error-content">
+            <div class="audio-error-header">
+                <span class="audio-error-icon" aria-hidden="true">!</span>
+                <h2 id="audioErrorTitle" class="audio-error-title">Audio Loading Failed</h2>
+            </div>
+            <p id="audioErrorMessage" class="audio-error-message">Unable to load the audio file.</p>
+            <form method="dialog" class="audio-error-actions">
+                <button type="submit" class="t-btn t-btn-accent" autofocus>OK</button>
+            </form>
+        </div>
+    </dialog>
+
+    <script src="./proDemo/musicStore.js"></script>
+    <script src="./proDemo/musicEditor.js"></script>
+    <script src="./proDemo/musicPlayer.js"></script>
+    <script src="./proDemo/momentEdit.js"></script>
+    <script src="./proDemo/synchro.js"></script>
+    <script src="./proDemo/synchroProject.js"></script>
+</body>
+
+</html>

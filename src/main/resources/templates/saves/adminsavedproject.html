@@ -23,41 +23,54 @@
 
             <a class="member-settings" href="/settings" aria-label="Settings">
                 <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L8.4 18.9 L9.7 19.5Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
+                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
                 </svg>
             </a>
         </nav>
 
         <main class="view-accounts-main">
             <section class="view-accounts-panel">
-                <h2>Account Management</h2>
+                <h2>Saved Projects</h2>
 
-                <table class="accounts-table">
-                    <thead>
-                        <tr>
-                            <!-- <th>UID</th> -->
-                            <th>projectname</th>
-                            <th>owner</th>
-                            <th>view</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="project : ${projects}">
-                            <!-- <td th:text="${project.uid}">1</td> -->
-                            <td th:text="${project.projectname}">projectname</td>
-                            <td th:text="${project.name}">owner</td>
-                            <td>
-                                <form th:action="@{/viewproject}" method="post">
-                                    <input type="hidden" name="UID" th:value="${project.uid}">
-                                    <button class="member-button" type="submit">view</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="4">No projects found.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div style="width: 100%; overflow-x: auto;">
+                    <table class="accounts-table">
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Type</th>
+                                <th>Owner</th>
+                                <th>Details</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="project : ${projectItems}">
+                                <td th:text="${project.projectName}">Project Name</td>
+                                <td th:text="${project.projectType}">Product</td>
+                                <td th:text="${project.ownerName}">Owner</td>
+                                <td>
+                                    <span th:if="${project.product}" th:text="${project.productType}">Club</span>
+                                    <details th:if="${project.synchro}">
+                                        <summary>Timeline Details</summary>
+                                        <p>Audio: <span th:text="${project.audioFileName}">music.mp3</span></p>
+                                        <p>Duration: <span th:text="${project.durationSeconds}">0</span> seconds</p>
+                                        <p>Moments: <span th:text="${project.momentCount}">0</span></p>
+                                    </details>
+                                </td>
+                                <td>
+                                    <form th:if="${project.product}" th:action="@{/viewproject}" method="post">
+                                        <input type="hidden" name="UID" th:value="${project.id}">
+                                        <button class="member-button" type="submit">view</button>
+                                    </form>
+                                    <span th:if="${project.synchro}">Summary only</span>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(projectItems)}">
+                                <td colspan="5">No projects found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <a class="member-button" href="/home">Back to Home</a>
             </section>

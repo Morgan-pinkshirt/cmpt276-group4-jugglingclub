@@ -24,7 +24,7 @@
 
                     <label for="password">Password</label>
                     <input id="password" type="password" name="password" required>
-
+                    <div th:text="${message}" style = "color: red;"></div>
                     <h3>Email (Optional)</h3>
                     <label for="email">Email Address</label>
                     <input id="email" type="email" name="email" th:value="${email}">

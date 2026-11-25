@@ -35,7 +35,7 @@
 
         <main class="view-accounts-main">
             <section class="view-accounts-panel">
-                <h2>Account Management</h2>
+                <h2>Saved Projects</h2>
                 <style>
                     /* Make the table span 100% width and collapse borders to prevent misalignment */
                     .accounts-table {
@@ -75,73 +75,188 @@
                         justify-content: center;
                         align-items: center;
                     }
+
+                    .saved-project-preview {
+                        width: 110px;
+                        height: 110px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #000000;
+                        border: 1px solid #ccc;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+
+                    .saved-project-preview svg {
+                        max-width: 95%;
+                        max-height: 95%;
+                    }
+
+                    .saved-project-details {
+                        min-width: 160px;
+                    }
+
+                    .saved-project-details summary {
+                        cursor: pointer;
+                        white-space: nowrap;
+                    }
+
+                    .saved-project-details p {
+                        margin: 8px 0;
+                    }
+
+                    .saved-project-table-scroll {
+                        width: 100%;
+                        overflow-x: auto;
+                    }
+
+                    .saved-project-sort {
+                        display: flex;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                    }
+
+                    .saved-project-sort select {
+                        padding: 8px;
+                        border-radius: 6px;
+                    }
+
+                    .synchro-project-preview {
+                        width: 110px;
+                        height: 110px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        padding: 8px;
+                        background-color: #000000;
+                        border: 1px solid #ccc;
+                        border-radius: 8px;
+                        color: #ffffff;
+                        font-size: 12px;
+                        text-align: center;
+                    }
+
+                    .synchro-project-preview strong {
+                        color: #c4b5fd;
+                    }
                 </style>
 
-                <table class="accounts-table">
-                    <thead>
-                        <tr>
-                            <th>UID</th>
-                            <th>Project Name</th>
-                            <!-- Centered Edit Header -->
-                            <th class="edit-column">Edit</th>
-                            <th>Export</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Iterate through the projects list -->
-                        <tr th:each="project : ${projects}">
-                            <!-- Display project UID -->
-                            <td th:text="${project.uid}">1</td>
-                            <!-- Display project name -->
-                            <td th:text="${project.projectname}">Project Name</td>
+                <form class="saved-project-sort" th:action="@{/viewsavedprojects}" method="get">
+                    <label for="savedProjectsSort">Sort by:</label>
+                    <select id="savedProjectsSort" name="sort">
+                        <option value="newest" th:selected="${selectedSort == 'newest'}">Newest First</option>
+                        <option value="oldest" th:selected="${selectedSort == 'oldest'}">Oldest First</option>
+                        <option value="productFirst" th:selected="${selectedSort == 'productFirst'}">Product First (A–Z)</option>
+                        <option value="synchroFirst" th:selected="${selectedSort == 'synchroFirst'}">Synchro First (A–Z)</option>
+                    </select>
+                    <button class="member-button" type="submit">Sort</button>
+                </form>
 
-                            <!-- Edit Column with Centered Buttons -->
-                            <td class="edit-column">
-                                <div class="edit-button-group">
-                                    <!-- 2D Editor Form -->
-                                    <form th:action="@{/2d-sim}" method="post" style="margin: 0;">
-                                        <input type="hidden" name="UID" th:value="${project.uid}">
-                                        <button class="member-button" type="submit">2D editor</button>
+                <div class="saved-project-table-scroll">
+                    <table class="accounts-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Preview</th>
+                                <th>Project Name</th>
+                                <th class="edit-column">Edit</th>
+                                <th>Details</th>
+                                <th>Export</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="project : ${projectItems}">
+                                <td th:text="${project.id}">1</td>
+                                <td th:text="${project.projectType}">Product</td>
+                                <td>
+                                    <div th:if="${project.product}" class="saved-project-preview"
+                                         th:attr="data-product-type=${project.productType},
+                                                  data-product-color=${project.productColor},
+                                                  data-body-color=${project.bodyColor},
+                                                  data-brightness=${project.brightness},
+                                                  data-saturation=${project.saturation}">
+                                        <span>Preview unavailable</span>
+                                    </div>
+                                    <div th:if="${project.synchro}" class="synchro-project-preview">
+                                        <strong>Synchro Timeline</strong>
+                                        <span><span th:text="${project.momentCount}">0</span> Moments</span>
+                                        <span><span th:text="${project.durationSeconds}">0</span> seconds</span>
+                                    </div>
+                                </td>
+                                <td th:text="${project.projectName}">Project Name</td>
+                                <td class="edit-column">
+                                    <div th:if="${project.product}" class="edit-button-group">
+                                        <form th:action="@{/2d-sim}" method="post" style="margin: 0;">
+                                            <input type="hidden" name="UID" th:value="${project.id}">
+                                            <button class="member-button" type="submit">2D editor</button>
+                                        </form>
+                                        <form th:action="@{/customsave}" method="post" style="margin: 0;">
+                                            <input type="hidden" name="UID" th:value="${project.id}">
+                                            <button class="member-button" type="submit">3D editor</button>
+                                        </form>
+                                    </div>
+                                    <a th:if="${project.synchro}" class="member-button"
+                                       th:href="@{/synchro.html(projectId=${project.id})}">Edit Synchro</a>
+                                </td>
+                                <td>
+                                    <details th:if="${project.product}" class="saved-project-details">
+                                        <summary>Effects &amp; Motion</summary>
+                                        <p>
+                                            <strong>Flashing Effect:</strong>
+                                            <span th:text="${#strings.isEmpty(project.effect) ? 'None' : project.effect}">None</span>
+                                        </p>
+                                        <p>
+                                            <strong>Rotation Speed:</strong>
+                                            <span>Not saved</span>
+                                        </p>
+                                    </details>
+                                    <details th:if="${project.synchro}" class="saved-project-details">
+                                        <summary>Timeline Details</summary>
+                                        <p><strong>Audio:</strong> <span th:text="${project.audioFileName}">music.mp3</span></p>
+                                        <p><strong>Duration:</strong> <span th:text="${project.durationSeconds}">0</span> seconds</p>
+                                        <p><strong>Moments:</strong> <span th:text="${project.momentCount}">0</span></p>
+                                    </details>
+                                </td>
+                                <td>
+                                    <a th:if="${project.product}" class="member-button"
+                                       th:href="@{/exportproject(UID=${project.id})}">Export</a>
+                                    <a th:if="${project.synchro}" class="member-button"
+                                       th:href="@{/api/synchro-projects/{id}/export(id=${project.id})}">Export ZIP</a>
+                                </td>
+                                <td>
+                                    <form th:if="${project.product}" th:action="@{/deleteproject}" method="post"
+                                          onsubmit="return confirm('Are you sure you want to delete this project?');"
+                                          style="margin: 0;">
+                                        <input type="hidden" name="UID" th:value="${project.id}">
+                                        <button class="member-button" type="submit">Delete</button>
                                     </form>
-
-                                    <!-- 3D Editor Form -->
-                                    <form th:action="@{/customsave}" method="post" style="margin: 0;">
-                                        <input type="hidden" name="UID" th:value="${project.uid}">
-                                        <button class="member-button" type="submit">3D editor</button>
-                                    </form>
-                                </div>
-                            </td>
-
-                            <!-- Export Project Link -->
-                            <td><a class="member-button" th:href="@{/exportproject(UID=${project.uid})}">Export</a></td>
-
-                            <!-- Delete Project Column and Form -->
-                            <td>
-                                <form th:action="@{/deleteproject}" method="post"
-                                    onsubmit="return confirm('Are you sure you want to delete this project?');"
-                                    style="margin: 0;">
-                                    <input type="hidden" name="UID" th:value="${project.uid}">
-                                    <button class="member-button" type="submit">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-
-                        <!-- Fallback row if the project list is empty -->
-                        <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="5" style="text-align: center;">No projects found.</td>
-                        </tr>
-                    </tbody>
-                </table>
+                                    <button th:if="${project.synchro}" class="member-button delete-synchro-project"
+                                            th:attr="data-synchro-id=${project.id}" type="button">Delete</button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(projectItems)}">
+                                <td colspan="8" style="text-align: center;">No projects found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- Import Project Section -->
                 <section>
                     <h3>Import Project</h3>
-                    <form th:action="@{/importproject}" method="post" enctype="multipart/form-data">
-                        <input type="file" name="file" accept=".json,application/json" required>
-                        <button class="member-button" type="submit">Import JSON</button>
+                    <form id="importProjectForm" th:action="@{/importproject}" method="post" enctype="multipart/form-data">
+                        <input id="importProjectFile" type="file" name="file" accept=".json,.zip,application/json,application/zip" required>
+                        <button class="member-button" type="submit">Import</button>
                     </form>
                     <p th:if="${importMessage}" th:text="${importMessage}"></p>
+                    <p id="synchroProjectActionMessage" role="alert" hidden></p>
                 </section>
 
                 <!-- Navigation back to Home -->
@@ -153,6 +268,78 @@
     <footer>
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
+
+    <script defer th:src="@{/js/saved-project-preview.js}"></script>
+    <script>
+        (() => {
+            const importForm = document.getElementById('importProjectForm');
+            const importInput = document.getElementById('importProjectFile');
+            const status = document.getElementById('synchroProjectActionMessage');
+
+            function showError(message) {
+                status.textContent = message;
+                status.hidden = false;
+            }
+
+            async function getResponseError(response) {
+                try {
+                    const details = await response.json();
+                    if (typeof details.error === 'string') return details.error;
+                } catch (_) {
+                }
+                return `Project request failed (${response.status}).`;
+            }
+
+            importForm.addEventListener('submit', async (event) => {
+                const file = importInput.files?.[0];
+                if (!file) return;
+                const filename = file.name.toLowerCase();
+                if (filename.endsWith('.json')) return;
+
+                event.preventDefault();
+                status.hidden = true;
+                if (!filename.endsWith('.zip')) {
+                    showError('Please select a JSON or ZIP project file.');
+                    return;
+                }
+
+                const button = importForm.querySelector('button[type="submit"]');
+                button.disabled = true;
+                try {
+                    const response = await fetch('/api/synchro-projects/import', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: new FormData(importForm)
+                    });
+                    if (!response.ok) throw new Error(await getResponseError(response));
+                    window.location.assign('/viewsavedprojects');
+                } catch (error) {
+                    showError(error.message || 'Unable to import the Synchro project.');
+                } finally {
+                    button.disabled = false;
+                }
+            });
+
+            document.querySelectorAll('.delete-synchro-project').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    if (!window.confirm('Are you sure you want to delete this project?')) return;
+                    button.disabled = true;
+                    status.hidden = true;
+                    try {
+                        const response = await fetch(`/api/synchro-projects/${button.dataset.synchroId}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin'
+                        });
+                        if (!response.ok) throw new Error(await getResponseError(response));
+                        window.location.reload();
+                    } catch (error) {
+                        showError(error.message || 'Unable to delete the Synchro project.');
+                        button.disabled = false;
+                    }
+                });
+            });
+        })();
+    </script>
 </body>
 
 </html>
