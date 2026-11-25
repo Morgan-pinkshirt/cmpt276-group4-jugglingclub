@@ -53,13 +53,24 @@
             <section class="universal-controls">
                 <div class="universal-intro">
                     <i data-lucide="settings"></i>
-                    <div>
-                        <h2 id="universal-heading">
+                    <div class="universal-section" >
+                        <!-- <h2 id="universal-heading">
                             Design Controls
                         </h2>
                         <p>
                             Test and explore colours and lighting effects on a rotating club preview.
-                        </p>
+                        </p> -->
+                        <h2>Choose a prop</h2>
+                        <form class="mode-form" onsubmit="return false">
+                            <select id="prop-options">
+                                <option value="club">Club</option>
+                                <option value="ball">Ball</option>
+                                <option value="ring">Ring</option>
+                                <option value="poi">Poi</option>
+                                <option value="staff">Staff</option>
+                            </select>
+                            <input type="button" id="prop-button" value="VIEW">
+                        </form>
                     </div>
                 </div>
                 <div class="universal-section">
@@ -69,10 +80,12 @@
                     </span>
                     <div class="part-switch">
                         <button type="button" id="bodyButton" class="active">
-                            Juggling Club Body
+                            <!-- Juggling Club Body -->
+                            Prop Body
                         </button>
                         <button type="button" id="handleButton">
-                            Juggling Club Handle
+                            <!-- Juggling Club Handle -->
+                            Prop Handle
                         </button>
                     </div>
                 </div>
@@ -305,7 +318,31 @@
                                         <rect x="47" y="265" width="26" height="15" rx="15" fill="black">
                                         </rect>
                                     </svg>
+                                    <svg id="ball_still" width="170" height="300" viewBox="0 0 170 300">
+                                        <circle id="ball-color" r="60" cx="83" cy="140" fill="red"></circle>
+                                    </svg>
+                                    <svg id="ring_still" width="250" height="300" viewBox="0 0 250 300">
+                                        <circle id="ring-color" r="100" cx="120" cy="140" fill="green"></circle>
+                                        <circle r="75" cx="120" cy="140" fill="grey"></circle>
+                                    </svg>
+                                    <svg id="poi_still" width="150" height="300" viewBox="0 0 150 300">
+                                        <circle id="poi-color" r="30" cx="50" cy="250" fill="blue"></circle>
+                                        <line x1="50" x2="50" y1="220" y2="100" style="stroke:white;stroke-width:4"></line>
+                                    </svg>
+                                    <svg id="staff_still" width="150" height="300"viewBox="0 0 150 300">
+                                        <circle id="staff-top" r="25" cx="50" cy="25" fill="red"></circle>
+                                        <rect id="staff-handle" x="45" y="50" width="10" height="200" fill="grey"></rect>
+                                        <circle id="staff-bottom" r="25" cx="50" cy="275" fill="red"></circle>
+                                    </svg>
                                     <canvas id="canvas_still" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_ball" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_ring" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_poi" width="200" height="400">
+                                    </canvas>
+                                    <canvas id="canvas_staff" width="200" height="400">
                                     </canvas>
                                 </div>
                             </div>
@@ -421,11 +458,12 @@
     </script>
 
     <!-- 2D Simulation Scripts (Load AFTER the bridge sets sessionStorage) -->
-    <script th:src="@{/2d-sim/moving.js}"></script>
-    <script th:src="@{/2d-sim/script.js}"></script>
+    <script type="module" th:src="@{/2d-sim/moving.js}"></script>
+    <script type="module" th:src="@{/2d-sim/script.js}"></script>
     <script th:src="@{/2d-sim/sim.js}"></script>
     <script th:src="@{/2d-sim/speed.js}"></script>
-    <script th:src="@{/2d-sim/controls.js}"></script>
+    <script type="module" th:src="@{/2d-sim/controls.js}"></script>
+    <script type="module" th:src="@{/2d-sim/prop.js}"></script>
     <!-- Lucide icons initialization -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {

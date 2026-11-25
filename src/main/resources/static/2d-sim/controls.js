@@ -1,3 +1,5 @@
+// import { clickedButton, angleMov, angleStill } from "./moving.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     
     const resetButton =
@@ -198,5 +200,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateMovingZoom();
     updateStaticZoom();
     updateStaticOrientation();
+    // clickedButton.click();
 });
-clickedButton.click();
+// clickedButton.click();
