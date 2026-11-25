@@ -1,110 +1,163 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <nav th:fragment="sidebar(role)"
-         class="lobby-sidebar"
-         aria-label="Lobby navigation">
-        <div class="lobby-nav-links">
-            <a class="lobby-nav-link"
-                th:href="@{/home}">
-                <i data-lucide="house"
-                aria-hidden="true"></i>
-                <span>Home</span>
+<a th:fragment="navItem(url, icon, label)"
+    th:href="@{${url}}">
+    <i th:attr="data-lucide=${icon}"></i>
+    <span th:text="${label}"></span>
+</a>
+<header th:fragment="header(role)" class="mc-header">
+    <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+    <div class="mc-account">
+        <span class="mc-role"
+                th:classappend="${role == 'super_admin'
+                ? 'mc-role-super'
+                : ''}"
+                th:text="${role == 'super_admin'
+                ? 'SUPER ADMIN'
+                : #strings.toUpperCase(role)}">
+        </span>
+        <span class="mc-username" th:if="${role != 'guest'}">
+            <i data-lucide="user-round"></i>
+            <span th:text="${'@' + currentUsername}"></span>
+        </span>
+        <a class="mc-button" th:if="${role == 'guest'}" th:href="@{/userlogin}">
+            <i data-lucide="log-in"></i>
+            Sign in
+        </a>
+        <a class="mc-button mc-outline"
+            th:if="${role != 'guest'}"
+            th:href="@{/logout}">
+            <i data-lucide="log-out"></i>
+            Logout
+        </a>
+    </div>
+</header>
+<nav th:fragment="sidebar(role)" class="mc-sidebar">
+    <div class="mc-nav-group">
+        <span class="mc-nav-label">
+            CREATIVE STUDIO
+        </span>
+        <a class="mc-nav-current" th:href="@{/home}">
+            <i data-lucide="house"></i>
+            <span>Lobby</span>
+        </a>
+        <th:block th:if="${role != 'guest'}">
+            <a href="#create">
+                <i data-lucide="box"></i>
+                <span>Create Product</span>
             </a>
-            <a class="lobby-nav-link"
-                th:if="${role != 'guest'}"
-                th:href="@{/simulator}">
-                <i data-lucide="box"
-                aria-hidden="true"></i>
-                <span>3D Simulator</span>
+            <a th:replace="~{fragments/lobby :: navItem(
+                '/synchro.html',
+                'audio-lines',
+                'Create Moment'
+            )}"></a>
+            <a th:replace="~{fragments/lobby :: navItem(
+                '/viewsavedprojects',
+                'folder-open',
+                'Saved Projects'
+            )}"></a>
+            <a href="#presets">
+                <i data-lucide="shapes"></i>
+                <span>Prop Presets</span>
             </a>
-            <a class="lobby-nav-link"
-                th:if="${role != 'guest'}"
-                th:href="@{/2d-sim}">
-                <i data-lucide="palette"
-                aria-hidden="true"></i>
-                <span>2D Simulator</span>
+            <a href="#templates">
+                <i data-lucide="layout-template"></i>
+                <span>Templates</span>
             </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'guest'}"
-                th:href="@{/our-service}">
-                <i data-lucide="info"
-                aria-hidden="true"></i>
-                <span>Our Service</span>
-            </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'guest'}"
-                th:href="@{/userregister}">
-                <i data-lucide="user-plus"
-                aria-hidden="true"></i>
-                <span>Register</span>
-            </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'member'}"
-                th:href="@{/viewsavedprojects}">
-                <i data-lucide="folder-open"
-                aria-hidden="true"></i>
-                <span>Saved Projects</span>
-            </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'admin' or role == 'super_admin'}"
-                th:href="@{/admin/accounts}">
-                <i data-lucide="users"
-                aria-hidden="true"></i>
-                <span>Accounts</span>
-            </a>
-            <a class="lobby-nav-link"
-                th:if="${role == 'admin' or role == 'super_admin'}"
-                th:href="@{/viewallsaves}">
-                <i data-lucide="folder-open"
-                aria-hidden="true"></i>
-                <span>All Projects</span>
-            </a>
-            <div class="lobby-theme-control"
-                th:attr="data-theme-mode=${role == 'guest' ? 'guest' : 'account'}">
-                <label for="lobby-theme">
-                    <i data-lucide="palette"
-                        aria-hidden="true">
-                    </i>
-                    <span>Change Theme</span>
-                </label>
-                <select id="lobby-theme"
-                aria-label="Change UI theme">
-                
-                    <option value="light"
-                        th:selected="${theme == 'light'}"
-                        th:attr="data-url=@{/css/themes/light.css}">
-                    Light
-                    </option>
-                    <option value="dark"
-                        th:selected="${theme == 'dark'}"
-                        th:attr="data-url=@{/css/themes/dark.css}">
-                    Dark
-                    </option>
-                    <option value="purple"
-                        th:selected="${theme == 'purple'}"
-                        th:attr="data-url=@{/css/themes/purple.css}">
-                    Purple
-                    </option>
-                </select>
-            </div>
-        <div class="lobby-nav-divider"></div>
-            <a class="lobby-nav-link"
-                th:if="${role != 'guest'}"
-                th:href="@{/settings}">
-                <i data-lucide="settings"
-                aria-hidden="true"></i>
-                <span>Settings</span>
-            </a>
-        </div>
-        <div class="lobby-sidebar-bottom">
-            <span th:switch="${role}">
-                <span th:case="'guest'">Guest Mode</span>
-                <span th:case="'member'">Member Mode</span>
-                <span th:case="'admin'">Admin Mode</span>
-                <span th:case="'super_admin'">Super Admin Mode</span>
+        </th:block>
+        <th:block th:if="${role == 'guest'}">
+            <a th:replace="~{fragments/lobby :: navItem(
+                '/our-service',
+                'info',
+                'Our Service'
+            )}"></a>
+            <a th:replace="~{fragments/lobby :: navItem(
+                '/userregister',
+                'user-plus',
+                'Register'
+            )}"></a>
+        </th:block>
+    </div>
+    <div class="mc-nav-group" th:if="${role == 'admin' or role == 'super_admin'}">
+        <span class="mc-nav-label">
+            ADMINISTRATION
+        </span>
+        <a th:replace="~{fragments/lobby :: navItem(
+            '/admin/accounts',
+            'users',
+            'Accounts'
+        )}"></a>
+        <a th:replace="~{fragments/lobby :: navItem(
+            '/viewallsaves',
+            'folders',
+            'All Projects'
+        )}"></a>
+        <a th:replace="~{fragments/lobby :: navItem(
+            '/admin/create',
+            'shield-plus',
+            'Create Admin'
+        )}"></a>
+    </div>
+    <div class="mc-nav-group" th:if="${role != 'guest'}">
+        <span class="mc-nav-label">
+            ACCOUNT
+        </span>
+        <a th:replace="~{fragments/lobby :: navItem(
+            '/settings',
+            'settings',
+            'Settings'
+        )}"></a>
+    </div>
+    <div class="mc-sidebar-brand">
+        <img th:src="@{/img/midnight/jester-art.webp}"
+            loading="lazy"
+            decoding="async"
+            alt="">
+        <span class="mc-sidebar-note">
+            <i data-lucide="sparkles"></i>
+            THE JESTERS CLUB
+        </span>
+    </div>
+</nav>
+
+<section th:fragment="hero(role)" class="mc-hero">
+    <div class="mc-hero-copy">
+        <div class="mc-hero-label">
+            <i data-lucide="sparkles"></i>
+            <span class="mc-eyebrow"
+                    th:text="${role == 'super_admin'
+                    ? 'SUPER ADMIN DASHBOARD'
+                    : #strings.toUpperCase(role) + ' DASHBOARD'}">
             </span>
+            <i data-lucide="sparkles"></i>
         </div>
-    </nav>
+        <h1 th:switch="${role}">
+            <th:block th:case="'guest'">
+                Welcome to The Jesters Club
+            </th:block>
+            <th:block th:case="'member'">
+                Welcome back, Jester!
+            </th:block>
+            <th:block th:case="'admin'">
+                Welcome back, Trickster!
+            </th:block>
+            <th:block th:case="'super_admin'">
+                Welcome back, Joker!
+            </th:block>
+            <th:block th:case="*">
+                Welcome to The Jesters Club
+            </th:block>
+        </h1>
+        <p th:if="${role == 'guest'}">
+            Discover the art of light, colour and motion.
+        </p>
+        <p th:if="${role != 'guest'}">
+            Your stage is ready. Design your props,
+            synchronize your moments and bring
+            your next performance to life.
+        </p>
+    </div>
+</section>
 </body>
 </html>

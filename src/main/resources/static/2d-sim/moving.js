@@ -217,6 +217,15 @@ clickedButton.addEventListener('click', function () {
 	const mode = document.getElementById("options").value;
     const prop = document.getElementById("prop-options").value;
     let i = 5;
+    if(mode == "none"){
+        window.svgStill.style.display = "block";
+        window.canvasStill.style.display = "none";
+        window.svgMov.style.display = "block";
+        window.canvasMov.style.display = "none";
+        window.modeName.style.visibility = "hidden";
+        return;
+    }
+
     if (mode[1] == 1 && mode[2] != 3) {
         modeName.innerHTML = `Page 1 - #${mode[3]}`;
         i = numberTen(mode);

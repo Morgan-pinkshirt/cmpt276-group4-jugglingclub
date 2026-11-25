@@ -1,9 +1,10 @@
-
 package com.cmpt276.jugglingclub.controllers;
 
 import com.cmpt276.jugglingclub.models.user;
 import com.cmpt276.jugglingclub.models.usersRepository;
 import com.cmpt276.jugglingclub.models.AccountTokenRepository;
+import com.cmpt276.jugglingclub.models.save;
+import com.cmpt276.jugglingclub.models.savesRepository;
 import com.cmpt276.jugglingclub.roles.Role;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Sort;
@@ -14,17 +15,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 public class AdminAccountController {
 
     private final usersRepository userRepository;
     private final AccountTokenRepository accountTokenRepository;
+    private final savesRepository savesRepository;
 
     public AdminAccountController(
             usersRepository userRepository,
-            AccountTokenRepository accountTokenRepository) {
+            AccountTokenRepository accountTokenRepository,
+            savesRepository savesRepository) {
         this.userRepository = userRepository;
         this.accountTokenRepository = accountTokenRepository;
+        this.savesRepository = savesRepository;
     }
 
     @GetMapping("/admin/accounts")
@@ -49,7 +57,18 @@ public class AdminAccountController {
             return "redirect:/home";
         }
 
-        model.addAttribute("accounts", userRepository.findAll(Sort.by("uid")));
+        List<user> accounts = userRepository.findAll(Sort.by("uid"));
+        Map<Integer, List<save>> projectsByUser = new HashMap<>();
+
+        for (user account : accounts) {
+            projectsByUser.put(
+                    account.getUid(),
+                    savesRepository.findAllByName(account.getName())
+            );
+        }
+
+        model.addAttribute("accounts", accounts);
+        model.addAttribute("projectsByUser", projectsByUser);
         model.addAttribute("currentUid", currentUser.getUid());
         model.addAttribute("currentRole", currentUser.getRole());
         model.addAttribute("theme", currentUser.getTheme());
@@ -103,3 +122,4 @@ public class AdminAccountController {
         return "redirect:/admin/accounts";
     }
 }
+

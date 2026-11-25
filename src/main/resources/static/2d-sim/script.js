@@ -122,11 +122,13 @@ function changeColor(body, handle) {
     // toggleColor(current);
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
-        body.setAttribute("fill", colour);
+        if (body) body.setAttribute("fill", colour);
         bodyColour = slider.value;
+        hasCustomBodyColor = true;
     } else {
-        handle.setAttribute("fill", colour);
+        if (handle) handle.setAttribute("fill", colour);
         handleColour = slider.value;
+        hasCustomHandleColor = true;
     }
 
 }
@@ -189,15 +191,22 @@ function hexToHSL(hex) {
 
 function saveStateAndRedirect(event, targetUrl) {
     event.preventDefault();
-    const bodyHex = hslToHex(parseFloat(typeof bodyColour !== 'undefined' ? bodyColour : 0), 100, 50);
-    const handleHex = hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50);
 
-    const rawBrightness = document.getElementById('static-brightness')?.value || document.getElementById('brightness')?.value || '50';
-    const rawSaturation = document.getElementById('static-saturation')?.value || document.getElementById('saturation')?.value || '50';
-    const brightness3D = (parseFloat(rawBrightness) / 50).toFixed(2); // 50 -> 1.0, 100 -> 2.0
-    const saturation3D = (parseFloat(rawSaturation) / 50).toFixed(2);
+    const bodyHex = hasCustomBodyColor
+        ? hslToHex(parseFloat(typeof bodyColour !== 'undefined' ? bodyColour : 0), 100, 50)
+        : DEFAULT_3D_BODY;
+
+    const handleHex = hasCustomHandleColor
+        ? hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50)
+        : DEFAULT_3D_HANDLE;
 
     const productTypeVal = document.getElementById('propTypeSelector')?.value || document.getElementById('productType')?.value || 'club';
+
+    const rawEffect = document.getElementById('options')?.value
+        || document.getElementById('effectSelect')?.value
+        || document.getElementById('effect')?.value
+        || 'none';
+    const finalEffect = (isSolidColorMode || !hasCustomEffect) ? 'none' : rawEffect;
 
     const currentSelection = {
         UID: document.querySelector('input[name="UID"]')?.value || 'new',
@@ -208,10 +217,9 @@ function saveStateAndRedirect(event, targetUrl) {
         handleColor: handleHex,
         ballColor: productTypeVal === 'ball' ? bodyHex : '',
 
-        brightness: brightness3D,
-        saturation: saturation3D,
-        
-        effect: document.getElementById('options')?.value || document.getElementById('effectSelect')?.value || document.getElementById('effect')?.value || 'none'
+        brightness: 1,
+        saturation: 1,
+        effect: finalEffect
     };
 
     sessionStorage.setItem('tempSelection', JSON.stringify(currentSelection));
@@ -222,7 +230,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedTempData = sessionStorage.getItem('tempSelection');
     if (savedTempData) {
         const data = JSON.parse(savedTempData);
-        
+        isSolidColorMode = (data.effect === 'none');
+
         const uidInput = document.querySelector('input[name="UID"]');
         if (uidInput && data.UID) uidInput.value = data.UID;
 
@@ -236,40 +245,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const effectEl = document.getElementById('options') || document.getElementById('effectSelect') || document.getElementById('effect');
-        if (effectEl && data.effect) {
+        if (effectEl && data.effect && data.effect !== 'none') {
+            hasCustomEffect = true;
             effectEl.value = data.effect;
             effectEl.dispatchEvent(new Event('change'));
         }
-
-        // Scale from 3D (0 - 2) to 2D percentage (0 - 100, where 1.0 -> 50%)
-        const briVal = data.brightness !== undefined ? Number(data.brightness) : 1;
-        const briPercent = briVal <= 2 ? Math.min(100, Math.max(0, briVal * 50)) : briVal;
-
-        const satVal = data.saturation !== undefined ? Number(data.saturation) : 1;
-        const satPercent = satVal <= 2 ? Math.min(100, Math.max(0, satVal * 50)) : satVal;
-
-        // Sync BOTH Static (right) and Rotating (left) sliders in 2D
-        ['static-brightness', 'brightness'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.value = briPercent;
-                el.dispatchEvent(new Event('input'));
-            }
-        });
-
-        ['static-saturation', 'saturation'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.value = satPercent;
-                el.dispatchEvent(new Event('input'));
-            }
-        });
-    
 
         const bodyHex = data.bodyColor || data.productColor;
         const handleHex = data.handleColor;
 
         if (bodyHex && typeof hexToHSL === 'function') {
+            hasCustomBodyColor = bodyHex.toLowerCase() !== DEFAULT_3D_BODY.toLowerCase();
             const bodyHsl = hexToHSL(bodyHex);
             bodyColour = bodyHsl.h;
             let bodyStr = `hsl(${bodyHsl.h}, ${bodyHsl.s}%, ${bodyHsl.l}%)`;
@@ -278,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (handleHex && typeof hexToHSL === 'function') {
+            hasCustomHandleColor = handleHex.toLowerCase() !== DEFAULT_3D_HANDLE.toLowerCase();
             const handleHsl = hexToHSL(handleHex);
             handleColour = handleHsl.h;
             let handleStr = `hsl(${handleHsl.h}, ${handleHsl.s}%, ${handleHsl.l}%)`;
@@ -291,7 +278,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         sessionStorage.removeItem('tempSelection');
         console.log("Restored temporary selection successfully in 2D:", data);
+        clickedButton.click();
     }
+
 });
 
 if (typeof bodyButton !== 'undefined' && bodyButton) {

@@ -1,0 +1,76 @@
+(function () {
+    const DB_NAME = 'JesterStudioAudioDB';
+    const STORE_NAME = 'audioFiles';
+    const AUDIO_KEY = 'currentTrack';
+
+    function openAudioDB() {
+        return new Promise((resolve, reject) => {
+            if (!('indexedDB' in window)) {
+                reject(new Error('IndexedDB not supported'));
+                return;
+            }
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = () => {
+                const db = req.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME);
+                }
+            };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function saveAudioToDB(record) {
+        try {
+            const db = await openAudioDB();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).put(record, AUDIO_KEY);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+            db.close();
+        } catch (err) {
+            console.error('Failed to save audio to IndexedDB:', err);
+        }
+    }
+
+    async function loadAudioFromDB() {
+        try {
+            const db = await openAudioDB();
+            const data = await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const req = tx.objectStore(STORE_NAME).get(AUDIO_KEY);
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => reject(req.error);
+            });
+            db.close();
+            return data;
+        } catch (err) {
+            console.error('Failed to load audio from IndexedDB:', err);
+            return null;
+        }
+    }
+
+    async function clearAudioFromDB() {
+        try {
+            const db = await openAudioDB();
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).delete(AUDIO_KEY);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+            db.close();
+        } catch (err) {
+            console.error('Failed to clear audio from IndexedDB:', err);
+        }
+    }
+
+    window.JesterAudioStorage = {
+        saveAudioToDB,
+        loadAudioFromDB,
+        clearAudioFromDB
+    };
+})();
