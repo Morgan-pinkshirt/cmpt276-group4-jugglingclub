@@ -37,7 +37,9 @@
                         <tr>
                             <!-- <th>UID</th> -->
                             <th>Username</th>
+                            <th>Email</th>
                             <th>Role</th>
+                            <th>Projects</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -45,7 +47,32 @@
                         <tr th:each="account : ${accounts}">
                             <!-- <td th:text="${account.uid}">1</td> -->
                             <td th:text="${account.name}">Username</td>
+
+                            <td>
+                                <span th:if="${#strings.isEmpty(account.email)}">Not linked</span>
+                                <span th:unless="${#strings.isEmpty(account.email)}"
+                                      th:text="${account.email}">Email</span>
+                            </td>
+
                             <td th:text="${account.role.displayName}">jester</td>
+
+                            <td>
+                                <details>
+                                    <summary>
+                                        Projects (<span th:text="${#lists.size(projectsByUser[account.uid])}">0</span>)
+                                    </summary>
+
+                                    <ul th:if="${not #lists.isEmpty(projectsByUser[account.uid])}">
+                                        <li th:each="project : ${projectsByUser[account.uid]}"
+                                            th:text="${project.projectname}">Project Name</li>
+                                    </ul>
+
+                                    <p th:if="${#lists.isEmpty(projectsByUser[account.uid])}">
+                                        No saved projects.
+                                    </p>
+                                </details>
+                            </td>
+
                             <td>
                                 <form
                                     th:if="${currentRole.name() == 'SUPER_ADMIN'
@@ -62,7 +89,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(accounts)}">
-                            <td colspan="4">No accounts found.</td>
+                            <td colspan="5">No accounts found.</td>
                         </tr>
                     </tbody>
                 </table>

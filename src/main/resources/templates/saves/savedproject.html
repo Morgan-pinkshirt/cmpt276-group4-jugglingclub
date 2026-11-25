@@ -75,15 +75,47 @@
                         justify-content: center;
                         align-items: center;
                     }
+
+                    .saved-project-preview {
+                        width: 110px;
+                        height: 110px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: #000000;
+                        border: 1px solid #ccc;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+
+                    .saved-project-preview svg {
+                        max-width: 95%;
+                        max-height: 95%;
+                    }
+
+                    .saved-project-details {
+                        min-width: 160px;
+                    }
+
+                    .saved-project-details summary {
+                        cursor: pointer;
+                        white-space: nowrap;
+                    }
+
+                    .saved-project-details p {
+                        margin: 8px 0;
+                    }
                 </style>
 
                 <table class="accounts-table">
                     <thead>
                         <tr>
                             <th>UID</th>
+                            <th>Preview</th>
                             <th>Project Name</th>
                             <!-- Centered Edit Header -->
                             <th class="edit-column">Edit</th>
+                            <th>Effects &amp; Motion</th>
                             <th>Export</th>
                             <th>Delete</th>
                         </tr>
@@ -93,6 +125,18 @@
                         <tr th:each="project : ${projects}">
                             <!-- Display project UID -->
                             <td th:text="${project.uid}">1</td>
+
+                            <td>
+                                <div class="saved-project-preview"
+                                     th:attr="data-product-type=${project.productType},
+                                              data-product-color=${project.productColor},
+                                              data-body-color=${project.bodyColor},
+                                              data-brightness=${project.brightness},
+                                              data-saturation=${project.saturation}">
+                                    <span>Preview unavailable</span>
+                                </div>
+                            </td>
+
                             <!-- Display project name -->
                             <td th:text="${project.projectname}">Project Name</td>
 
@@ -113,6 +157,20 @@
                                 </div>
                             </td>
 
+                            <td>
+                                <details class="saved-project-details">
+                                    <summary>Effects &amp; Motion</summary>
+                                    <p>
+                                        <strong>Flashing Effect:</strong>
+                                        <span th:text="${#strings.isEmpty(project.effect) ? 'None' : project.effect}">None</span>
+                                    </p>
+                                    <p>
+                                        <strong>Rotation Speed:</strong>
+                                        <span>Not saved</span>
+                                    </p>
+                                </details>
+                            </td>
+
                             <!-- Export Project Link -->
                             <td><a class="member-button" th:href="@{/exportproject(UID=${project.uid})}">Export</a></td>
 
@@ -129,7 +187,7 @@
 
                         <!-- Fallback row if the project list is empty -->
                         <tr th:if="${#lists.isEmpty(projects)}">
-                            <td colspan="5" style="text-align: center;">No projects found.</td>
+                            <td colspan="7" style="text-align: center;">No projects found.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -153,6 +211,8 @@
     <footer>
         <p>The Jester Club - CMPT 276 Group 4</p>
     </footer>
+
+    <script defer th:src="@{/js/saved-project-preview.js}"></script>
 </body>
 
 </html>

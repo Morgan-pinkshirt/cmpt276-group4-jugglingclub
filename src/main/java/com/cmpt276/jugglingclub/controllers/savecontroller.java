@@ -136,6 +136,7 @@ public class savecontroller { // this only deals with ids and stuff
         ArrayList<save> savelist = saveREPO.findAllByName(User.getName());
 
         model.addAttribute("projects", savelist);
+        model.addAttribute("theme", User.getTheme());
 
         return "saves/savedproject";
     }
