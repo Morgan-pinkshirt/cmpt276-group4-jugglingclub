@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const propMapping = {
         '2d': {
             club: 'club',
-            ball: 'club',
-            staff: 'club'
+            ball: 'ball',
+            staff: 'staff'
         },
         '3d': {
             club: 'club',
@@ -44,13 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const selectedProp = propMapping[simulator][prop] || 'club';
-        const isFallback = simulator === '2d' && selectedProp !== prop;
         const project = {
             ...defaultProject,
             productType: selectedProp,
-            projectname: isFallback
-                ? 'New Club'
-                : projectName || 'My Project',
+            projectname: projectName || 'My Project',
             effect: effect || 'none'
         };
         try {

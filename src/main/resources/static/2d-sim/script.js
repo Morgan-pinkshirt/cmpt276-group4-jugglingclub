@@ -1,5 +1,5 @@
 // import { current, hidding } from './prop.js';
-import { canvasBall, canvasMov, canvasPoi, canvasRing, canvasStill, canvasStaff } from './moving.js';
+import { canvasMov, canvasStill } from './moving.js';
 import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffSvg } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
 // type="module"
@@ -22,6 +22,14 @@ const svgMov = document.getElementById("svg_moving");
 let selectedPart = "body";
 let bodyColour = 0;
 let handleColour = 0;
+
+const DEFAULT_3D_BODY = '#808080';
+const DEFAULT_3D_HANDLE = '#ffffff';
+
+let hasCustomBodyColor = false;
+let hasCustomHandleColor = false;
+let hasCustomEffect = false;
+let isSolidColorMode = true;
 
 
 function changeVisibilityColor() {
@@ -200,7 +208,7 @@ function saveStateAndRedirect(event, targetUrl) {
         ? hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50)
         : DEFAULT_3D_HANDLE;
 
-    const productTypeVal = document.getElementById('propTypeSelector')?.value || document.getElementById('productType')?.value || 'club';
+    const productTypeVal = document.getElementById('prop-options')?.value || 'club';
 
     const rawEffect = document.getElementById('options')?.value
         || document.getElementById('effectSelect')?.value
@@ -238,10 +246,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const projInput = document.getElementById('projectname') || document.getElementById('projectName');
         if (projInput && data.projectname) projInput.value = data.projectname;
 
-        const productTypeEl = document.getElementById('propTypeSelector') || document.getElementById('productType');
+        const productTypeEl = document.getElementById('prop-options');
         if (productTypeEl && data.productType) {
             productTypeEl.value = data.productType;
-            productTypeEl.dispatchEvent(new Event('change'));
         }
 
         const effectEl = document.getElementById('options') || document.getElementById('effectSelect') || document.getElementById('effect');
@@ -277,14 +284,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         sessionStorage.removeItem('tempSelection');
-        console.log("Restored temporary selection successfully in 2D:", data);
-        clickedButton.click();
-    }
+        requestAnimationFrame(() => {
+        const propButton = document.getElementById('prop-button');
+        const effectButton = document.getElementById('view-button');
 
+        if (propButton) {
+            propButton.click();
+        }
+
+        if (data.effect && data.effect !== 'none' && effectButton) {
+            effectButton.click();
+        }
+
+        console.log("Restored temporary selection successfully in 2D:", data);
+    });
+    }
 });
 
 if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
 
-export { svgStill, svgMov, handleButton, bodyButton };
+export { bodyButton, handleButton, svgMov, svgStill };
+
