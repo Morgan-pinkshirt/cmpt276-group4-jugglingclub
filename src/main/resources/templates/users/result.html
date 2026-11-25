@@ -1,32 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/light.css}">
-</head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
-
-        <main>
-            <section class="login-panel">
-                <h2><span th:text="${message}"></span></h2>
-                
-
-                <div class="login-links">
-                    <a href="/userlogin">Back to Login</a>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
+<html lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{fragments/auth :: layout(
+                    'Account Notification',
+                    ~{::section}
+                    )}">
+<body>
+<section class="mc-login-panel mc-result-panel"
+        th:with="
+            msg=${message == null ? '' : message},
+            loginError=${msg =='username or password dont match, log in failed'},
+            usernameError=${msg =='user name taken, try again'},
+            accountError=${msg == 'account dont exist'},
+            noQuestions=${msg == 'account did not set up questions'},
+            wrongAnswer=${msg == 'WRONG ANswer'},
+            expiredQuestion=${msg == 'Security question session expired or invalid.'},
+            generalError=${msg == 'ERROR OCCURED!!!!!!'},
+            incorrectPassword=${msg == 'Incorrect password.'},
+            recoveryError=${accountError
+                or noQuestions
+                or wrongAnswer
+                or expiredQuestion},
+            isError=${loginError
+                or usernameError
+                or recoveryError
+                or generalError
+                or incorrectPassword}
+        ">
+    <div class="mc-result-icon" th:classappend="${isError
+            ? 'mc-result-error'
+            : ''}">
+        <i th:attr="data-lucide=${isError
+                ? 'circle-alert'
+                : 'info'}">
+        </i>
     </div>
+    <h2 th:if="${loginError}">
+        Unable to Sign In
+    </h2>
+    <h2 th:if="${usernameError}">
+        Username Already Taken
+    </h2>
+    <h2 th:if="${accountError}">
+        Account Not Found
+    </h2>
+    <h2 th:if="${noQuestions}">
+        Security Questions Unavailable
+    </h2>
+    <h2 th:if="${wrongAnswer}">
+        Incorrect Security Answer
+    </h2>
+    <h2 th:if="${expiredQuestion}">
+        Recovery Session Expired
+    </h2>
+    <h2 th:if="${generalError}">
+        Something Went Wrong
+    </h2>
+    <h2 th:if="${incorrectPassword}">
+        Incorrect Password
+    </h2>
+    <h2 th:if="${!isError}">
+        Account Notification
+    </h2>
+    <div th:if="${isError}"
+        class="mc-notice mc-notice-error"
+        role="alert">
+        <i data-lucide="circle-alert"></i>
+        <div>
+            <p th:if="${loginError}">
+                Incorrect username or password.
+                Please check your details and try again.
+            </p>
+            <p th:if="${usernameError}">
+                This username is already in use.
+                Please choose a different username.
+            </p>
+            <p th:if="${accountError}">
+                We couldn't find the requested account.
+                Please check your details and try again.
+            </p>
+            <p th:if="${noQuestions}">
+                Security-question recovery is unavailable
+                because this account has not set up any
+                security questions. Try email recovery
+                if an email address is registered.
+            </p>
+            <p th:if="${wrongAnswer}">
+                Your answer did not match.
+                Please restart the recovery process.
+            </p>
+            <p th:if="${expiredQuestion}">
+                Your recovery session is no longer valid.
+                Please restart password recovery.
+            </p>
+            <p th:if="${generalError}">
+                We couldn't complete your request.
+                Please try again.
+            </p>
+            <p th:if="${incorrectPassword}">
+                The password you entered is incorrect.
+                Please check your password and try again.
+            </p>
+        </div>
+    </div>
+    <div th:if="${!isError}"
+        class="mc-notice mc-notice-info"
+        role="status">
+        <i data-lucide="info"></i>
+        <span th:text="${msg}">
+            Account notification
+        </span>
+    </div>
+    <div class="mc-result-actions">
+        <a class="mc-button"
+            th:if="${loginError}"
+            th:href="@{/userlogin}">
+            <i data-lucide="log-in"></i>
+            Try Signing In Again
+        </a>
+        <a class="mc-button"
+            th:if="${usernameError}"
+            th:href="@{/createaccount}">
+            <i data-lucide="user-plus"></i>
+            Choose Another Username
+        </a>
+        <a class="mc-button"
+            th:if="${recoveryError}"
+            th:href="@{/forgot-password}">
+            <i data-lucide="key-round"></i>
+            Try Another Recovery Method
+        </a>
+        <a class="mc-button mc-outline"
+            th:if="${loginError}"
+            th:href="@{/forgot-password}">
+            <i data-lucide="key-round"></i>
+            Forgot Password?
+        </a>
+        <a class="mc-button"
+            th:if="${!isError or generalError or incorrectPassword}"
+            th:href="@{/userlogin}">
+            <i data-lucide="arrow-left"></i>
+            Return to Login
+        </a>
+    </div>
+    <div class="mc-auth-back" th:if="${usernameError or recoveryError}">
+        <a th:href="@{/userlogin}">
+            <i data-lucide="arrow-left"></i>
+            Back to Login
+        </a>
+    </div>
+</section>
 </body>
 </html>

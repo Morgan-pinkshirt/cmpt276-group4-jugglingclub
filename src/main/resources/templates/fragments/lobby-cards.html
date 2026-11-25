@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="heading(id, icon, title, subtitle)" class="mc-section-heading">
+    <h2 th:id="${id}">
+        <i th:attr="data-lucide=${icon}"></i>
+        <span th:text="${title}"></span>
+    </h2>
+    <span class="mc-section-subtitle" th:text="${subtitle}">
+    </span>
+</div>
+<div th:fragment="art(image)" class="mc-art">
+    <img th:src="@{${'/img/midnight/' + image}}"
+        loading="lazy"
+        decoding="async"
+        alt="">
+</div>
+
+<article th:fragment="card(title, description, image, icon, accent, url, buttonText)"
+        class="mc-card"
+        th:classappend="${accent}">
+    <div th:replace="~{fragments/lobby-cards :: art(${image})}"></div>
+    <div class="mc-card-body">
+        <h3>
+            <i th:attr="data-lucide=${icon}"></i>
+            <span th:text="${title}"></span>
+        </h3>
+        <p th:text="${description}"></p>
+        <div class="mc-actions">
+            <a class="mc-button" th:href="@{${url}}">
+                <span th:text="${buttonText}"></span>
+                <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</article>
+<div th:fragment="simulatorButtons(prop, effect, projectName)" class="mc-actions mc-sim-actions">
+    <button class="mc-button mc-button-2d"
+            type="button"
+            data-simulator="2d"
+            th:attr="data-prop=${prop},
+                    data-effect=${effect},
+                    data-name=${projectName}">
+        <i data-lucide="square"></i>
+        Open in 2D
+    </button>
+    <button class="mc-button mc-button-3d"
+            type="button"
+            data-simulator="3d"
+            th:attr="data-prop=${prop},
+                    data-effect=${effect},
+                    data-name=${projectName}">
+        <i data-lucide="box"></i>
+        Open in 3D
+    </button>
+</div>
+<section th:fragment="creative"
+        id="create"
+        aria-labelledby="create-title">
+    <div th:replace="~{fragments/lobby-cards :: heading(
+        'create-title',
+        'sparkles',
+        'Your Creative stage',
+        'Start something new'
+    )}">
+    </div>
+
+    <div class="mc-grid">
+        <article class="mc-card mc-cyan">
+            <div th:replace="~{fragments/lobby-cards :: art('product.webp')}"></div>
+            <div class="mc-card-body">
+                <h3>
+                    <i data-lucide="box"></i>
+                    Create Product
+                </h3>
+                <p>
+                    Design and customize your LED
+                    juggling props in 2D or 3D.
+                </p>
+                <div class="mc-actions mc-sim-actions">
+                    <a class="mc-button mc-button-2d" th:href="@{/2d-sim}">
+                        <i data-lucide="square"></i>
+                        2D Simulator
+                    </a>
+                    <a class="mc-button mc-button-3d"th:href="@{/simulator}">
+                        <i data-lucide="box"></i>
+                        3D Simulator
+                    </a>
+                </div>
+            </div>
+        </article>
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Create Moment',
+            'Build a performance timeline and synchronize your lighting with music.',
+            'moment.webp',
+            'audio-lines',
+            'mc-purple',
+            '/synchro.html',
+            'Music Synchronization'
+        )}"></article>
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Saved Projects',
+            'Revisit, edit and manage your own saved juggling designs.',
+            'saved.webp',
+            'folder-open',
+            'mc-blue',
+            '/viewsavedprojects',
+            'View saved projects'
+        )}"></article>
+    </div>
+</section>
+<article th:fragment="propCard(name, prop, description, projectName)" class="mc-preset">
+<div class="mc-preset-art">
+    <img th:src="@{${'/img/midnight/' + prop + '.webp'}}"
+        loading="lazy"
+        decoding="async"
+        alt="">
+</div>
+<div class="mc-preset-body">
+    <h3 th:text="${name}"></h3>
+    <p th:text="${description}"></p>
+    <div th:replace="~{fragments/lobby-cards :: simulatorButtons(
+        ${prop},
+        'none',
+        ${projectName}
+    )}"></div>
+</div>
+</article>
+<section th:fragment="presets"id="presets">
+<div th:replace="~{fragments/lobby-cards :: heading(
+    'preset-title',
+    'shapes',
+    'Prop Presets',
+    'Choose your preferred simulator'
+)}">
+</div>
+<div class="mc-mini-grid">
+    <article th:replace="~{fragments/lobby-cards :: propCard(
+        'Club',
+        'club',
+        'Customize your LED juggling club.',
+        'New Club'
+    )}">
+    </article>
+    <article th:replace="~{fragments/lobby-cards :: propCard(
+        'Ball',
+        'ball',
+        'Explore illuminated juggling balls.',
+        'New Ball'
+    )}">
+    </article>
+    <article th:replace="~{fragments/lobby-cards :: propCard(
+        'Staff',
+        'staff',
+        'Design your LED performance staff.',
+        'New Staff'
+    )}"></article>
+</div>
+</section>
+<article th:fragment="templateCard(name, effect, description, previewClass)" class="mc-template">
+<div class="mc-swatches"
+    th:classappend="${previewClass}">
+</div>
+<div class="mc-template-body">
+    <h3 th:text="${name}"></h3>
+    <p th:text="${description}"></p>
+    <div th:replace="~{fragments/lobby-cards :: simulatorButtons(
+        'club',
+        ${effect},
+        ${name}
+    )}"></div>
+</div>
+</article>
+    <section th:fragment="templates"
+    id="templates"
+    aria-labelledby="template-title">
+<div th:replace="~{fragments/lobby-cards :: heading(
+    'template-title',
+    'layout-template',
+    'Quick-start Effect Templates',
+    'Start with a lighting effect'
+)}">
+</div>
+<div class="mc-mini-grid">
+    <article th:replace="~{fragments/lobby-cards :: templateCard(
+        'Rainbow Flow',
+        'p1_1_rainbow',
+        'A vibrant multicolour lighting effect.',
+        'mc-preview-rainbow'
+    )}">
+    </article>
+    <article th:replace="~{fragments/lobby-cards :: templateCard(
+        'Pulse',
+        'p1_10_pulse',
+        'A rhythmic pulsing lighting effect.',
+        'mc-preview-pulse'
+    )}">
+    </article>
+    <article th:replace="~{fragments/lobby-cards :: templateCard(
+        'Fire',
+        'p1_5_fire',
+        'A warm flame-inspired lighting effect.',
+        'mc-preview-fire'
+    )}"></article>
+</div>
+</section>
+<section th:fragment="administration"
+        id="administration"
+        class="mc-admin-section">
+    <div th:replace="~{fragments/lobby-cards :: heading(
+        'admin-title',
+        'shield-check',
+        'Administration',
+        'Manage the club'
+    )}">
+    </div>
+    <div class="mc-grid">
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Account Management',
+            'View and manage registered accounts.',
+            'accounts.webp',
+            'users',
+            'mc-purple',
+            '/admin/accounts',
+            'Manage accounts'
+        )}">
+        </article>
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'All Projects',
+            'Review saved juggling projects across accounts.',
+            'all-projects.webp',
+            'folders',
+            'mc-purple',
+            '/viewallsaves',
+            'View all projects'
+        )}">
+        </article>
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Create Admin',
+            'Create an administrator account.',
+            'create-admin.webp',
+            'shield-plus',
+            'mc-purple',
+            '/admin/create',
+            'Create admin'
+        )}">
+        </article>
+    </div>
+</section>
+<section th:fragment="guest"
+        class="mc-guest-section">
+    <div th:replace="~{fragments/lobby-cards :: heading(
+        'guest-title',
+        'compass',
+        'Discover The Club',
+        'Your creative journey starts here'
+    )}">
+    </div>
+    <div class="mc-grid mc-two">
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Become a Jester',
+            'Create an account to customize, save and manage your designs.',
+            'join.webp',
+            'user-plus',
+            'mc-cyan',
+            '/userregister',
+            'Join now'
+        )}">
+        </article>
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Our Service',
+            'Discover LED juggling prop customization, designs and lighting effects.',
+            'service.webp',
+            'info',
+            'mc-purple',
+            '/our-service',
+            'Explore our service'
+        )}">
+        </article>
+    </div>
+    <div class="mc-guest-showcase">
+        <div th:replace="~{fragments/lobby-cards :: heading(
+            'showcase-title',
+            'sparkles',
+            'Your Stage Awaits',
+            'Discover what it means to be a jester'
+        )}">
+        </div>
+        <div class="mc-mini-grid">
+            <article class="mc-showcase-item">
+                <i data-lucide="box"></i>
+                <h3>Design Your Props</h3>
+                <p>
+                    Explore colours, shapes and lighting
+                    effects using our 2D and 3D simulators.
+                </p>
+            </article>
+            <article class="mc-showcase-item">
+                <i data-lucide="audio-lines"></i>
+                <h3>Create Your Moments</h3>
+                <p>
+                    Bring music and lighting together
+                    for your next performance.
+                </p>
+            </article>
+            <article class="mc-showcase-item">
+                <i data-lucide="folder-heart"></i>
+                <h3>Save Your Creativity</h3>
+                <p>
+                    Build a personal collection of
+                    designs and revisit your projects.
+                </p>
+            </article>
+        </div>
+        <div class="mc-guest-cta">
+            <a class="mc-button" th:href="@{/userregister}">
+                <i data-lucide="user-plus"></i>
+                Join The Jesters Club
+                <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

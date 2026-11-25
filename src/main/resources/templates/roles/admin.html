@@ -1,216 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | The Jester Club</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
-    <link rel="stylesheet" th:href="@{/css/lobby-layout.css}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+                th:with=" isSuperAdmin=${currentRole != null 
+                        and currentRole.name() == 'SUPER_ADMIN'},
+                        lobbyRole=${isSuperAdmin
+                        ? 'super_admin'
+                        : 'admin'},
+                        pageTitle=${isSuperAdmin
+                        ? 'Super Admin Dashboard'
+                        : 'Admin Dashboard'}">
+<head th:replace="~{fragments/midnight-ui :: head(${pageTitle})}">
 </head>
-<body class="member-page admin-page lobby-page">
-    <header class="lobby-header">
-        <div class="lobby-brand">
-            <i data-lucide="sparkles"
-                aria-hidden="true">
-            </i>
-            <h1>The Jester Club</h1>
-        </div>
-        <div class="lobby-header-actions">
-            <div class="lobby-member-identity">
-                <span class="lobby-role"
-                    th:text="${currentRole != null
-                        and currentRole.name() == 'SUPER_ADMIN'
-                        ? 'SUPER ADMIN VIEW'
-                        : 'ADMIN VIEW'}">
-                    ADMIN VIEW
-                </span>
-                <div class="lobby-member-details">
-                    <!-- <span class="account-id">
-                        User ID:
-                        <span th:text="${currentUid}"></span>
-                    </span> -->
-                    <span class="account-username"
-                        th:text="${'@' + currentUsername}">
-                    </span>
-
-                </div>
-            </div>
-
-            <a class="member-button lobby-login"
-                th:href="@{/logout}">
-                <i data-lucide="log-out"
-                    aria-hidden="true">
-                </i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </header>
-
-    <div class="lobby-layout">
-        <nav th:replace="~{fragments/lobby ::
-            sidebar(${currentRole != null
-                and currentRole.name() == 'SUPER_ADMIN'
-                ? 'super_admin'
-                : 'admin'})}">
-        </nav>
-        <main class="lobby-main">
-        <div class="lobby-welcome">
-            <p class="lobby-eyebrow">
-                ADMINISTRATION
+<body class="mc-page mc-lobby">
+    <header th:replace="~{fragments/lobby :: header(${lobbyRole})}"></header>
+    <div class="mc-layout">
+        <nav th:replace="~{fragments/lobby :: sidebar(${lobbyRole})}"></nav>
+        <main class="mc-main" id="main">
+            <section th:replace="~{fragments/lobby :: hero(${lobbyRole})}"></section>
+            <p class="mc-message"
+                role="status"
+                th:if="${message != null}"
+                th:text="${message}">
             </p>
-            <h2 th:text="${currentRole != null
-                and currentRole.name() == 'SUPER_ADMIN'
-                ? 'Super Admin Dashboard'
-                : 'Admin Dashboard'}">
-                Admin Dashboard
-            </h2>
-            <p>
-                Manage accounts, review saved projects,
-                and access the juggling simulators.
+            <section th:replace="~{fragments/lobby-cards :: creative}"></section>
+            <section th:replace="~{fragments/lobby-cards :: presets}"></section>
+            <section th:replace="~{fragments/lobby-cards :: templates}"></section>
+            <section th:replace="~{fragments/lobby-cards :: administration}"></section>
+            <p class="mc-status"
+                id="mc-status"
+                role="status">
             </p>
-        </div>
-        <div class="lobby-card-grid lobby-card-grid--three">
-            <section class="lobby-card">
-                <div class="lobby-card-content">
-                    <div class="lobby-card-image-slot">
-                        <img
-                            th:src="@{/img/admin/account-manage.jpg}"
-                            alt="Account management"
-                            loading="lazy">
-                    </div>
-                    <h2>
-                        <i data-lucide="users"
-                            class="lobby-card-icon"
-                            aria-hidden="true"></i>
-                        Account Management
-                    </h2>
-                    <p>
-                        View and manage registered accounts.
-                    </p>
-                    <a class="lobby-button member-button"
-                        th:href="@{/admin/accounts}">
-                        Manage Accounts
-                    </a>
-                </div>
-            </section>
-            <section class="lobby-card">
-                <div class="lobby-card-content">
-                    <div class="lobby-card-image-slot">
-                        <img
-                            th:src="@{/img/admin/view-project.jpg}"
-                            alt="View Projects"
-                            loading="lazy">
-                    </div>
-                    <h2>
-                        <i data-lucide="folder-open"
-                            class="lobby-card-icon"
-                            aria-hidden="true"></i>
-                        All Projects
-                    </h2>
-                    <p>
-                        Review saved juggling projects.
-                    </p>
-                    <a class="lobby-button member-button"
-                        th:href="@{/viewallsaves}">
-                        View Projects
-                    </a>
-                </div>
-            </section>
-            <section class="lobby-card">
-                <div class="lobby-card-content">
-                    <div class="lobby-card-image-slot">
-                        <img
-                            th:src="@{/img/admin/create-admin.webp}"
-                            alt="Create Admin"
-                            loading="lazy">
-                    </div>
-                    <h2>
-                        <i data-lucide="user-plus"
-                            class="lobby-card-icon"
-                            aria-hidden="true"></i>
-                        Create Admin
-                    </h2>
-                    <p>
-                        Create an administrator account.
-                    </p>
-                    <a class="lobby-button member-button"
-                        th:href="@{/admin/create}">
-                        Create Admin
-                    </a>
-                </div>
-            </section>
-            <section class="lobby-card">
-                <div class="lobby-card-content">
-                    <div class="lobby-card-image-slot">
-                        <img
-                            th:src="@{/img/member/3d-simulator.jpg}"
-                            alt="3D juggling club simulator"
-                            loading="lazy">
-                    </div>
-                    <h2>
-                        <i data-lucide="box"
-                            class="lobby-card-icon"
-                            aria-hidden="true"></i>
-                        3D Simulator
-                    </h2>
-                    <p>
-                        Customize and build your
-                        juggling club projects in 3D.
-                    </p>
-                    <a class="lobby-button member-button"
-                        th:href="@{/simulator}">
-                        Open 3D Simulator
-                    </a>
-                </div>
-            </section>
-            <section class="lobby-card">
-                <div class="lobby-card-content">
-                    <div class="lobby-card-image-slot">
-                        <img
-                            th:src="@{/img/member/2d-simulation.webp}"
-                            alt="2D juggling club simulator"
-                            loading="lazy">
-                    </div>
-                    <h2>
-                        <i data-lucide="palette"
-                            class="lobby-card-icon"
-                            aria-hidden="true"></i>
-                        2D Simulator
-                    </h2>
-                    <p>
-                        Explore colour combinations
-                        and effects for your juggling club.
-                    </p>
-                    <a class="lobby-button member-button"
-                        th:href="@{/2d-sim}">
-                        Open 2D Simulator
-                    </a>
-                </div>
-            </section>
-        </div>
         </main>
     </div>
-    
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4
-            <br>
-            <span th:text="${message}"></span>
-        </p>
-    </footer>
-    <script defer
-            th:src="@{/js/lobby-theme.js}">
-    </script>
-
-    <script
-        src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js">
-    </script>
-
-    <script>
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    </script>
-
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <script defer th:src="@{/js/midnight-lobby.js}"></script>
 </body>
 </html>

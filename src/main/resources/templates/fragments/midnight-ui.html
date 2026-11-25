@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle + ' | The Jesters Club'}"> The Jesters Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+</head>
+<body>
+    <a th:fragment="brand"
+        class="mc-brand"
+        th:href="@{/home}">
+        <img th:src="@{/img/midnight/jester.svg}"
+            alt="The Jesters Club logo">
+        <span>
+            The Jesters Club
+            <small>
+                DESIGN · SYNCHRONIZE · PERFORM
+            </small>
+        </span>
+    </a>
+
+    <footer th:fragment="footer" class="mc-footer">
+        The Jesters Club ~ CMPT 276 Group 4
+    </footer>
+
+    <th:block th:fragment="scripts">
+        <script defer
+                src="https://unpkg.com/lucide@0.456.0/dist/umd/lucide.min.js">
+        </script>
+        <script defer
+                th:src="@{/js/midnight-ui.js}">
+        </script>
+    </th:block>
+</body>
+</html>
