@@ -6,7 +6,7 @@
     const SYNCHRO_DRAFT_KEY = 'synchroMomentsDraft';
     const MOMENT_RESULT_KEY = 'synchroMomentDesignResult';
     const RETURNING_FROM_3D_KEY = 'synchroReturningFrom3D';
-    const AudioStore = window.JesterAudioStorage; // not named Audio, which would shadow the browser constructor
+    const AudioStore = window.JesterAudioStorage;
     let pendingBounds = null;
 
     async function restoreMusicFromDB() {
@@ -184,7 +184,6 @@
             .sort((a, b) => a.start - b.start);
     }
 
-    // The moment being edited = the selected moment whose range matches the two anchors
     function getEditingMoment() {
         const m = state.moments.find((item) => item.id === state.selectedMomentId);
         if (!m) return null;
@@ -194,7 +193,6 @@
         return same ? m : null;
     }
 
-    // The free gap around the two anchors, so they never overlap another moment
     function getGapBounds(excludeId) {
         let lo = state.musicStart;
         let hi = state.musicEnd;
@@ -211,7 +209,6 @@
         );
     }
 
-    // Find the first free range (from start) that can hold span seconds
     function findFreeRange(start, span) {
         const sorted = otherMoments(null);
         let s = Math.max(state.musicStart, start);
@@ -266,7 +263,6 @@
                 state.momentEnd = Math.min(hi, Math.max(sec, state.momentStart + minLen));
             }
 
-            // Dragging an anchor while a moment is selected also updates that moment's start/end
             if (editing) {
                 editing.start = Number(state.momentStart.toFixed(2));
                 editing.end = Number(state.momentEnd.toFixed(2));
@@ -335,7 +331,6 @@
         }
         if (end <= start) return;
 
-        // A new moment must not overlap an existing one: move it to the nearest free gap
         if (overlapsOthers(start, end, null)) {
             const free = findFreeRange(start, Math.max(0.5, end - start));
             if (!free) return;
@@ -358,10 +353,8 @@
         state.focusTarget = 'moment';
         if (dom.momentTitleInput) dom.momentTitleInput.value = '';
 
-        const span = Math.max(0.5, moment.end - moment.start);
-        state.momentStart = Math.min(state.musicEnd, moment.end);
-        state.momentEnd = Math.min(state.musicEnd, Number((state.momentStart + span).toFixed(2)));
-        relocateAnchorsToFreeGap();
+        state.momentStart = moment.start;
+        state.momentEnd = moment.end;
 
         syncRangeVisuals();
         renderMoments();
@@ -369,6 +362,7 @@
         core.setActiveDisplayName(moment.title);
         core.emit('momentsUpdated', { moments: getMoments() });
         core.emit('momentSelected', { moment: core.clone(moment) });
+        if (!player.isPlaying?.()) applyMomentTo3D(moment);
     }
 
     function selectMoment(id) {
@@ -381,7 +375,7 @@
             player.seekTo?.(m.start);
             core.setActiveDisplayName(m.title);
             syncRangeVisuals();
-            applyMomentTo3D(m);
+            if (!player.isPlaying?.()) applyMomentTo3D(m);
         }
         renderMoments();
         persistMomentsDraft();
@@ -393,12 +387,19 @@
         state.moments = state.moments.filter((m) => m.id !== state.selectedMomentId);
         state.selectedMomentId = state.moments[0]?.id || null;
         state.focusTarget = state.selectedMomentId ? 'moment' : (state.duration > 0 ? 'music' : null);
+        const sel = state.moments.find((m) => m.id === state.selectedMomentId) || null;
+        if (sel) {
+            state.momentStart = sel.start;
+            state.momentEnd = sel.end;
+        } else {
+            state.momentStart = state.musicStart;
+            state.momentEnd = Math.min(state.musicEnd, state.musicStart + 1);
+        }
         renderMoments();
         syncRangeVisuals();
         persistMomentsDraft();
-        const sel = state.moments.find((m) => m.id === state.selectedMomentId) || null;
         core.setActiveDisplayName(sel ? sel.title : core.getCurrentMusicName());
-        if (sel) {
+        if (sel && !player.isPlaying?.()) {
             applyMomentTo3D(sel);
         }
         core.emit('momentsUpdated', { moments: getMoments() });
@@ -449,7 +450,11 @@
             m.title = updates.title.trim();
         }
         if (updates.options && typeof updates.options === 'object') {
-            m.options = { ...(m.options || {}), ...updates.options };
+            const isProductApply = updates.synchro &&
+                Object.prototype.hasOwnProperty.call(updates.synchro, 'productId');
+            m.options = isProductApply
+                ? core.clone(updates.options)
+                : { ...(m.options || {}), ...updates.options };
         }
         if (updates.synchro && typeof updates.synchro === 'object') {
             m.synchro = { ...(m.synchro || {}), ...updates.synchro };
@@ -468,7 +473,6 @@
         const moment = state.moments.find((m) => m.id === state.selectedMomentId);
         if (!moment) return;
         persistMomentsDraft();
-        // Prefer the modal inside synchro (no page navigation, so music and moments are kept)
         if (window.SynchroAPI && typeof window.SynchroAPI.openMomentEditor === 'function') {
             window.SynchroAPI.openMomentEditor(core.clone(moment));
             return;
@@ -518,8 +522,8 @@
 
             const active = state.moments.find((m) => m.id === state.selectedMomentId) || state.moments[0];
             if (active) {
-                state.momentStart = Number(active.start) || state.momentStart;
-                state.momentEnd = Number(active.end) || state.momentEnd;
+                state.momentStart = Number(active.start);
+                state.momentEnd = Number(active.end);
                 syncRangeVisuals();
                 core.setActiveDisplayName(active.title);
                 core.emit('momentSelected', { moment: core.clone(active) });
@@ -528,6 +532,70 @@
         }
 
         sessionStorage.removeItem(RETURNING_FROM_3D_KEY);
+    }
+
+    function restoreProject(projectData) {
+        if (!projectData || typeof projectData !== 'object' || !Array.isArray(projectData.moments)) {
+            throw new Error('Invalid Synchro project data.');
+        }
+
+        const loadedDuration = Number(player.getDuration?.());
+        const savedDuration = Number(projectData.duration);
+        const musicStart = Number(projectData.musicStart);
+        const musicEnd = Number(projectData.musicEnd);
+        if (!Number.isFinite(loadedDuration) || loadedDuration <= 0) {
+            throw new Error('Please load the project audio before restoring the Timeline.');
+        }
+        if (!Number.isFinite(savedDuration) || savedDuration <= 0 ||
+            Math.abs(savedDuration - loadedDuration) > 0.5 ||
+            !Number.isFinite(musicStart) || !Number.isFinite(musicEnd) ||
+            musicStart < 0 || musicEnd <= musicStart || musicEnd > loadedDuration + 0.01) {
+            throw new Error('The saved Timeline does not match the loaded audio.');
+        }
+
+        const restoredMoments = projectData.moments.map(core.clone);
+        const ids = new Set();
+        for (const moment of restoredMoments) {
+            if (!moment || typeof moment.id !== 'string' || !moment.id ||
+                typeof moment.title !== 'string' || !moment.title.trim() ||
+                !Number.isFinite(moment.start) || !Number.isFinite(moment.end) ||
+                moment.start < musicStart - 0.01 || moment.end <= moment.start ||
+                moment.end > musicEnd + 0.01 || ids.has(moment.id) ||
+                (moment.options != null &&
+                    (typeof moment.options !== 'object' || Array.isArray(moment.options)))) {
+                throw new Error('The saved project contains an invalid Moment.');
+            }
+            ids.add(moment.id);
+        }
+
+        const selectedId = restoredMoments.some((m) => m.id === projectData.selectedMomentId)
+            ? projectData.selectedMomentId
+            : (restoredMoments[0]?.id || null);
+        const active = restoredMoments.find((m) => m.id === selectedId) || null;
+
+        state.duration = loadedDuration;
+        state.musicStart = musicStart;
+        state.musicEnd = Math.min(musicEnd, loadedDuration);
+        state.moments = restoredMoments;
+        state.selectedMomentId = selectedId;
+        state.focusTarget = active ? 'moment' : 'music';
+        state.momentStart = active ? active.start : state.musicStart;
+        state.momentEnd = active ? active.end : state.musicEnd;
+        state.lastTriggeredMomentId = null;
+        state.draggingAnchor = null;
+
+        player.setMusicBounds?.(state.musicStart, state.musicEnd);
+        if (dom.btnCreateMoment) dom.btnCreateMoment.disabled = false;
+        if (dom.momentTitleInput) dom.momentTitleInput.value = '';
+        renderRuler();
+        syncRangeVisuals();
+        renderMoments();
+        persistMomentsDraft();
+        core.setActiveDisplayName(active ? active.title : core.getCurrentMusicName());
+        core.emit('momentsUpdated', { moments: getMoments() });
+        core.emit('momentSelected', { moment: active ? core.clone(active) : null });
+        if (active) applyMomentTo3D(active);
+        player.seekTo?.(state.musicStart);
     }
 
     function exportMomentsJson() {
@@ -650,9 +718,12 @@
 
     window.addEventListener('musicEditor:playbackStopped', () => {
         state.lastTriggeredMomentId = null;
+        const selected = state.moments.find((m) => m.id === state.selectedMomentId);
+        if (selected) applyMomentTo3D(selected);
     });
 
     window.addEventListener('musicEditor:playbackTick', (e) => {
+        if (!player.isPlaying?.()) return;
         const cur = e.detail?.currentTime ?? 0;
         const activeMoment = state.moments.find((m) => cur >= m.start && cur <= m.end) || null;
         if (activeMoment && activeMoment.id !== state.lastTriggeredMomentId) {
@@ -670,7 +741,6 @@
     dom.btnEditMomentIn3D?.addEventListener('click', () => editSelectedMomentIn3D());
 
     dom.momentsTrackLane?.addEventListener('click', (e) => {
-        // Releasing the mouse after dragging an anchor fires a click: do not treat it as deselecting the moment
         if (e.target.closest('.timeline-anchor')) return;
         const clip = e.target.closest('.moment-clip');
         if (clip) {
@@ -700,7 +770,8 @@
         selectMoment,
         updateMoment,
         editSelectedMomentIn3D,
-        persistMomentsDraft
+        persistMomentsDraft,
+        restoreProject
     });
 
     bindAnchors();

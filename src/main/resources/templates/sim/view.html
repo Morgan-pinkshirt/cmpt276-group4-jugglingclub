@@ -257,46 +257,50 @@
             <!-- Custom Dropdown UI for Effect Selection -->
             <div id="customSelectionContainer" style="position:relative; margin-top: 4px;">
                 <!-- Display box for current option -->
-                <div id="customSelectHeader" onclick="toggleCustomDropdown()" style="background: #222; 
-                border: 1px solid #444; 
-                border-radius: 4px; padding: 6px 10px; 
-                cursor: pointer; 
-                display: flex; 
-                align-items: center; 
+                <div id="customSelectHeader" onclick="toggleCustomDropdown()" style="background: #222;
+                border: 1px solid #444;
+                border-radius: 4px; padding: 6px 10px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
                 justify-content: space-between;">
-                    <div style="display: flex; 
-                align-items: center; 
-                gap: 8px; 
+                    <div style="display: flex;
+                align-items: center;
+                gap: 8px;
                 overflow: hidden;">
-                        <img id="headerImg" src="" alt="" style="width: 24px; 
-                        height: 24px; 
-                        object-fit: contain; 
+                        <img id="headerImg" src="" alt="" style="width: 24px;
+                        height: 24px;
+                        object-fit: contain;
                         display: none;">
-                        <span id="headerText" style="font-size: 0.9rem; 
-                        white-space: nowrap; 
-                        overflow: hidden; 
+                        <span id="headerText" style="font-size: 0.9rem;
+                        white-space: nowrap;
+                        overflow: hidden;
                         text-overflow: ellipsis;">-- None (Solid Color) --</span>
                     </div>
                     <span style="font-size: 0.75rem; color: #aaa;">▼</span>
                 </div>
 
                 <!-- Dropdown List for other options -->
-                <div id="customDropdownList" style="display: none; 
-                position: absolute; 
-                top: 100%; 
-                left: 0; 
-                right: 0; 
-                background: #222; 
-                border: 1px solid #444; 
-                border-radius: 4px; 
-                max-height: 260px; 
-                overflow-y: auto; 
-                z-index: 1000; 
-                margin-top: 3px; 
+                <div id="customDropdownList" style="display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: #222;
+                border: 1px solid #444;
+                border-radius: 4px;
+                max-height: 260px;
+                overflow-y: auto;
+                z-index: 1000;
+                margin-top: 3px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
                 </div>
             </div>
         </div>
+            <a href="/synchro.html" class="home-btn nav-btn primary"
+                style="display: block; width: 100%; text-align: center; text-decoration: none;">
+                Synchro Editor
+            </a>
     </div>
 
     <!-- Top-Right: User Panel -->
@@ -340,6 +344,7 @@
             <input type="hidden" name="brightness" id="hbright" th:value="${currentSave.brightness}">
             <input type="hidden" name="saturation" id="hsat" th:value="${currentSave.saturation}">
             <input type="hidden" name="effect" id="heffect" th:value="${currentSave.effect}">
+            <input type="hidden" name="optionsJson" id="optionsJson" th:value="${currentSave.optionsJson}">
         </form>
 
         <!-- Animation Speed -->
@@ -370,6 +375,29 @@
     <script src="/3Dsim/dropDown.js" defer></script>
     <script src="/3Dsim/state.js" defer></script>
     <script src="/3Dsim/viewMyProduct.js" defer></script>
+    <script>
+        window.addEventListener('load', () => {
+            const form = document.getElementById('savingform');
+            const optionsField = document.getElementById('optionsJson');
+            if (!form || !optionsField) return;
+
+            if (optionsField.value) {
+                try {
+                    const options = JSON.parse(optionsField.value);
+                    if (options && typeof options === 'object' && !Array.isArray(options)) {
+                        window.JesterStateBridge?.applyDesignTo3D?.(options);
+                    }
+                } catch (error) {
+                    console.error('Failed to restore saved Product options:', error);
+                }
+            }
+
+            form.addEventListener('submit', () => {
+                const options = window.JesterStateBridge?.collect3DDesignOptions?.();
+                if (options) optionsField.value = JSON.stringify(options);
+            });
+        });
+    </script>
 </body>
 
 </html>

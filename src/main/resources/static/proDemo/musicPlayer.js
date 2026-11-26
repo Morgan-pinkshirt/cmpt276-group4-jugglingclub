@@ -2,6 +2,10 @@
     const core = window.MusicEditorCore;
     if (!core) return;
 
+    const ALLOWED_AUDIO_EXTENSIONS = new Set(['mp3', 'wav', 'ogg', 'm4a', 'flac']);
+    const MAX_AUDIO_BYTES = 25 * 1024 * 1024;
+    let loadRequestId = 0;
+
     const state = {
         audioCtx: null,
         audioBuffer: null,
@@ -22,9 +26,10 @@
         playheadLine: document.getElementById('playheadLine')
     };
 
-    function getAudioCtx() {
+   function getAudioCtx() {
         if (!state.audioCtx) {
             const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) throw new Error('This browser does not support audio decoding.');
             state.audioCtx = new Ctx();
         }
         return state.audioCtx;
@@ -164,18 +169,38 @@
     async function loadFile(file, { restored = false } = {}) {
         if (!file) return;
 
-        stopPlayback();
-        core.setCurrentMusicName(file.name);
-
-        if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
-        state.objectUrl = URL.createObjectURL(file);
-        state.audioElement.src = state.objectUrl;
+        const requestId = ++loadRequestId;
+        const extension = String(file.name || '').split('.').pop().toLowerCase();
+        if (!ALLOWED_AUDIO_EXTENSIONS.has(extension)) {
+            throw new Error('Unsupported audio format. Use MP3, WAV, OGG, M4A, or FLAC.');
+        }
+        if (file.size === 0 || file.size > MAX_AUDIO_BYTES) {
+            throw new Error('The audio file must be larger than 0 bytes and no more than 25 MB.');
+        }
 
         const buf = await file.arrayBuffer();
-        state.audioBuffer = await getAudioCtx().decodeAudioData(buf);
-        state.duration = Number(state.audioBuffer.duration.toFixed(2));
+        let decodedBuffer;
+        try {
+            decodedBuffer = await getAudioCtx().decodeAudioData(buf);
+        } catch (err) {
+            throw new Error('This audio file could not be decoded. Please select another file.');
+        }
+        if (!Number.isFinite(decodedBuffer.duration) || decodedBuffer.duration <= 0) {
+            throw new Error('This audio file does not have a valid duration.');
+        }
+        if (requestId !== loadRequestId) return;
+
+        const nextObjectUrl = URL.createObjectURL(file);
+        const previousObjectUrl = state.objectUrl;
+        stopPlayback();
+        state.objectUrl = nextObjectUrl;
+        state.audioElement.src = nextObjectUrl;
+        if (previousObjectUrl) URL.revokeObjectURL(previousObjectUrl);
+        state.audioBuffer = decodedBuffer;
+        state.duration = Number(decodedBuffer.duration.toFixed(2));
         state.musicStart = 0;
         state.musicEnd = state.duration;
+        core.setCurrentMusicName(file.name);
 
         if (dom.btnPlayStopToggle) dom.btnPlayStopToggle.disabled = false;
 
@@ -195,14 +220,47 @@
     }
 
     async function handleFileSelect(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
         try {
-            await loadFile(e.target.files?.[0]);
+            await loadFile(file);
         } catch (err) {
             console.error('Load audio failed:', err);
+            showAudioErrorDialog(err, file);
+            if (dom.fileInput) dom.fileInput.value = '';
         }
     }
 
+    function showAudioErrorDialog(error, file) {
+        const dialog = document.getElementById('audioErrorDialog');
+        const title = document.getElementById('audioErrorTitle');
+        const description = document.getElementById('audioErrorMessage');
+        if (!dialog || !title || !description) {
+            console.error('Audio error dialog is unavailable:', error);
+            return;
+        }
+
+        const message = error?.message || 'Unable to load the audio file.';
+        let heading = 'Audio Loading Failed';
+        let explanation = message;
+
+        if (message.startsWith('Unsupported audio format.')) {
+            heading = 'Unsupported Audio Format';
+        } else if (file?.size === 0) {
+            heading = 'Invalid Audio File';
+            explanation = 'The selected audio file is empty. Please choose another file.';
+        } else if (file?.size > MAX_AUDIO_BYTES) {
+            heading = 'File Too Large';
+            explanation = 'The audio file exceeds the 25 MB limit.';
+        }
+
+        title.textContent = heading;
+        description.textContent = explanation;
+        if (!dialog.open) dialog.showModal();
+    }
+
     function clearMusic() {
+        loadRequestId++;
         stopPlayback();
 
         if (state.objectUrl) {
@@ -244,6 +302,7 @@
 
     window.MusicPlayerAPI = {
         getDuration: () => state.duration,
+        isPlaying: () => state.isPlaying,
         getCurrentTime: () => state.audioElement.currentTime || 0,
         getMusicRange: () => ({
             duration: state.duration,

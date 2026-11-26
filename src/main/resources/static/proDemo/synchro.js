@@ -1,5 +1,9 @@
 (function () {
     const state = {
+        savedProducts: [],
+        selectedProductId: '',
+        pendingProductId: null,
+        pendingMomentId: null,
         moments: [],
         currentMoment: null,
         activePlayingMoment: null
@@ -11,6 +15,8 @@
         btnExpandPanel: document.getElementById('btnExpandPanel'),
 
         momentTitleEdit: document.getElementById('momentEditTitleInput'),
+        productSelect: document.getElementById('savedProductSelect'),
+        btnRefresh: document.getElementById('btnRefreshProducts'),
         btnChooseProduct: document.getElementById('btnChooseSavedProduct'),
         savedProductLabel: document.getElementById('savedProductLabel'),
         btnEditIn3D: document.getElementById('btnEditMomentIn3D'),
@@ -41,7 +47,6 @@
         win.postMessage({ type: 'applyMoment', options: options || {} }, window.location.origin);
     }
 
-    // momentEdit.js calls this whenever a moment is selected, entered or updated
     window.applyMomentOptions = function (options) {
         stage.pending = options || {};
         if (stage.ready) sendToStage(stage.pending, false);
@@ -57,7 +62,6 @@
         stage.frame.src = `${STAGE_URL}?embed=1`;
     }
 
-    // ---------- Design editor modal (iframe view.html?embed=edit) ----------
     const editor = { overlay: null, frame: null, momentId: null, options: null };
 
     function closeMomentEditor() {
@@ -133,6 +137,8 @@
         }
     });
 
+    const STORAGE_KEYS = ['savingProducts', 'savedProducts', 'myProducts', 'products'];
+
     function setPanelCollapsed(collapsed) {
         if (!dom.panel || !dom.btnExpandPanel) return;
         dom.panel.classList.toggle('is-collapsed', collapsed);
@@ -140,44 +146,93 @@
         setTimeout(() => window.dispatchEvent(new Event('resize')), 210);
     }
 
-    // ---------- Saved project picker (saves table on the server) ----------
-    const SAVED_PROJECTS_URL = '/api/saved-projects';
-    let savedPicker = null;
+    async function loadProducts({ throwOnError = false } = {}) {
+        try {
+            const response = await fetch('/api/saved-products', {
+                credentials: 'same-origin',
+                cache: 'no-store'
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to load saved products (${response.status}).`);
+            }
+            const products = await response.json();
+            if (!Array.isArray(products)) {
+                throw new Error('Invalid saved products response.');
+            }
+            state.savedProducts = products.map((p, i) => ({
+                id: String(p.id ?? p.name ?? `prod_${i}`),
+                name: p.name || p.title || `Product #${i + 1}`,
+                type: p.type || p.productType || 'club',
+                raw: p
+            }));
+            renderProductSelect();
+            syncFormToMoment(state.currentMoment);
+            renderStage();
+            return;
+        } catch (err) {
+            console.error('Failed to load saved products from server:', err);
+            if (throwOnError) throw err;
+        }
 
-    function projectToOptions(p) {
-        const color = p.productColor || '#ff5733';
-        const bright = Number(p.brightness);
-        const sat = Number(p.saturation);
-        return {
-            productType: p.productType || 'club',
-            productColor: color,
-            handleColor: color,
-            bodyColor: p.bodyColor || '#ffffff',
-            ballColor: color,
-            brightness: Number.isFinite(bright) ? bright : 1.0,
-            saturation: Number.isFinite(sat) ? sat : 1.0,
-            effect: p.effect || 'none'
-        };
+        let list = [];
+        for (const key of STORAGE_KEYS) {
+            const raw = localStorage.getItem(key);
+            if (!raw) continue;
+            try {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length) {
+                    list = parsed.map((p, i) => ({
+                        id: String(p.id ?? p.name ?? `prod_${i}`),
+                        name: p.name || p.title || `Product #${i + 1}`,
+                        type: p.type || p.productType || 'club',
+                        raw: p
+                    }));
+                    break;
+                }
+            } catch (_) { }
+        }
+        state.savedProducts = list;
+        renderProductSelect();
+        syncFormToMoment(state.currentMoment);
+        renderStage();
     }
+
+    function renderProductSelect() {
+        if (!dom.productSelect) return;
+        const prev = state.selectedProductId;
+        dom.productSelect.innerHTML = '<option value="">-- Saving Product --</option>';
+        state.savedProducts.forEach((p) => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = `${p.name} (${p.type})`;
+            dom.productSelect.appendChild(opt);
+        });
+        if (state.savedProducts.some((p) => p.id === prev)) {
+            dom.productSelect.value = prev;
+        } else if (state.savedProducts.length) {
+            state.selectedProductId = state.savedProducts[0].id;
+            dom.productSelect.value = state.selectedProductId;
+        } else {
+            state.selectedProductId = '';
+            dom.productSelect.value = '';
+        }
+    }
+
+    let savedPicker = null;
 
     function closeSavedPicker() {
         savedPicker?.remove();
         savedPicker = null;
     }
 
-    function chooseSavedProject(p) {
-        const target = state.currentMoment;
-        if (!target || !window.MusicEditorAPI?.updateMoment) return;
-        const updated = window.MusicEditorAPI.updateMoment(target.id, {
-            options: projectToOptions(p),
-            synchro: { ...(target.synchro || {}), productId: p.uid, projectName: p.projectname }
-        });
+    function chooseSavedProduct(product) {
+        if (!state.currentMoment) return;
+        state.pendingProductId = product.id;
+        state.pendingMomentId = state.currentMoment.id;
+        state.selectedProductId = product.id;
+        if (dom.productSelect) dom.productSelect.value = product.id;
         closeSavedPicker();
-        if (updated) {
-            state.currentMoment = updated;
-            syncFormToMoment(updated);
-            renderStage(`Applied "${p.projectname}" to "${updated.title}"`);
-        }
+        syncFormToMoment(state.currentMoment);
     }
 
     async function openSavedPicker() {
@@ -185,17 +240,16 @@
 
         const overlay = document.createElement('div');
         overlay.className = 'design-modal';
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) closeSavedPicker();
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) closeSavedPicker();
         });
 
         const box = document.createElement('div');
         box.className = 'design-modal-box saved-picker-box';
-
         const head = document.createElement('div');
         head.className = 'design-modal-head';
         const title = document.createElement('span');
-        title.textContent = 'Choose a saved project';
+        title.textContent = 'Choose Saved Product';
         const closeBtn = document.createElement('button');
         closeBtn.type = 'button';
         closeBtn.className = 't-btn';
@@ -207,60 +261,78 @@
         list.className = 'saved-picker-list';
         const note = document.createElement('div');
         note.className = 'moment-list-empty';
-        note.textContent = 'Loading...';
+        note.textContent = 'Loading saved Products...';
         list.append(note);
-
         box.append(head, list);
         overlay.append(box);
         document.body.append(overlay);
         savedPicker = overlay;
 
         try {
-            const res = await fetch(SAVED_PROJECTS_URL, {
-                credentials: 'same-origin',
-                headers: { Accept: 'application/json' }
-            });
-            if (res.status === 401) throw new Error('Please log in first.');
-            if (!res.ok) throw new Error(`Server error (${res.status})`);
-            const projects = await res.json();
-            if (!savedPicker) return;
-
+            await loadProducts({ throwOnError: true });
+            if (savedPicker !== overlay) return;
             list.innerHTML = '';
-            if (!Array.isArray(projects) || !projects.length) {
-                note.textContent = 'No saved projects yet.';
+            if (!state.savedProducts.length) {
+                note.textContent = 'No saved Products yet.';
                 list.append(note);
                 return;
             }
-            projects.forEach((p) => {
+
+            state.savedProducts.forEach((product) => {
+                const raw = product.raw || {};
+                const options = raw.options && typeof raw.options === 'object' ? raw.options : {};
                 const item = document.createElement('button');
                 item.type = 'button';
                 item.className = 'saved-picker-item';
 
                 const name = document.createElement('span');
                 name.className = 'saved-picker-name';
-                name.textContent = p.projectname || `Project ${p.uid}`;
+                name.textContent = product.name;
 
                 const meta = document.createElement('span');
                 meta.className = 'saved-picker-meta';
-                meta.textContent = `${p.productType || 'club'} · ${p.effect || 'none'}`;
+                meta.textContent = `${options.productType || product.type} · ${options.effect || raw.effect || 'none'}`;
 
-                const sw1 = document.createElement('span');
-                sw1.className = 'saved-picker-swatch';
-                sw1.style.background = p.productColor || '#ffffff';
-                const sw2 = document.createElement('span');
-                sw2.className = 'saved-picker-swatch';
-                sw2.style.background = p.bodyColor || '#ffffff';
+                const swatchA = document.createElement('span');
+                swatchA.className = 'saved-picker-swatch';
+                swatchA.style.backgroundColor = options.productColor || options.ballColor ||
+                    options.colorKnob1 || raw.productColor || '#ffffff';
+                const swatchB = document.createElement('span');
+                swatchB.className = 'saved-picker-swatch';
+                swatchB.style.backgroundColor = options.bodyColor || options.colorStaff ||
+                    raw.bodyColor || '#ffffff';
 
-                item.append(name, meta, sw1, sw2);
-                item.addEventListener('click', () => chooseSavedProject(p));
+                item.append(name, meta, swatchA, swatchB);
+                item.addEventListener('click', () => chooseSavedProduct(product));
                 list.append(item);
             });
-        } catch (err) {
-            if (!savedPicker) return;
+        } catch (error) {
+            if (savedPicker !== overlay) return;
             list.innerHTML = '';
-            note.textContent = `Could not load projects: ${err.message}`;
+            note.textContent = `Could not load Products: ${error.message}`;
             list.append(note);
         }
+    }
+
+    function productToOptions(product) {
+        const raw = product.raw || {};
+        if (raw.options && typeof raw.options === 'object' &&
+            !Array.isArray(raw.options) && Object.keys(raw.options).length > 0) {
+            return JSON.parse(JSON.stringify(raw.options));
+        }
+        const productColor = raw.productColor || raw.handleColor || '#ff5733';
+        const brightness = Number(raw.brightness);
+        const saturation = Number(raw.saturation);
+        return {
+            productType: raw.productType || raw.type || product.type,
+            productColor,
+            handleColor: productColor,
+            bodyColor: raw.bodyColor || '#ffffff',
+            ballColor: productColor,
+            brightness: Number.isFinite(brightness) ? brightness : 1,
+            saturation: Number.isFinite(saturation) ? saturation : 1,
+            effect: raw.effect || 'none'
+        };
     }
 
     function syncFormToMoment(m) {
@@ -271,16 +343,36 @@
         if (dom.btnChooseProduct) dom.btnChooseProduct.disabled = !hasMoment;
 
         if (!m) {
+            state.pendingProductId = null;
+            state.pendingMomentId = null;
             if (dom.momentTitleEdit) dom.momentTitleEdit.value = '';
-            if (dom.savedProductLabel) dom.savedProductLabel.textContent = 'No project linked';
+            if (dom.savedProductLabel) dom.savedProductLabel.textContent = 'No Product linked';
             return;
         }
 
+        if (state.pendingMomentId && state.pendingMomentId !== m.id) {
+            state.pendingProductId = null;
+            state.pendingMomentId = null;
+        }
+
         if (dom.momentTitleEdit) dom.momentTitleEdit.value = m.title || '';
+        const linkedId = m.synchro?.productId == null ? '' : String(m.synchro.productId);
+        if (linkedId && state.savedProducts.some((p) => p.id === linkedId)) {
+            state.selectedProductId = linkedId;
+            if (dom.productSelect) dom.productSelect.value = linkedId;
+        }
         if (dom.savedProductLabel) {
-            dom.savedProductLabel.textContent = m.synchro?.projectName
-                ? `Linked: ${m.synchro.projectName}`
-                : 'No project linked';
+            if (state.pendingMomentId === m.id && state.pendingProductId) {
+                const selected = state.savedProducts.find((p) => p.id === state.pendingProductId);
+                dom.savedProductLabel.textContent = selected
+                    ? `Selected: ${selected.name} (click Apply to confirm)`
+                    : 'Selected Product is unavailable';
+            } else {
+                const linked = state.savedProducts.find((p) => p.id === linkedId);
+                const linkedName = m.synchro?.projectName || linked?.name;
+                dom.savedProductLabel.textContent = linkedName
+                    ? `Linked: ${linkedName}` : 'No Product linked';
+            }
         }
     }
 
@@ -314,21 +406,41 @@
 
     function applyToCurrentMoment() {
         if (!state.currentMoment || !window.MusicEditorAPI?.updateMoment) return;
-        const updated = window.MusicEditorAPI.updateMoment(state.currentMoment.id, {
-            title: dom.momentTitleEdit?.value
-        });
+        const current = state.currentMoment;
+        const pendingId = state.pendingMomentId === current.id ? state.pendingProductId : null;
+        const chosenId = pendingId || (dom.productSelect ? state.selectedProductId : null);
+        const product = state.savedProducts.find((p) => p.id === chosenId);
+        const changes = { title: dom.momentTitleEdit?.value };
+        if (product) {
+            changes.options = productToOptions(product);
+            changes.synchro = {
+                ...(current.synchro || {}),
+                productId: product.id,
+                projectName: product.name
+            };
+        }
+        const updated = window.MusicEditorAPI.updateMoment(current.id, changes);
         if (updated) {
             state.currentMoment = updated;
-            renderStage(`Saved "${updated.title}"`);
+            state.pendingProductId = null;
+            state.pendingMomentId = null;
+            syncFormToMoment(updated);
+            renderStage(`Applied changes to "${updated.title}"`);
         }
     }
 
     function renderStage(note) {
-        const mom = state.activePlayingMoment || state.currentMoment;
+        const mom = window.MusicPlayerAPI?.isPlaying?.()
+            ? (state.activePlayingMoment || state.currentMoment)
+            : state.currentMoment;
+        const linkedId = mom?.synchro?.productId == null ? '' : String(mom.synchro.productId);
+        const product = state.savedProducts.find((p) => p.id === linkedId);
 
         if (dom.simProductStatus) {
             if (mom?.options?.productType) {
                 dom.simProductStatus.textContent = `3D Design: ${mom.options.productType} (${mom.options.effect || 'none'})`;
+            } else if (product) {
+                dom.simProductStatus.textContent = `Product: ${product.name} (${product.type})`;
             } else {
                 dom.simProductStatus.textContent = 'No design yet';
             }
@@ -344,9 +456,11 @@
 
         const payload = {
             note: note || undefined,
-            product: mom.synchro?.projectName
-                ? { id: mom.synchro.productId, name: mom.synchro.projectName }
-                : null,
+            product: product
+                ? { id: product.id, name: product.name, type: product.type }
+                : (mom.synchro?.projectName
+                    ? { id: linkedId, name: mom.synchro.projectName }
+                    : null),
             moment: {
                 id: mom.id,
                 title: mom.title,
@@ -365,6 +479,14 @@
     dom.btnTogglePanel?.addEventListener('click', () => setPanelCollapsed(true));
     dom.btnExpandPanel?.addEventListener('click', () => setPanelCollapsed(false));
 
+    dom.productSelect?.addEventListener('change', (e) => {
+        state.selectedProductId = e.target.value;
+        state.pendingProductId = e.target.value || null;
+        state.pendingMomentId = state.currentMoment?.id || null;
+        renderStage();
+    });
+
+    dom.btnRefresh?.addEventListener('click', () => loadProducts());
     dom.btnChooseProduct?.addEventListener('click', openSavedPicker);
     dom.btnApply?.addEventListener('click', applyToCurrentMoment);
 
@@ -372,6 +494,9 @@
         state.moments = e.detail?.moments || [];
         if (state.currentMoment) {
             state.currentMoment = state.moments.find((m) => m.id === state.currentMoment.id) || null;
+        }
+        if (state.activePlayingMoment) {
+            state.activePlayingMoment = state.moments.find((m) => m.id === state.activePlayingMoment.id) || null;
         }
         renderMomentList();
         renderStage();
@@ -389,7 +514,6 @@
 
     window.addEventListener('musicEditor:momentEntered', (e) => {
         state.activePlayingMoment = e.detail?.moment || null;
-        syncFormToMoment(state.activePlayingMoment);
         renderStage('Entered moment');
     });
 
@@ -402,6 +526,11 @@
         }
     });
 
+    window.addEventListener('musicEditor:playbackStopped', () => {
+        state.activePlayingMoment = null;
+        renderStage();
+    });
+
     window.addEventListener('musicEditor:cleared', () => {
         state.moments = [];
         state.currentMoment = null;
@@ -412,8 +541,22 @@
     });
 
     window.SynchroAPI = {
-        openMomentEditor
+        openMomentEditor,
+        setSavedProducts(list) {
+            state.savedProducts = Array.isArray(list)
+                ? list.map((p, i) => ({
+                    id: String(p.id ?? p.name ?? `prod_${i}`),
+                    name: p.name || p.title || `Product #${i + 1}`,
+                    type: p.type || p.productType || 'club',
+                    raw: p
+                }))
+                : [];
+            renderProductSelect();
+            syncFormToMoment(state.currentMoment);
+            renderStage();
+        }
     };
 
     syncFormToMoment(null);
+    loadProducts();
 })();

@@ -42,7 +42,6 @@ if (JESTER_EMBED) {
     document.addEventListener('DOMContentLoaded', () => document.body.classList.add('embed-' + JESTER_EMBED));
 }
 
-// Push options into the inputs, then refresh the product and effect (shared by restore and postMessage)
 function applyDesignTo3D(data) {
     if (!data || typeof data !== 'object') return;
 
@@ -76,7 +75,6 @@ function applyDesignTo3D(data) {
     setField(['bodyColor'], data.bodyColor);
     setField(['ballColor'], data.ballColor);
 
-    // Staff: set knobType first so the mesh is built with the right shape, then set the colors
     setField(['knobType'], data.knobType);
     setField(['knob1Color'], data.colorKnob1);
     setField(['knob2Color'], data.colorKnob2);
@@ -131,7 +129,6 @@ function applyDesignTo3D(data) {
 }
 
 function restoreFromSessionStorage() {
-    // The stage iframe shares sessionStorage with the synchro page: it must not consume the parent's tempSelection
     if (JESTER_EMBED === '1') return;
 
     const savedTempData = sessionStorage.getItem('tempSelection');
@@ -327,8 +324,6 @@ function restoreFromSessionStorage() {
 
     function saveMomentAndReturn(event) {
         if (event && typeof event.preventDefault === 'function') event.preventDefault();
-
-        // Modal mode inside synchro: send the result to the parent page instead of navigating
         if (JESTER_EMBED === 'edit' && JESTER_IS_FRAMED) {
             const momentId = new URLSearchParams(window.location.search).get('moment');
             window.parent.postMessage(
@@ -339,8 +334,6 @@ function restoreFromSessionStorage() {
         }
         window.location.href = commitMomentDesignFrom3D();
     }
-
-    // The parent page (synchro) drives the 3D product through postMessage
     window.addEventListener('message', (e) => {
         if (e.origin !== window.location.origin) return;
         const msg = e.data;
@@ -349,7 +342,6 @@ function restoreFromSessionStorage() {
         applyDesignTo3D({ ...STAGE_DEFAULTS, ...opts });
     });
 
-    // Tell the parent page the stage is ready to receive moments
     window.addEventListener('load', () => {
         if (JESTER_EMBED && JESTER_IS_FRAMED) {
             window.parent.postMessage({ type: 'stageReady' }, window.location.origin);

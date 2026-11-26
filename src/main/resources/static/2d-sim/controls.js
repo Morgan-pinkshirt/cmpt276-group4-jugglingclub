@@ -200,6 +200,4 @@ document.addEventListener("DOMContentLoaded", function () {
     updateMovingZoom();
     updateStaticZoom();
     updateStaticOrientation();
-    // clickedButton.click();
 });
-// clickedButton.click();

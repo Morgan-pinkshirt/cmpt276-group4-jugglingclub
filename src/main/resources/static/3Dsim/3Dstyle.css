@@ -232,20 +232,16 @@ input[type="range"] {
     background: rgba(255, 255, 255, 0.35);
 }
 
-/* ---- Embed mode: view.html embedded inside synchro ---- */
-/* ?embed=1 : keep only the product canvas */
 body.embed-1 .left-panels,
 body.embed-1 .user-panel {
     display: none !important;
 }
 
-/* ?embed=edit : design editor modal, hide navigation and the project save form */
 body.embed-edit .user-panel > div:first-child,
 body.embed-edit #savingform {
     display: none !important;
 }
 
-/* ---- Theme (images live in /3Dsim/3Dimg; change the file names/extensions here) ---- */
 body {
     background:
         linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.6)),

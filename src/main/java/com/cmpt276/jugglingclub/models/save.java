@@ -1,9 +1,12 @@
+
 package com.cmpt276.jugglingclub.models;
 
 
 import com.cmpt276.jugglingclub.roles.Role;
 import java.io.Serializable;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 @Entity 
 @Table(name="saves") 
 public class save{
@@ -19,6 +22,28 @@ public class save{
     private String brightness;
     private String saturation;
     private String effect;
+    @Column(name = "options_json", columnDefinition = "text")
+    private String optionsJson;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now(ZoneOffset.UTC);
+        }
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getOptionsJson() {
+        return optionsJson;
+    }
+    public void setOptionsJson(String optionsJson) {
+        this.optionsJson = optionsJson;
+    }
 
     public String getProjectname() {
         return projectname;
@@ -61,7 +86,6 @@ public class save{
         this.bodyColor = bodyColor;
     }
     
-
 
     public String getBrightness() {
         return brightness;

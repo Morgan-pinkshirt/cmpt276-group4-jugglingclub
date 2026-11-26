@@ -810,7 +810,7 @@ button:disabled {
     background: transparent;
 }
 
-/* ---- 3D design editor modal (iframe view.html?embed=edit) ---- */
+/* ---- Modal for design 3D (iframe view.html?embed=edit) ---- */
 .design-modal {
     position: fixed;
     inset: 0;
@@ -847,6 +847,67 @@ button:disabled {
     flex: 1;
     width: 100%;
     border: 0;
+}
+
+/* Audio import error dialog */
+.audio-error-dialog {
+    width: min(400px, calc(100vw - 32px));
+    max-width: 100%;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    background: #1a1d27;
+    color: #f3f4f6;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
+}
+
+.audio-error-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.audio-error-content {
+    padding: 22px;
+}
+
+.audio-error-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.audio-error-icon {
+    display: inline-flex;
+    flex: 0 0 26px;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(248, 113, 113, 0.14);
+    color: #fca5a5;
+    font-weight: 700;
+}
+
+.audio-error-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.audio-error-message {
+    margin: 14px 0 20px;
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.audio-error-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.audio-error-actions .t-btn {
+    min-width: 76px;
 }
 
 /* ---- Saved project picker ---- */

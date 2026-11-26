@@ -22,6 +22,10 @@
 
         <div class="topbar-right">
             <button id="btnExportMoments" class="t-btn" type="button">Export JSON</button>
+            <button id="btnExportSynchroZip" class="t-btn" type="button">Export ZIP</button>
+            <a href="/simulator" class="t-btn" style="text-decoration: none;">3D Editor</a>
+            <a href="/viewsavedprojects" class="t-btn" style="text-decoration: none;">Saved Projects</a>
+            <a href="/home" class="t-btn" style="text-decoration: none;">Home</a>
         </div>
     </header>
 
@@ -61,8 +65,18 @@
                 </button>
 
                 <button id="btnApplyMomentBinding" class="t-btn t-btn-accent full-w" type="button" disabled>
-                    Save Moment Changes
+                    Applying modifications to moment
                 </button>
+
+                <button id="btnSaveSynchro" class="t-btn t-btn-accent full-w" type="button">
+                    Save Synchro Changes
+                </button>
+
+                <button id="btnSaveAsNewSynchro" class="t-btn t-btn-accent full-w" type="button">
+                    Save as New Synchro
+                </button>
+
+                <div id="synchroSaveStatus" class="panel-label" role="status" aria-live="polite"></div>
 
                 <div class="panel-divider"></div>
 
@@ -165,11 +179,26 @@
         </div>
     </section>
 
+    <dialog id="audioErrorDialog" class="audio-error-dialog" aria-labelledby="audioErrorTitle"
+        aria-describedby="audioErrorMessage">
+        <div class="audio-error-content">
+            <div class="audio-error-header">
+                <span class="audio-error-icon" aria-hidden="true">!</span>
+                <h2 id="audioErrorTitle" class="audio-error-title">Audio Loading Failed</h2>
+            </div>
+            <p id="audioErrorMessage" class="audio-error-message">Unable to load the audio file.</p>
+            <form method="dialog" class="audio-error-actions">
+                <button type="submit" class="t-btn t-btn-accent" autofocus>OK</button>
+            </form>
+        </div>
+    </dialog>
+
     <script src="./proDemo/musicStore.js"></script>
     <script src="./proDemo/musicEditor.js"></script>
     <script src="./proDemo/musicPlayer.js"></script>
     <script src="./proDemo/momentEdit.js"></script>
     <script src="./proDemo/synchro.js"></script>
+    <script src="./proDemo/synchroProject.js"></script>
 </body>
 
 </html>

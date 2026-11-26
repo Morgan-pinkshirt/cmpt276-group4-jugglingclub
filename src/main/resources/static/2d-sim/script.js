@@ -100,26 +100,38 @@ handleButton.addEventListener("click", function () {
 });
 
 slider.addEventListener("input", function () {
-    // changeVisibilityColor();
+
+    isSolidColorMode = true;
+
     const prop = document.getElementById("prop-options").value;
-    // hidding(current, newDisplay);
+
     toggleColor(prop);
+
     if (prop === "club") {
+
         changeColor(club, handle);
         changeColor(clubMov, handleMov);
         changeVisibilityColor();
-    } else if (prop === "staff") {
-        changeColorStaff(document.getElementById(`staff-top`), document.getElementById(`staff-bottom`), document.getElementById(`staff-handle`));
-        console.log(current);
-        toggleColor(current);
-        // current = newDisplay;
-    } else {
-        changeColorSingle(document.getElementById(`${prop}-color`));
-        console.log(current);
-        toggleColor(current);
-        // current = newDisplay;
-    }
 
+    } else if (prop === "staff") {
+
+        changeColorStaff(
+            document.getElementById("staff-top"),
+            document.getElementById("staff-bottom"),
+            document.getElementById("staff-handle")
+        );
+
+        toggleColor(current);
+
+    } else {
+
+        changeColorSingle(
+            document.getElementById(`${prop}-color`)
+        );
+
+        toggleColor(current);
+
+    }
 });
 
 // export function changeCurrent(newCurrent) {
@@ -143,8 +155,11 @@ function changeColor(body, handle) {
 
 function changeColorSingle(body) {
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
-    body.setAttribute("fill", colour);
+
+    if (body) body.setAttribute("fill", colour);
+
     bodyColour = slider.value;
+    hasCustomBodyColor = true;
 }
 
 function changeColorStaff(knob1, knob2, handle) {
@@ -154,13 +169,50 @@ function changeColorStaff(knob1, knob2, handle) {
         knob1.setAttribute("fill", colour);
         knob2.setAttribute("fill", colour);
         bodyColour = slider.value;
+        hasCustomBodyColor = true;
     } else {
-        handle.setAttribute("fill", colour);
+        if (handle) handle.setAttribute("fill", colour);
         handleColour = slider.value;
+        hasCustomHandleColor = true;
     }
 
 }
 
+const effectSelectEl =
+    document.getElementById("options") ||
+    document.getElementById("effectSelect") ||
+    document.getElementById("effect");
+
+if (effectSelectEl) {
+    effectSelectEl.addEventListener("change", function () {
+        hasCustomEffect = true;
+
+        if (this.value && this.value !== "none") {
+            isSolidColorMode = false;
+        }
+    });
+}
+
+const viewEffectBtn = document.getElementById("view-button");
+
+if (viewEffectBtn) {
+    viewEffectBtn.addEventListener("click", function () {
+        isSolidColorMode = false;
+    });
+}
+
+const resetSimBtn = document.getElementById("reset-simulator");
+
+if (resetSimBtn) {
+    resetSimBtn.addEventListener("click", function () {
+        hasCustomBodyColor = false;
+        hasCustomHandleColor = false;
+        isSolidColorMode = false;
+        hasCustomEffect = false;
+        bodyColour = 0;
+        handleColour = 0;
+    });
+}
 
 function hslToHex(h, s, l) {
     l /= 100;
@@ -216,6 +268,7 @@ function saveStateAndRedirect(event, targetUrl) {
         || 'none';
     const finalEffect = (isSolidColorMode || !hasCustomEffect) ? 'none' : rawEffect;
 
+  
     const currentSelection = {
         UID: document.querySelector('input[name="UID"]')?.value || 'new',
         projectname: document.getElementById('projectname')?.value || document.getElementById('projectName')?.value || 'My Project',

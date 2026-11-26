@@ -81,7 +81,7 @@ public class usercontrollerTest {
                         .param("username", "bob")
                         .param("password", "billy"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("users/result"))
+                .andExpect(MockMvcResultMatchers.view().name("users/userlogin"))
                 .andExpect(MockMvcResultMatchers.model().attribute(
                         "message", "username or password dont match, log in failed"));
 
@@ -89,7 +89,7 @@ public class usercontrollerTest {
                         .param("username", "billy")
                         .param("password", "billy"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("users/result"))
+                .andExpect(MockMvcResultMatchers.view().name("users/userlogin"))
                 .andExpect(MockMvcResultMatchers.model().attribute(
                         "message", "username or password dont match, log in failed"));
     }
@@ -104,7 +104,7 @@ public class usercontrollerTest {
                         .param("username", "billy")
                         .param("password", "bob"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("users/result"))
+                .andExpect(MockMvcResultMatchers.view().name("users/createaccount"))
                 .andExpect(MockMvcResultMatchers.model().attribute(
                         "message", "user name taken, try again"));
 
@@ -115,7 +115,7 @@ public class usercontrollerTest {
                         .param("password", "bob")
                         .session(oldSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("users/result"));
+                .andExpect(MockMvcResultMatchers.view().name("users/createaccount"));
         assertSame(u1, oldSession.getAttribute("user"));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/usermakeaccount")
