@@ -358,5 +358,6 @@ if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
 
+window.saveStateAndRedirect = saveStateAndRedirect;
 export { bodyButton, handleButton, svgMov, svgStill };
 

@@ -1,345 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View saved projects</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+    <title>My Saved Projects | The Jesters Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-admin.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-saves.css}">
 </head>
-
-
-
-<body class="member-page view-accounts-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <a class="member-button member-logout-button" href="/logout">Logout</a>
-    </header>
-
-    <div class="member-layout">
-        <nav class="member-sidebar">
-            <a class="member-home" href="/home" aria-label="Home">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z" />
-                </svg>
+<body class="mc-page mc-admin-page mc-saves-page">
+    <header class="mc-header">
+        <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+        <nav class="mc-admin-nav">
+            <a class="mc-button mc-outline" th:href="@{/home}">
+                <i data-lucide="house"></i>
+                Back to Lobby
             </a>
-
-            <a class="member-settings" href="/settings" aria-label="Settings">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd"
-                        d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L8.4 18.9 L9.7 19.5Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z" />
-                </svg>
+            <a class="mc-button mc-outline" th:href="@{/settings}">
+                <i data-lucide="settings"></i>
+                Settings
+            </a>
+            <a class="mc-button mc-outline" th:href="@{/logout}">
+                <i data-lucide="log-out"></i>
+                Sign Out
             </a>
         </nav>
-
-        <main class="view-accounts-main">
-            <section class="view-accounts-panel">
-                <h2>Saved Projects</h2>
-                <style>
-                    /* Make the table span 100% width and collapse borders to prevent misalignment */
-                    .accounts-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 20px;
-                    }
-
-                    /* Uniform padding and default left-alignment for table cells */
-                    .accounts-table th,
-                    .accounts-table td {
-                        padding: 12px 16px;
-                        text-align: left;
-                        vertical-align: middle;
-                    }
-
-                    /* Header bottom border and styling */
-                    .accounts-table th {
-                        border-bottom: 2px solid #ddd;
-                        font-weight: bold;
-                    }
-
-                    /* Row bottom border for clean separation */
-                    .accounts-table tbody tr {
-                        border-bottom: 1px solid #eee;
-                    }
-
-                    /* Center alignment specifically for the Edit column */
-                    .edit-column {
-                        text-align: center !important;
-                    }
-
-                    /* Flex container to keep 2D and 3D buttons neatly aligned side by side */
-                    .edit-button-group {
-                        display: flex;
-                        gap: 8px;
-                        justify-content: center;
-                        align-items: center;
-                    }
-
-                    .saved-project-preview {
-                        width: 110px;
-                        height: 110px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        background-color: #000000;
-                        border: 1px solid #ccc;
-                        border-radius: 8px;
-                        overflow: hidden;
-                    }
-
-                    .saved-project-preview svg {
-                        max-width: 95%;
-                        max-height: 95%;
-                    }
-
-                    .saved-project-details {
-                        min-width: 160px;
-                    }
-
-                    .saved-project-details summary {
-                        cursor: pointer;
-                        white-space: nowrap;
-                    }
-
-                    .saved-project-details p {
-                        margin: 8px 0;
-                    }
-
-                    .saved-project-table-scroll {
-                        width: 100%;
-                        overflow-x: auto;
-                    }
-
-                    .saved-project-sort {
-                        display: flex;
-                        flex-wrap: wrap;
-                        align-items: center;
-                        gap: 10px;
-                        margin-bottom: 20px;
-                    }
-
-                    .saved-project-sort select {
-                        padding: 8px;
-                        border-radius: 6px;
-                    }
-
-                    .synchro-project-preview {
-                        width: 110px;
-                        height: 110px;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 8px;
-                        padding: 8px;
-                        background-color: #000000;
-                        border: 1px solid #ccc;
-                        border-radius: 8px;
-                        color: #ffffff;
-                        font-size: 12px;
-                        text-align: center;
-                    }
-
-                    .synchro-project-preview strong {
-                        color: #c4b5fd;
-                    }
-                </style>
-
-                <form class="saved-project-sort" th:action="@{/viewsavedprojects}" method="get">
-                    <label for="savedProjectsSort">Sort by:</label>
-                    <select id="savedProjectsSort" name="sort">
-                        <option value="newest" th:selected="${selectedSort == 'newest'}">Newest First</option>
-                        <option value="oldest" th:selected="${selectedSort == 'oldest'}">Oldest First</option>
-                        <option value="productFirst" th:selected="${selectedSort == 'productFirst'}">Product First (A–Z)</option>
-                        <option value="synchroFirst" th:selected="${selectedSort == 'synchroFirst'}">Synchro First (A–Z)</option>
-                    </select>
-                    <button class="member-button" type="submit">Sort</button>
-                </form>
-
-                <div class="saved-project-table-scroll">
-                    <table class="accounts-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Preview</th>
-                                <th>Project Name</th>
-                                <th class="edit-column">Edit</th>
-                                <th>Details</th>
-                                <th>Export</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="project : ${projectItems}">
-                                <td th:text="${project.id}">1</td>
-                                <td th:text="${project.projectType}">Product</td>
-                                <td>
-                                    <div th:if="${project.product}" class="saved-project-preview"
-                                         th:attr="data-product-type=${project.productType},
-                                                  data-product-color=${project.productColor},
-                                                  data-body-color=${project.bodyColor},
-                                                  data-brightness=${project.brightness},
-                                                  data-saturation=${project.saturation}">
-                                        <span>Preview unavailable</span>
-                                    </div>
-                                    <div th:if="${project.synchro}" class="synchro-project-preview">
-                                        <strong>Synchro Timeline</strong>
-                                        <span><span th:text="${project.momentCount}">0</span> Moments</span>
-                                        <span><span th:text="${project.durationSeconds}">0</span> seconds</span>
-                                    </div>
-                                </td>
-                                <td th:text="${project.projectName}">Project Name</td>
-                                <td class="edit-column">
-                                    <div th:if="${project.product}" class="edit-button-group">
-                                        <form th:action="@{/2d-sim}" method="post" style="margin: 0;">
-                                            <input type="hidden" name="UID" th:value="${project.id}">
-                                            <button class="member-button" type="submit">2D editor</button>
-                                        </form>
-                                        <form th:action="@{/customsave}" method="post" style="margin: 0;">
-                                            <input type="hidden" name="UID" th:value="${project.id}">
-                                            <button class="member-button" type="submit">3D editor</button>
-                                        </form>
-                                    </div>
-                                    <a th:if="${project.synchro}" class="member-button"
-                                       th:href="@{/synchro.html(projectId=${project.id})}">Edit Synchro</a>
-                                </td>
-                                <td>
-                                    <details th:if="${project.product}" class="saved-project-details">
-                                        <summary>Effects &amp; Motion</summary>
-                                        <p>
-                                            <strong>Flashing Effect:</strong>
-                                            <span th:text="${#strings.isEmpty(project.effect) ? 'None' : project.effect}">None</span>
-                                        </p>
-                                        <p>
-                                            <strong>Rotation Speed:</strong>
-                                            <span>Not saved</span>
-                                        </p>
-                                    </details>
-                                    <details th:if="${project.synchro}" class="saved-project-details">
-                                        <summary>Timeline Details</summary>
-                                        <p><strong>Audio:</strong> <span th:text="${project.audioFileName}">music.mp3</span></p>
-                                        <p><strong>Duration:</strong> <span th:text="${project.durationSeconds}">0</span> seconds</p>
-                                        <p><strong>Moments:</strong> <span th:text="${project.momentCount}">0</span></p>
-                                    </details>
-                                </td>
-                                <td>
-                                    <a th:if="${project.product}" class="member-button"
-                                       th:href="@{/exportproject(UID=${project.id})}">Export</a>
-                                    <a th:if="${project.synchro}" class="member-button"
-                                       th:href="@{/api/synchro-projects/{id}/export(id=${project.id})}">Export ZIP</a>
-                                </td>
-                                <td>
-                                    <form th:if="${project.product}" th:action="@{/deleteproject}" method="post"
-                                          onsubmit="return confirm('Are you sure you want to delete this project?');"
-                                          style="margin: 0;">
-                                        <input type="hidden" name="UID" th:value="${project.id}">
-                                        <button class="member-button" type="submit">Delete</button>
-                                    </form>
-                                    <button th:if="${project.synchro}" class="member-button delete-synchro-project"
-                                            th:attr="data-synchro-id=${project.id}" type="button">Delete</button>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(projectItems)}">
-                                <td colspan="8" style="text-align: center;">No projects found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    </header>
+    <main class="mc-admin-main mc-saves-main">
+        <section class="mc-hero mc-admin-hero mc-saves-hero">
+            <div class="mc-hero-copy">
+                <div class="mc-hero-label">
+                    <i data-lucide="sparkles"></i>
+                    <span class="mc-eyebrow">
+                        YOUR CREATIVE COLLECTION
+                    </span>
+                    <i data-lucide="sparkles"></i>
                 </div>
-
-                <!-- Import Project Section -->
-                <section>
-                    <h3>Import Project</h3>
-                    <form id="importProjectForm" th:action="@{/importproject}" method="post" enctype="multipart/form-data">
-                        <input id="importProjectFile" type="file" name="file" accept=".json,.zip,application/json,application/zip" required>
-                        <button class="member-button" type="submit">Import</button>
-                    </form>
-                    <p th:if="${importMessage}" th:text="${importMessage}"></p>
-                    <p id="synchroProjectActionMessage" role="alert" hidden></p>
-                </section>
-
-                <!-- Navigation back to Home -->
-                <a class="member-button" href="/home">Back to Home</a>
-            </section>
-        </main>
-    </div>
-
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4</p>
-    </footer>
-
+                <h1>My Saved Projects</h1>
+                <p>
+                    Revisit, refine and bring your creations to life.
+                </p>
+            </div>
+        </section>
+        <section class="mc-admin-stats mc-saves-stats">
+            <article class="mc-admin-stat mc-stat-total">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="folders"></i>
+                </div>
+                <div>
+                    <strong id="totalProjectCount"
+                            th:text="${#lists.size(projectItems)}">
+                        0
+                    </strong>
+                    <h2>All Projects</h2>
+                    <p>Your creative collection</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-trickster">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="wand-sparkles"></i>
+                </div>
+                <div>
+                    <strong id="productProjectCount">0</strong>
+                    <h2>Product Projects</h2>
+                    <p>Custom juggling props</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-joker">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="audio-lines"></i>
+                </div>
+                <div>
+                    <strong id="synchroProjectCount">0</strong>
+                    <h2>Synchronization Projects</h2>
+                    <p>Synchronized performances</p>
+                </div>
+            </article>
+        </section>
+        <section class="mc-admin-panel mc-saves-toolbar-panel">
+            <div class="mc-admin-panel-heading">
+                <div>
+                    <h2>
+                        <i data-lucide="folder-open"></i>
+                        Your Collection
+                    </h2>
+                    <p>
+                        Manage your saved designs and performances.
+                    </p>
+                </div>
+                <a class="mc-button mc-outline"
+                    href="#import-project">
+                    <i data-lucide="upload"></i>
+                    Import Project
+                </a>
+            </div>
+            <div class="mc-admin-toolbar mc-saves-toolbar">
+                <div class="mc-admin-search">
+                    <label for="projectSearch">
+                        Search Projects
+                    </label>
+                    <div class="mc-admin-input-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search"
+                                id="projectSearch"
+                                placeholder="Search your projects..."
+                                autocomplete="off">
+                    </div>
+                </div>
+                <div class="mc-admin-filter">
+                    <label for="projectTypeFilter">
+                        Project Type
+                    </label>
+                    <select id="projectTypeFilter">
+                        <option value="all">
+                            All Project Types
+                        </option>
+                        <option value="product">
+                            Product Projects
+                        </option>
+                        <option value="synchro">
+                            Synchro Projects
+                        </option>
+                    </select>
+                </div>
+                <form class="mc-saves-sort" th:action="@{/viewsavedprojects}" method="get">
+                    <div class="mc-admin-filter">
+                        <label for="savedProjectsSort">
+                            Sort By
+                        </label>
+                        <select id="savedProjectsSort"
+                                name="sort">
+                            <option value="newest"
+                                    th:selected="${selectedSort == 'newest'}">
+                                Newest First
+                            </option>
+                            <option value="oldest"
+                                    th:selected="${selectedSort == 'oldest'}">
+                                Oldest First
+                            </option>
+                            <option value="productFirst"
+                                    th:selected="${selectedSort == 'productFirst'}">
+                                Product First (A–Z)
+                            </option>
+                            <option value="synchroFirst"
+                                    th:selected="${selectedSort == 'synchroFirst'}">
+                                Synchro First (A–Z)
+                            </option>
+                        </select>
+                    </div>
+                    <button class="mc-button mc-outline"
+                            type="submit">
+                        <i data-lucide="arrow-down-up"></i>
+                        Sort
+                    </button>
+                </form>
+                <button type="button"
+                        class="mc-button mc-outline"
+                        id="clearProjectFilters">
+                    <i data-lucide="rotate-ccw"></i>
+                    Reset
+                </button>
+            </div>
+            <p id="projectResultsCount"
+                class="mc-saves-results"
+                role="status">
+                Showing
+                <span th:text="${#lists.size(projectItems)}">0</span>
+                projects
+            </p>
+        </section>
+        <section class="mc-saves-gallery" id="projectGallery">
+            <article th:each="project : ${projectItems}"
+                    class="mc-save-card"
+                    th:classappend="${project.synchro ? 'mc-save-synchro' : 'mc-save-product'}"
+                    th:attr="data-project-type=${project.product ? 'product' : 'synchro'},
+                            data-project-name=${project.projectName},
+                            data-project-id=${project.id}">
+                <div class="mc-save-preview">
+                    <div th:if="${project.product}"
+                        class="saved-project-preview"
+                        th:attr="data-product-type=${project.productType},
+                                data-product-color=${project.productColor},
+                                data-body-color=${project.bodyColor},
+                                data-brightness=${project.brightness},
+                                data-saturation=${project.saturation}">
+                        <span>Preview unavailable</span>
+                    </div>
+                    <div th:if="${project.synchro}"
+                        class="synchro-project-preview">
+                        <div class="mc-synchro-preview-icon">
+                            <i data-lucide="audio-lines"></i>
+                        </div>
+                        <strong>Synchro Timeline</strong>
+                        <div class="mc-synchro-track-art">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="mc-synchro-preview-stats">
+                            <span>
+                                <i data-lucide="layers"></i>
+                                <span th:text="${project.momentCount}">
+                                    0
+                                </span>
+                                Moments
+                            </span>
+                            <span>
+                                <i data-lucide="clock"></i>
+                                <span th:text="${project.durationSeconds}">
+                                    0
+                                </span>
+                                seconds
+                            </span>
+                        </div>
+                    </div>
+                    <span th:if="${project.product}"
+                        class="mc-save-type mc-save-type-product">
+                        <i data-lucide="wand-sparkles"></i>
+                        Product
+                    </span>
+                    <span th:if="${project.synchro}"
+                        class="mc-save-type mc-save-type-synchro">
+                        <i data-lucide="audio-lines"></i>
+                        Synchro
+                    </span>
+                </div>
+                <div class="mc-save-card-body">
+                    <div class="mc-save-card-heading">
+                        <h2 th:text="${project.projectName}">
+                            Project Name
+                        </h2>
+                        <p class="mc-save-id">
+                            Project #
+                            <span th:text="${project.id}">1</span>
+                            <span th:if="${project.product}">
+                                <span th:text="${#strings.capitalize(project.productType)}">
+                                    Club
+                                </span>
+                            </span>
+                        </p>
+                    </div>
+                    <div th:if="${project.product}"
+                        class="mc-save-editors">
+                        <form th:action="@{/2d-sim}" method="post">
+                            <input type="hidden"
+                                    name="UID"
+                                    th:value="${project.id}">
+                            <button class="mc-button" type="submit">
+                                <i data-lucide="shapes"></i>
+                                2D Editor
+                            </button>
+                        </form>
+                        <form th:action="@{/customsave}" method="post">
+                            <input type="hidden"
+                                    name="UID"
+                                    th:value="${project.id}">
+                            <button class="mc-button" type="submit">
+                                <i data-lucide="box"></i>
+                                3D Editor
+                            </button>
+                        </form>
+                    </div>
+                    <a th:if="${project.synchro}"
+                        class="mc-button mc-save-synchro-edit"
+                        th:href="@{/synchro.html(projectId=${project.id})}">
+                        <i data-lucide="sliders-horizontal"></i>
+                        Edit Synchro
+                    </a>
+                    <details th:if="${project.product}" class="saved-project-details mc-save-details">
+                        <summary>
+                            <i data-lucide="sparkles"></i>
+                            Effects &amp; Motion
+                            <i data-lucide="chevron-down" class="mc-save-chevron"></i>
+                        </summary>
+                        <div class="mc-save-details-content">
+                            <p>
+                                <strong>Flashing Effect:</strong>
+                                <span th:text="${#strings.isEmpty(project.effect) ? 'None' : project.effect}">
+                                    None
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Rotation Speed:</strong>
+                                <span>Not saved</span>
+                            </p>
+                        </div>
+                    </details>
+                    <details th:if="${project.synchro}" class="saved-project-details mc-save-details">
+                        <summary>
+                            <i data-lucide="list-music"></i>
+                            Timeline Details
+                            <i data-lucide="chevron-down" class="mc-save-chevron"></i>
+                        </summary>
+                        <div class="mc-save-details-content">
+                            <p>
+                                <strong>Audio:</strong>
+                                <span th:text="${project.audioFileName}">
+                                    music.mp3
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Duration:</strong>
+                                <span th:text="${project.durationSeconds}">
+                                    0
+                                </span>
+                                seconds
+                            </p>
+                            <p>
+                                <strong>Moments:</strong>
+                                <span th:text="${project.momentCount}">
+                                    0
+                                </span>
+                            </p>
+                        </div>
+                    </details>
+                    <div class="mc-save-card-actions">
+                        <a th:if="${project.product}"
+                            class="mc-button mc-outline"
+                            th:href="@{/exportproject(UID=${project.id})}">
+                            <i data-lucide="download"></i>
+                            Export JSON
+                        </a>
+                        <a th:if="${project.synchro}"
+                            class="mc-button mc-outline"
+                            th:href="@{/api/synchro-projects/{id}/export(id=${project.id})}">
+                            <i data-lucide="download"></i>
+                            Export ZIP
+                        </a>
+                        <form th:if="${project.product}"
+                            class="mc-save-delete-form"
+                            th:action="@{/deleteproject}"
+                            method="post"
+                            th:attr="data-project-name=${project.projectName}">
+                            <input type="hidden"
+                                    name="UID"
+                                    th:value="${project.id}">
+                            <button class="mc-button mc-admin-danger"
+                                    type="submit">
+                                <i data-lucide="trash-2"></i>
+                                Delete
+                            </button>
+                        </form>
+                        <button th:if="${project.synchro}"
+                                class="mc-button mc-admin-danger delete-synchro-project"
+                                th:attr="data-synchro-id=${project.id},
+                                        data-project-name=${project.projectName}"
+                                type="button">
+                            <i data-lucide="trash-2"></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </section>
+        <section th:if="${#lists.isEmpty(projectItems)}" class="mc-admin-panel mc-saves-empty">
+            <div class="mc-saves-empty-icon">
+                <i data-lucide="folder-open"></i>
+            </div>
+            <h2>Your Stage Awaits</h2>
+            <p>
+                You haven't saved any projects yet.
+                Start designing your first juggling prop
+                or create a synchronized performance.
+            </p>
+            <div class="mc-saves-empty-actions">
+                <a class="mc-button" th:href="@{/home}">
+                    <i data-lucide="sparkles"></i>
+                    Start Creating
+                </a>
+                <a class="mc-button mc-outline" href="#import-project">
+                    <i data-lucide="upload"></i>
+                    Import Project
+                </a>
+            </div>
+        </section>
+        <section class="mc-admin-panel mc-saves-empty" id="projectSearchEmpty" hidden>
+            <div class="mc-saves-empty-icon">
+                <i data-lucide="search-x"></i>
+            </div>
+            <h2>No Matching Projects</h2>
+            <p>
+                Try another search or change the project type filter.
+            </p>
+        </section>
+        <section class="mc-admin-panel mc-saves-import" id="import-project">
+            <div class="mc-admin-panel-heading">
+                <div>
+                    <h2>
+                        <i data-lucide="file-up"></i>
+                        Import Project
+                    </h2>
+                    <p>
+                        Continue working on a previously exported creation.
+                    </p>
+                </div>
+            </div>
+            <div class="mc-saves-import-types">
+                <div class="mc-import-type">
+                    <i data-lucide="file-json"></i>
+                    <div>
+                        <strong>Product Project</strong>
+                        <p>JSON file (.json)</p>
+                    </div>
+                </div>
+                <div class="mc-import-type">
+                    <i data-lucide="file-archive"></i>
+                    <div>
+                        <strong>Synchro Project</strong>
+                        <p>ZIP archive (.zip)</p>
+                    </div>
+                </div>
+            </div>
+            <form id="importProjectForm"
+                    th:action="@{/importproject}"
+                    method="post"
+                    enctype="multipart/form-data">
+                <div class="mc-import-file-wrap">
+                    <label for="importProjectFile">
+                        <i data-lucide="paperclip"></i>
+                        Select Project File
+                    </label>
+                    <input id="importProjectFile"
+                            type="file"
+                            name="file"
+                            accept=".json,.zip,application/json,application/zip"
+                            required>
+                </div>
+                <button class="mc-button"
+                        type="submit"
+                        id="importProjectButton">
+                    <i data-lucide="upload"></i>
+                    Import Project
+                </button>
+            </form>
+            <p th:if="${importMessage}"
+                th:text="${importMessage}"
+                class="mc-saves-notice"
+                role="status">
+            </p>
+        </section>
+        <div id="synchroProjectActionMessage"
+            class="mc-saves-notice mc-saves-error"
+            role="alert"
+            hidden>
+        </div>
+        <div class="mc-admin-table-footer">
+            <a th:href="@{/home}">
+                <i data-lucide="arrow-left"></i>
+                Back to Lobby
+            </a>
+        </div>
+    </main>
+    <dialog id="deleteProjectDialog"
+            class="mc-admin-dialog">
+        <div class="mc-admin-dialog-icon">
+            <i data-lucide="triangle-alert"></i>
+        </div>
+        <h2 id="deleteProjectHeading">
+            Delete Project?
+        </h2>
+        <p id="deleteProjectDescription">
+            Are you sure you want to permanently delete
+            <strong id="deleteProjectName"></strong>?
+        </p>
+        <div class="mc-admin-dialog-warning">
+            <i data-lucide="info"></i>
+            <span>
+                This action cannot be undone.
+            </span>
+        </div>
+        <div class="mc-admin-dialog-actions">
+            <button type="button"
+                    class="mc-button mc-outline"
+                    id="cancelProjectDelete"
+                    autofocus>
+                <i data-lucide="x"></i>
+                Cancel
+            </button>
+            <button type="button"
+                    class="mc-button mc-admin-danger"
+                    id="confirmProjectDelete">
+                <i data-lucide="trash-2"></i>
+                Delete Project
+            </button>
+        </div>
+    </dialog>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
     <script defer th:src="@{/js/saved-project-preview.js}"></script>
-    <script>
-        (() => {
-            const importForm = document.getElementById('importProjectForm');
-            const importInput = document.getElementById('importProjectFile');
-            const status = document.getElementById('synchroProjectActionMessage');
-
-            function showError(message) {
-                status.textContent = message;
-                status.hidden = false;
-            }
-
-            async function getResponseError(response) {
-                try {
-                    const details = await response.json();
-                    if (typeof details.error === 'string') return details.error;
-                } catch (_) {
-                }
-                return `Project request failed (${response.status}).`;
-            }
-
-            importForm.addEventListener('submit', async (event) => {
-                const file = importInput.files?.[0];
-                if (!file) return;
-                const filename = file.name.toLowerCase();
-                if (filename.endsWith('.json')) return;
-
-                event.preventDefault();
-                status.hidden = true;
-                if (!filename.endsWith('.zip')) {
-                    showError('Please select a JSON or ZIP project file.');
-                    return;
-                }
-
-                const button = importForm.querySelector('button[type="submit"]');
-                button.disabled = true;
-                try {
-                    const response = await fetch('/api/synchro-projects/import', {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        body: new FormData(importForm)
-                    });
-                    if (!response.ok) throw new Error(await getResponseError(response));
-                    window.location.assign('/viewsavedprojects');
-                } catch (error) {
-                    showError(error.message || 'Unable to import the Synchro project.');
-                } finally {
-                    button.disabled = false;
-                }
-            });
-
-            document.querySelectorAll('.delete-synchro-project').forEach((button) => {
-                button.addEventListener('click', async () => {
-                    if (!window.confirm('Are you sure you want to delete this project?')) return;
-                    button.disabled = true;
-                    status.hidden = true;
-                    try {
-                        const response = await fetch(`/api/synchro-projects/${button.dataset.synchroId}`, {
-                            method: 'DELETE',
-                            credentials: 'same-origin'
-                        });
-                        if (!response.ok) throw new Error(await getResponseError(response));
-                        window.location.reload();
-                    } catch (error) {
-                        showError(error.message || 'Unable to delete the Synchro project.');
-                        button.disabled = false;
-                    }
-                });
-            });
-        })();
-    </script>
+    <script defer th:src="@{/js/midnight-saves.js}"></script>
 </body>
-
 </html>
