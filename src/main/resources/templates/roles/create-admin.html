@@ -1,44 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Admin</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
-    <script th:src="@{/createaccount.js}" defer></script>
-</head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
-
-        <main>
-            <section class="login-panel">
-                <h2>Create Admin Account</h2>
-
-                <form action="/admin/create" id="login" method="post">
-                    <label for="username">Username</label>
-                    <input id="username" type="text" name="username" required>
-
-                    <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required>
-
-                    <button type="submit">Create Admin</button>
-                </form>
-
-                <p th:if="${message}" th:text="${message}"></p>
-
-                <div class="login-links">
-                    <a href="/home">Back to Home</a>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
+<html lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{fragments/auth :: layout(
+        'Create Trickster',
+        ~{::section}
+    )}">
+<body>
+<section class="mc-login-panel mc-result-panel">
+    <div class="mc-result-icon">
+        <i data-lucide="shield-plus"></i>
     </div>
+    <h2>Create Trickster (Admin)</h2>
+    <p class="mc-auth-description">
+        Welcome a new Trickster to the administration
+        team of The Jesters Club.
+    </p>
+    <form id="login" th:action="@{/admin/create}" method="post">
+        <div class="mc-auth-field">
+            <label for="username">
+                Username
+            </label>
+            <div class="mc-input-wrap">
+                <i data-lucide="user-round" class="mc-input-icon"></i>
+                <input type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Choose a username"
+                        autocomplete="off"
+                        required>
+            </div>
+        </div>
+        <div th:replace="~{fragments/auth :: password(
+            'password',
+            'Password',
+            'new-password'
+        )}">
+        </div>
+        <th:block th:if="${message != null}">
+            <div th:replace="~{fragments/auth :: notice(
+                'error',
+                'circle-alert',
+                ${message}
+            )}">
+            </div>
+        </th:block>
+        <button type="submit" class="mc-button">
+            <i data-lucide="shield-plus"></i>
+            Create Trickster (Admin)
+        </button>
+    </form>
+    <div class="mc-auth-back">
+        <a th:href="@{/admin/accounts}">
+            <i data-lucide="arrow-left"></i>
+            Back to Account Management
+        </a>
+    </div>
+    <div class="mc-auth-back">
+        <a th:href="@{/home}">
+            <i data-lucide="house"></i>
+            Back to Lobby
+        </a>
+    </div>
+</section>
 </body>
 </html>
