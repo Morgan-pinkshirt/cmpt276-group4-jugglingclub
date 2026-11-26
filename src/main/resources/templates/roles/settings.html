@@ -187,6 +187,11 @@
                     )}">
                     </div>
                 </div>
+                <p class="mc-settings-error"
+                    role="alert"
+                    th:if="${passwordError}"
+                    th:text="${passwordError}">
+                </p>
                 <div class="mc-settings-actions">
                     <button type="submit" class="mc-button">
                         <i data-lucide="save"></i>

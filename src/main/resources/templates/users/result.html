@@ -17,6 +17,17 @@
             expiredQuestion=${msg == 'Security question session expired or invalid.'},
             generalError=${msg == 'ERROR OCCURED!!!!!!'},
             incorrectPassword=${msg == 'Incorrect password.'},
+            emailSent=${msg == 'A verification email has been sent. Please check your inbox.'},
+            emailVerified=${msg == 'Your email has been verified successfully!'},
+            emailError=${msg == 'Invalid or expired verification link.'
+                or msg == 'Invalid email verification request.'
+                or msg == 'This email is already linked to another account.'},
+            signedIn=${session.user != null},
+            settingsNotification=${signedIn
+                and (incorrectPassword
+                    or emailSent
+                    or emailVerified
+                    or emailError)},
             recoveryError=${accountError
                 or noQuestions
                 or wrongAnswer
@@ -32,7 +43,11 @@
             : ''}">
         <i th:attr="data-lucide=${isError
                 ? 'circle-alert'
-                : 'info'}">
+                : (emailSent
+                ? 'mail-check'
+                : (emailVerified
+                    ? 'circle-check-big'
+                    : 'info'))}">
         </i>
     </div>
     <h2 th:if="${loginError}">
@@ -59,7 +74,20 @@
     <h2 th:if="${incorrectPassword}">
         Incorrect Password
     </h2>
-    <h2 th:if="${!isError}">
+    <h2 th:if="${emailSent}">
+        Check Your Inbox
+    </h2>
+
+    <h2 th:if="${emailVerified}">
+        Email Verified
+    </h2>
+
+    <h2 th:if="${emailError}">
+        Email Verification Failed
+    </h2>
+    <h2 th:if="${!isError
+        and !emailSent
+        and !emailVerified}">
         Account Notification
     </h2>
     <div th:if="${isError}"
@@ -101,6 +129,11 @@
                 The password you entered is incorrect.
                 Please check your password and try again.
             </p>
+            <p th:if="${emailError}"
+                th:text="${msg}">
+                Email verification failed.
+            </p>
+
         </div>
     </div>
     <div th:if="${!isError}"
@@ -137,7 +170,22 @@
             Forgot Password?
         </a>
         <a class="mc-button"
-            th:if="${!isError or generalError or incorrectPassword}"
+            th:if="${settingsNotification and incorrectPassword}"
+            th:href="@{/securityquestions}">
+            <i data-lucide="shield-check"></i>
+            Try Again
+        </a>
+        <a class="mc-button"
+            th:classappend="${incorrectPassword
+                ? 'mc-outline'
+                : ''}"
+            th:if="${settingsNotification}"
+            th:href="@{/settings}">
+            <i data-lucide="settings"></i>
+            Back to Settings
+        </a>
+        <a class="mc-button"
+            th:if="${!isError or generalError}"
             th:href="@{/userlogin}">
             <i data-lucide="arrow-left"></i>
             Return to Login
