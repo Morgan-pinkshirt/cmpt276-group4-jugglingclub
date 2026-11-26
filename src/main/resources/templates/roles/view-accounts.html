@@ -1,106 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Accounts</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+    <title>Account Management | The Jesters Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-admin.css}">
 </head>
-<body class="member-page view-accounts-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <a class="member-button member-logout-button" href="/logout">Logout</a>
+<body class="mc-page mc-admin-page" th:with="isJoker=${currentRole.name() == 'SUPER_ADMIN'}">
+    <header class="mc-header">
+        <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+        <div class="mc-admin-nav">
+            <span class="mc-admin-role" th:classappend="${isJoker ? 'mc-role-joker' : 'mc-role-trickster'}">
+                <i th:attr="data-lucide=${isJoker ? 'crown' : 'shield-check'}"></i>
+                <span th:text="${isJoker ? 'Joker (Super Admin)' : 'Trickster (Admin)'}">
+                    Administrator
+                </span>
+            </span>
+            <a class="mc-button mc-outline" th:href="@{/home}">
+                <i data-lucide="arrow-left"></i>
+                Back to Lobby
+            </a>
+            <a class="mc-button mc-outline" th:href="@{/settings}">
+                <i data-lucide="settings"></i>
+                Settings
+            </a>
+            <a class="mc-button mc-outline" th:href="@{/logout}">
+                <i data-lucide="log-out"></i>
+                Sign Out
+            </a>
+        </div>
     </header>
-
-    <div class="member-layout">
-        <nav class="member-sidebar">
-            <a class="member-home" href="/home" aria-label="Home">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
-                </svg>
-            </a>
-
-            <a class="member-settings" href="/settings" aria-label="Settings">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L8.4 18.9 L9.7 19.5Z M15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
-                </svg>
-            </a>
-        </nav>
-
-        <main class="view-accounts-main">
-            <section class="view-accounts-panel">
-                <h2>Account Management</h2>
-
-                <table class="accounts-table">
+    <main class="mc-admin-main" id="main">
+        <section class="mc-hero mc-admin-hero">
+            <div class="mc-hero-copy">
+                <div class="mc-hero-label">
+                    <i data-lucide="sparkles"></i>
+                    <span class="mc-eyebrow">ADMINISTRATION</span>
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <h1>Account Management</h1>
+                <p>
+                    Oversee the accounts of The Jesters Club.
+                </p>
+            </div>
+        </section>
+        <section class="mc-admin-stats">
+            <article class="mc-admin-stat mc-stat-total">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="users"></i>
+                </div>
+                <div>
+                    <strong id="totalCount" th:text="${#lists.size(accounts)}">
+                        0
+                    </strong>
+                    <h2>All Accounts</h2>
+                    <p>Registered accounts</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-jester">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="user-round"></i>
+                </div>
+                <div>
+                    <strong id="jesterCount">—</strong>
+                    <h2>Jesters</h2>
+                    <p>Members</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-trickster">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <div>
+                    <strong id="tricksterCount">—</strong>
+                    <h2>Tricksters</h2>
+                    <p>Administrators</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-joker">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="crown"></i>
+                </div>
+                <div>
+                    <strong id="jokerCount">—</strong>
+                    <h2>Jokers</h2>
+                    <p>Super Administrators</p>
+                </div>
+            </article>
+        </section>
+        <section class="mc-admin-panel">
+            <div class="mc-admin-panel-heading">
+                <div>
+                    <h2 id="accounts-heading">
+                        <i data-lucide="users"></i>
+                        All Accounts
+                    </h2>
+                    <p th:if="${isJoker}">
+                        View accounts and manage eligible users.
+                    </p>
+                    <p th:unless="${isJoker}">
+                        View registered accounts and their projects.
+                    </p>
+                </div>
+                <a class="mc-button" th:href="@{/admin/create}">
+                    <i data-lucide="shield-plus"></i>
+                    Create Trickster (Admin)
+                </a>
+            </div>
+            <div class="mc-admin-toolbar">
+                <div class="mc-admin-search">
+                    <label for="accountSearch">
+                        Search Accounts
+                    </label>
+                    <div class="mc-admin-input-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search"
+                                id="accountSearch"
+                                placeholder="Search username, email or role..."
+                                autocomplete="off">
+                    </div>
+                </div>
+                <div class="mc-admin-filter">
+                    <label for="roleFilter">
+                        Filter by Role
+                    </label>
+                    <select id="roleFilter">
+                        <option value="all">
+                            All Roles
+                        </option>
+                        <option value="MEMBER">
+                            Jester (Member)
+                        </option>
+                        <option value="ADMIN">
+                            Trickster (Admin)
+                        </option>
+                        <option value="SUPER_ADMIN">
+                            Joker (Super Admin)
+                        </option>
+                    </select>
+                </div>
+                <button type="button"
+                        id="clearAccountFilters"
+                        class="mc-button mc-outline">
+                    <i data-lucide="rotate-ccw"></i>
+                    Reset
+                </button>
+            </div>
+            <div class="mc-admin-table-wrap">
+                <table class="mc-admin-table">
                     <thead>
                         <tr>
-                            <!-- <th>UID</th> -->
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Projects</th>
-                            <th>Action</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Projects</th>
+                            <th scope="col">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="account : ${accounts}">
-                            <!-- <td th:text="${account.uid}">1</td> -->
-                            <td th:text="${account.name}">Username</td>
-
+                    <tbody id="accountsTableBody">
+                        <tr th:each="account : ${accounts}"
+                            class="mc-admin-account-row"
+                            th:attr="data-role=${account.role.name()}">
                             <td>
-                                <span th:if="${#strings.isEmpty(account.email)}">Not linked</span>
-                                <span th:unless="${#strings.isEmpty(account.email)}"
-                                      th:text="${account.email}">Email</span>
+                                <div class="mc-admin-user">
+                                    <span class="mc-admin-avatar">
+                                        <i data-lucide="user-round"></i>
+                                    </span>
+                                    <strong th:text="${account.name}"
+                                            class="mc-admin-username">
+                                        Username
+                                    </strong>
+                                </div>
                             </td>
-
-                            <td th:text="${account.role.displayName}">jester</td>
-
+                            <td class="mc-admin-email">
+                                <span th:if="${#strings.isEmpty(account.email)}"
+                                        class="mc-admin-unlinked">
+                                    <i data-lucide="mail"></i>
+                                    Not linked
+                                </span>
+                                <span th:unless="${#strings.isEmpty(account.email)}"
+                                        th:text="${account.email}">
+                                    Email
+                                </span>
+                            </td>
                             <td>
-                                <details>
+                                <span class="mc-admin-role mc-role-jester"
+                                        th:if="${account.role.name() == 'MEMBER'}">
+                                    <i data-lucide="user-round"></i>
+                                    <span>
+                                        Jester
+                                        <small>(Member)</small>
+                                    </span>
+                                </span>
+                                <span class="mc-admin-role mc-role-trickster"
+                                        th:if="${account.role.name() == 'ADMIN'}">
+                                    <i data-lucide="shield-check"></i>
+                                    <span>
+                                        Trickster
+                                        <small>(Admin)</small>
+                                    </span>
+                                </span>
+                                <span class="mc-admin-role mc-role-joker"
+                                        th:if="${account.role.name() == 'SUPER_ADMIN'}">
+                                    <i data-lucide="crown"></i>
+                                    <span>
+                                        Joker
+                                        <small>(Super Admin)</small>
+                                    </span>
+                                </span>
+                                <span th:if="${account.role.name() != 'MEMBER'
+                                        and account.role.name() != 'ADMIN'
+                                        and account.role.name() != 'SUPER_ADMIN'}"
+                                        th:text="${account.role.displayName}">
+                                    Role
+                                </span>
+                            </td>
+                            <td>
+                                <details class="mc-admin-projects">
                                     <summary>
-                                        Projects (<span th:text="${#lists.size(projectsByUser[account.uid])}">0</span>)
+                                        <i data-lucide="folder-open"></i>
+                                        <span>
+                                            Projects
+                                            (<span th:text="${#lists.size(projectsByUser[account.uid])}">0</span>)
+                                        </span>
+                                        <i data-lucide="chevron-down" class="mc-project-chevron"></i>
                                     </summary>
-
-                                    <ul th:if="${not #lists.isEmpty(projectsByUser[account.uid])}">
-                                        <li th:each="project : ${projectsByUser[account.uid]}"
-                                            th:text="${project.projectname}">Project Name</li>
+                                    <ul th:unless="${#lists.isEmpty(projectsByUser[account.uid])}">
+                                        <li th:each="project : ${projectsByUser[account.uid]}">
+                                            <i data-lucide="file"></i>
+                                            <span th:text="${project.projectname}">
+                                                Project Name
+                                            </span>
+                                        </li>
                                     </ul>
-
                                     <p th:if="${#lists.isEmpty(projectsByUser[account.uid])}">
                                         No saved projects.
                                     </p>
                                 </details>
                             </td>
-
                             <td>
-                                <form
-                                    th:if="${currentRole.name() == 'SUPER_ADMIN'
+                                <form class="mc-admin-delete-form"
+                                        th:if="${isJoker
                                         and account.uid != currentUid
                                         and (account.role.name() == 'MEMBER'
                                             or account.role.name() == 'ADMIN')}"
-                                    th:action="@{/admin/accounts/delete}"
-                                    method="post"
-                                    onsubmit="return confirm('Are you sure you want to delete this account?');">
-                                    <input type="hidden" name="uid" th:value="${account.uid}">
-                                    <button class="member-button" type="submit">Delete</button>
+                                        th:action="@{/admin/accounts/delete}"
+                                        method="post"
+                                        th:attr="data-username=${account.name}">
+                                    <input type="hidden"
+                                            name="uid"
+                                            th:value="${account.uid}">
+                                    <button type="submit"
+                                            class="mc-button mc-admin-danger">
+                                        <i data-lucide="trash-2"></i>
+                                        Delete
+                                    </button>
                                 </form>
-                                <span th:if="${account.uid == currentUid}">Current Account</span>
+                                <span class="mc-admin-current"
+                                        th:if="${account.uid == currentUid}">
+                                    <i data-lucide="circle-check"></i>
+                                    Your Account
+                                </span>
+                                <span class="mc-admin-view-only"
+                                        th:if="${account.uid != currentUid
+                                        and !(isJoker
+                                            and (account.role.name() == 'MEMBER'
+                                                or account.role.name() == 'ADMIN'))}">
+                                    <i data-lucide="lock-keyhole"></i>
+                                    View Only
+                                </span>
                             </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(accounts)}">
-                            <td colspan="5">No accounts found.</td>
                         </tr>
                     </tbody>
                 </table>
-
-                <a class="member-button" href="/home">Back to Home</a>
-            </section>
-        </main>
-    </div>
-
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4</p>
-    </footer>
+            </div>
+            <div class="mc-admin-empty" id="accountsEmpty" hidden>
+                <i data-lucide="search-x"></i>
+                <h3>No accounts found</h3>
+                <p>
+                    Try changing your search or role filter.
+                </p>
+            </div>
+            <div class="mc-admin-table-footer">
+                <p id="accountResultsCount" role="status">
+                    Showing
+                    <span th:text="${#lists.size(accounts)}">0</span>
+                    accounts
+                </p>
+                <a th:href="@{/home}">
+                    <i data-lucide="arrow-left"></i>
+                    Back to Lobby
+                </a>
+            </div>
+        </section>
+    </main>
+    <dialog id="deleteAccountDialog"
+            class="mc-admin-dialog">
+        <div class="mc-admin-dialog-icon">
+            <i data-lucide="triangle-alert"></i>
+        </div>
+        <h2 id="deleteDialogHeading">
+            Delete Account?
+        </h2>
+        <p id="deleteDialogDescription">
+            Are you sure you want to permanently delete
+            <strong id="deleteAccountName"></strong>?
+        </p>
+        <div class="mc-admin-dialog-warning">
+            <i data-lucide="info"></i>
+            <span>
+                This action cannot be undone.
+            </span>
+        </div>
+        <div class="mc-admin-dialog-actions">
+            <button type="button"
+                    class="mc-button mc-outline"
+                    id="cancelAccountDelete"
+                    autofocus>
+                <i data-lucide="x"></i>
+                Cancel
+            </button>
+            <button type="button"
+                    class="mc-button mc-admin-danger"
+                    id="confirmAccountDelete">
+                <i data-lucide="trash-2"></i>
+                Delete Account
+            </button>
+        </div>
+    </dialog>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <script defer th:src="@{/js/midnight-admin.js}"></script>
 </body>
 </html>

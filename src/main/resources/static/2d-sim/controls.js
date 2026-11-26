@@ -1,3 +1,5 @@
+// import { clickedButton, angleMov, angleStill } from "./moving.js";
+
 document.addEventListener("DOMContentLoaded", function () {
     
     const resetButton =

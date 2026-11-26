@@ -3,62 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Questions - The Jester Club</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
+    <title>Security Questions | The Jester Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-settings.css}">
 </head>
-<body class="settings-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <p>Jester Club Simulator</p>
+<body class="mc-page mc-settings">
+    <header class="mc-header">
+        <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+        <nav class="mc-settings-nav">
+            <a class="mc-button mc-outline" th:href="@{/settings}">
+                <i data-lucide="arrow-left"></i>
+                Back to Settings
+            </a>
+            <a class="mc-button mc-outline" th:href="@{/logout}">
+                <i data-lucide="log-out"></i>
+                Sign Out
+            </a>
+        </nav>
     </header>
-
-    <nav>
-        <a href="/home">Home</a>
-        <a href="/settings">Settings</a>
-        <a href="/logout">Logout</a>
-    </nav>
-
-    <main>
-        <section>
+    <main class="mc-settings-main" id="main">
+        <section class="mc-login-panel mc-settings-secondary-wide">
+            <div class="mc-settings-panel-icon">
+                <i data-lucide="shield-check"></i>
+            </div>
             <h2>Security Questions</h2>
-            <p>Existing answers are shown below. Leave a field blank to keep its current answer.</p>
-            <p th:if="${error}" th:text="${error}"></p>
-
-            <form action="/setquestions" method="post"
-                  style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="favcolor">Favourite Color:</label>
-                    <input type="text" id="favcolor" name="favcolor" th:value="${user.favcolor}">
+            <p>
+                Manage your security answers for account recovery
+            </p>
+            <div class="mc-notice mc-notice-info">
+                <i data-lucide="info"></i>
+                <span>
+                    Existing answers are shown below.
+                    Leave a field blank to keep its current answer.
+                </span>
+            </div>
+            <form class="mc-questions-form" action="/setquestions" method="post">
+                <div class="mc-notice mc-notice-error"
+                    th:if="${error}"
+                    role="alert">
+                    <i data-lucide="circle-alert"></i>
+                    <span th:text="${error}"></span>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="mothername">Mother's Name:</label>
-                    <input type="text" id="mothername" name="mothername" th:value="${user.mothername}">
+                <div class="mc-settings-question-grid">
+                    <div th:replace="~{fragments/auth :: field(
+                        'favcolor',
+                        'Favourite Colour',
+                        'text',
+                        'palette',
+                        'Enter your answer',
+                        ${user.favcolor},
+                        false
+                    )}">
+                    </div>
+                    <div th:replace="~{fragments/auth :: field(
+                        'mothername',
+                        'Name of your mother',
+                        'text',
+                        'user-round',
+                        'Enter your answer',
+                        ${user.mothername},
+                        false
+                    )}">
+                    </div>
+                    <div th:replace="~{fragments/auth :: field(
+                        'favplace',
+                        'Favourite Place',
+                        'text',
+                        'map-pin',
+                        'Enter your answer',
+                        ${user.favplace},
+                        false
+                    )}">
+                    </div>
+                    <div th:replace="~{fragments/auth :: field(
+                        'favsubject',
+                        'Favourite Subject',
+                        'text',
+                        'book-open',
+                        'Enter your answer',
+                        ${user.favsubject},
+                        false
+                    )}">
+                    </div>
+                    <div th:replace="~{fragments/auth :: field(
+                        'hometown',
+                        'Hometown',
+                        'text',
+                        'house',
+                        'Enter your answer',
+                        ${user.hometown},
+                        false
+                    )}">
+                    </div>
+                    <div th:replace="~{fragments/auth :: field(
+                        'favgame',
+                        'Favourite Game',
+                        'text',
+                        'gamepad-2',
+                        'Enter your answer',
+                        ${user.favgame},
+                        false
+                    )}">
+                    </div>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="favplace">Favourite Place:</label>
-                    <input type="text" id="favplace" name="favplace" th:value="${user.favplace}">
+                <div class="mc-settings-panel-actions">
+                    <a class="mc-button mc-outline" th:href="@{/settings}">
+                        <i data-lucide="arrow-left"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="mc-button">
+                        <i data-lucide="save"></i>
+                        Save Answers
+                    </button>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="favsubject">Favourite Subject:</label>
-                    <input type="text" id="favsubject" name="favsubject" th:value="${user.favsubject}">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="hometown">Hometown:</label>
-                    <input type="text" id="hometown" name="hometown" th:value="${user.hometown}">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label for="favgame">Favourite Game:</label>
-                    <input type="text" id="favgame" name="favgame" th:value="${user.favgame}">
-                </div>
-                <button type="submit">Update</button>
             </form>
         </section>
     </main>
-
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4</p>
-    </footer>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
 </body>
 </html>
 

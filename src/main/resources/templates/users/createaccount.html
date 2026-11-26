@@ -1,68 +1,166 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/purple.css}">
-    <script th:src="@{/createaccount.js}" defer></script>
-</head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
+<html lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{fragments/auth :: layout(
+            'Create Account',
+            ~{::section}
+        )}">
+<body>
+<section class="mc-login-panel mc-register-panel">
+    <h2 id="register-title">
+        Become a Jester
+    </h2>
+    <p class="mc-auth-description">
+        Your creative journey starts here.
+        Create an account to design, synchronize
+        and save your performances.
+    </p>
+    <form id="login"
+        th:action="@{/usermakeaccount}"
+        method="post">
+        <div class="mc-auth-field">
+            <label for="username">
+                Username
+            </label>
+            <div class="mc-input-wrap">
+                <i data-lucide="user-round"
+                    class="mc-input-icon"></i>
+                <input id="username"
+                        name="username"
+                        type="text"
+                        th:value="${username}"
+                        autocomplete="username"
+                        placeholder="Choose a username"
+                        required>
+            </div>
+        </div>
 
-        <main>
-            <section class="login-panel">
-                <h2>Create Account</h2>
+        <div th:replace="~{fragments/auth :: password(
+            'password',
+            'Password',
+            'new-password'
+        )}">
+        </div>
 
-                <form action="/usermakeaccount" id="login" method="post">
-                    <label for="username">Username</label>
-                    <input id="username" type="text" name="username" th:value="${username}" required>
+        <div class="mc-auth-section">
+            <h3>
+                <i data-lucide="mail"></i>
+                Email
+                <span class="mc-optional">
+                    Optional
+                </span>
+            </h3>
+            <p>
+                Add an email address for
+                account recovery.
+            </p>
+            <div th:replace="~{fragments/auth :: field(
+                'email',
+                'Email Address',
+                'email',
+                'mail',
+                'Enter your email address',
+                ${email},
+                false
+            )}"></div>
 
-                    <label for="password">Password</label>
-                    <input id="password" type="password" name="password" required>
-                    <div th:text="${message}" style = "color: red;"></div>
-                    <h3>Email (Optional)</h3>
-                    <label for="email">Email Address</label>
-                    <input id="email" type="email" name="email" th:value="${email}">
-                    <p th:if="${emailError}" th:text="${emailError}" style="color: red;"></p>
+            <th:block th:if="${emailError != null}">
+                <div th:replace="~{fragments/auth :: notice(
+                    'error',
+                    'circle-alert',
+                    ${emailError}
+                )}"></div>
+            </th:block>
+        </div>
 
-                    <h3>Security Questions (Optional)</h3>
-                    <p>You can answer one or more security questions for password recovery.</p>
-
-                    <label for="favcolor">What is your favourite color?</label>
-                    <input id="favcolor" type="text" name="favcolor" th:value="${favcolor}">
-
-                    <label for="mothername">What is your mother's name?</label>
-                    <input id="mothername" type="text" name="mothername" th:value="${mothername}">
-
-                    <label for="favplace">What is your favourite place?</label>
-                    <input id="favplace" type="text" name="favplace" th:value="${favplace}">
-
-                    <label for="favsubject">What is your favourite subject?</label>
-                    <input id="favsubject" type="text" name="favsubject" th:value="${favsubject}">
-
-                    <label for="hometown">Where were you born?</label>
-                    <input id="hometown" type="text" name="hometown" th:value="${hometown}">
-
-                    <label for="favgame">What is your favourite game?</label>
-                    <input id="favgame" type="text" name="favgame" th:value="${favgame}">
-
-                    <button type="submit">Register</button>
-                </form>
-
-                <div class="login-links">
-                    <a href="/userlogin">Back to Login</a>
-                </div>
-            </section>
-        </main>
-
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
+        <details class="mc-security-questions"
+                th:open="${emailError != null
+                    or favcolor != null
+                    or mothername != null
+                    or favplace != null
+                    or favsubject != null
+                    or hometown != null
+                    or favgame != null}">
+            <summary>
+                <i data-lucide="shield-check"></i>
+                Security Questions
+                <span class="mc-optional">
+                    Optional
+                </span>
+                <i data-lucide="chevron-down"
+                    class="mc-chevron"></i>
+            </summary>
+            <div class="mc-security-content">
+                <p>
+                    You can answer one or more security
+                    questions to help recover your account.
+                </p>
+                <div th:replace="~{fragments/auth :: field(
+                    'favcolor',
+                    'What is your favourite color?',
+                    'text',
+                    'palette',
+                    'Enter your answer',
+                    ${favcolor},
+                    false
+                )}"></div>
+                <div th:replace="~{fragments/auth :: field(
+                    'mothername',
+                    'What is the name of your mother?',
+                    'text',
+                    'user-round',
+                    'Enter your answer',
+                    ${mothername},
+                    false
+                )}"></div>
+                <div th:replace="~{fragments/auth :: field(
+                    'favplace',
+                    'What is your favourite place?',
+                    'text',
+                    'map-pin',
+                    'Enter your answer',
+                    ${favplace},
+                    false
+                )}"></div>
+                <div th:replace="~{fragments/auth :: field(
+                    'favsubject',
+                    'What is your favourite subject?',
+                    'text',
+                    'book-open',
+                    'Enter your answer',
+                    ${favsubject},
+                    false
+                )}"></div>
+                <div th:replace="~{fragments/auth :: field(
+                    'hometown',
+                    'Where were you born?',
+                    'text',
+                    'house',
+                    'Enter your answer',
+                    ${hometown},
+                    false
+                )}"></div>
+                <div th:replace="~{fragments/auth :: field(
+                    'favgame',
+                    'What is your favourite game?',
+                    'text',
+                    'gamepad-2',
+                    'Enter your answer',
+                    ${favgame},
+                    false
+                )}"></div>
+            </div>
+        </details>
+        <button class="mc-button mc-auth-action"
+                type="submit">
+            <i data-lucide="user-plus"></i>
+            Create Account
+        </button>
+    </form>
+    <div class="mc-login-divider">
+        Already a member?
     </div>
+    <div th:replace="~{fragments/auth :: backToLogin}"></div>
+</section>
 </body>
 </html>

@@ -1,34 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Password - The Jester Club</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${user.theme})}">
-</head>
-<body class="login-page">
-    <div class="login-layout">
-        <header>
-            <h1>The Jester Club</h1>
-        </header>
-        <main>
-            <section class="login-panel">
-                <h2>View Security Questions</h2>
-                <p>Confirm your current password to continue.</p>
-                <form th:action="@{/securityquestions/confirm}" method="post">
-                    <label for="currentPassword">Current Password</label>
-                    <input type="password" id="currentPassword" name="currentPassword" required>
-                    <button type="submit">Confirm</button>
-                </form>
-                <div class="login-links">
-                    <a th:href="@{/settings}">Back to Settings</a>
-                </div>
-            </section>
-        </main>
-        <footer>
-            <p>The Jester Club - CMPT 276 Group 4</p>
-        </footer>
-    </div>
+<html lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        th:replace="~{fragments/auth :: layout(
+            'Confirm Password',
+            ~{::section}
+        )}">>
+<body>
+    <section class="mc-login-panel mc-result-panel">
+        <div class="mc-result-icon">
+            <i data-lucide="shield-check"></i>
+        </div>
+        <h2>Confirm Password</h2>
+        <p>
+            Verify your identity before accessing
+            your security questions.
+        </p>
+        <form th:action="@{/securityquestions/confirm}" method="post">
+            <div th:replace="~{fragments/auth :: password(
+                'currentPassword',
+                'Current Password',
+                'current-password'
+            )}">
+            </div>
+            <button type="submit" class="mc-button">
+                <i data-lucide="shield-check"></i>
+                Confirm Identity
+            </button>
+        </form>
+        <div class="mc-auth-back">
+            <a th:href="@{/settings}">
+                <i data-lucide="arrow-left"></i>
+                Back to Settings
+            </a>
+        </div>
+    </section>
 </body>
 </html>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class SettingsController {
@@ -75,7 +76,8 @@ public class SettingsController {
     public String changePassword(
             HttpSession session,
             @RequestParam String currentPassword,
-            @RequestParam String newPassword) {
+            @RequestParam String newPassword,
+            RedirectAttributes redirectAttributes) {
 
         user sessionUser = (user) session.getAttribute("user");
 
@@ -95,10 +97,18 @@ public class SettingsController {
         if (!passwordEncoder.matches(
                 currentPassword,
                 currentUser.getPassword())) {
+            redirectAttributes.addFlashAttribute(
+                "passwordError",
+                "Incorrect current password. Please try again."
+            );
             return "redirect:/settings";
         }
 
         if (newPassword.isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                "passwordError",
+                "Please enter a new password."
+            );
             return "redirect:/settings";
         }
 

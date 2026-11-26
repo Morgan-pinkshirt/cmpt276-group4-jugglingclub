@@ -1,155 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Dashboard | The Jester Club</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
-    <link rel="stylesheet" th:href="@{/css/lobby-layout.css}">
-    
+<head th:replace="~{fragments/midnight-ui :: head('Member Dashboard')}">
 </head>
-
-
-<body class="member-page lobby-page">
-    
-    
-
-    <header class="lobby-header">
-        <div class="lobby-brand">
-            <i data-lucide="sparkles" aria-hidden="true"></i>
-            <h1>The Jester Club</h1>
-        </div>
-        <div class="lobby-header-actions">
-            <div class="lobby-member-identity">
-                <span class="account-role lobby-role">
-                    MEMBER VIEW
-                </span>
-                <div class="lobby-member-details">
-                    <!-- <span class="account-id">
-                        User ID:
-                        <span th:text="${currentUid}"></span>
-                    </span> -->
-                    <span class="account-username"
-                        th:text="${'@' + currentUsername}">
-                    </span>
-                </div>
-            </div>
-            <a class="member-button lobby-login"
-                th:href="@{/logout}">
-                <i data-lucide="log-out"
-                    aria-hidden="true">
-                </i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </header>
-
-    <div class="lobby-layout">
+<body class="mc-page mc-lobby">
+    <header th:replace="~{fragments/lobby :: header('member')}"></header>
+    <div class="mc-layout">
         <nav th:replace="~{fragments/lobby :: sidebar('member')}"></nav>
-        <main class="lobby-main">
-            <div class="lobby-welcome">
-                <p class="lobby-eyebrow">
-                    MEMBER DASHBOARD
-                </p>
-                <h2>Welcome to The Jester Club</h2>
-                <p>
-                    Customize your juggling clubs, explore
-                    colour effects, and manage your saved projects.
-                </p>
-            </div>
-            <div class="lobby-card-grid lobby-card-grid--three">
-                <section class="lobby-card">
-                    <div class="lobby-card-content">
-                        <div class="lobby-card-image-slot">
-                            <img
-                            th:src="@{/img/member/3d-simulator.jpg}"
-                            alt="3D juggling club simulator"
-                            loading="lazy">
-                        </div>
-                        <h2>
-                            <i data-lucide="box"
-                                class="lobby-card-icon"
-                                aria-hidden="true">
-                            </i>
-                            3D Simulator
-                        </h2>
-                        <p>
-                            Customize and build your
-                            juggling club projects in 3D.
-                        </p>
-                        <a class="lobby-button member-button"
-                            th:href="@{/simulator}">
-                            Open 3D Simulator
-                        </a>
-                    </div>
-                </section>
-                <section class="lobby-card">
-                    <div class="lobby-card-content">
-                        <div class="lobby-card-image-slot">
-                            <img
-                            th:src="@{/img/member/2d-simulation.webp}"
-                            alt="2D juggling club simulator"
-                            loading="lazy">
-                        </div>
-                        <h2>
-                            <i data-lucide="palette"
-                                class="lobby-card-icon"
-                                aria-hidden="true">
-                            </i>
-                            2D Simulator
-                        </h2>
-                        <p>
-                            Explore colour combinations
-                            and effects for your juggling club.
-                        </p>
-                        <a class="lobby-button member-button"
-                            th:href="@{/2d-sim}">
-                            Open 2D Simulator
-                        </a>
-                    </div>
-                </section>
-                <section class="lobby-card">
-                    <div class="lobby-card-content">
-                        <div class="lobby-card-image-slot">
-                            <img
-                            th:src="@{/img/member/saved-projects.png}"
-                            alt="Saved Projects"
-                            loading="lazy">
-                        </div>
-                        <h2>
-                            <i data-lucide="folder-open"
-                                class="lobby-card-icon"
-                                aria-hidden="true">
-                            </i>
-                            Saved Projects
-                        </h2>
-                        <p>
-                            View and manage your saved
-                            juggling designs.
-                        </p>
-                        <a class="lobby-button member-button"
-                            th:href="@{/viewsavedprojects}">
-                            View Saved Projects
-                        </a>
-                    </div>
-                </section>
-            </div>
+        <main class="mc-main" id="main">
+            <section th:replace="~{fragments/lobby :: hero('member')}"> </section>
+            <p class="mc-message"
+                role="status"
+                th:if="${message != null}"
+                th:text="${message}">
+            </p>
+            <section th:replace="~{fragments/lobby-cards :: creative}"></section>
+            <section th:replace="~{fragments/lobby-cards :: presets}"></section>
+            <section th:replace="~{fragments/lobby-cards :: templates}"></section>
+            <p class="mc-status"
+                id="mc-status"
+                role="status">
+            </p>
         </main>
     </div>
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4
-            <span th:if="${message != NULL}" th:text="${message}"></span>
-        </p>
-    </footer>
-    <script defer th:src="@{/js/lobby-theme.js}"></script>
-    <script
-        src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js">
-    </script>
-    <script>
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    </script>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <script defer th:src="@{/js/midnight-lobby.js}"></script>
 </body>
 </html>

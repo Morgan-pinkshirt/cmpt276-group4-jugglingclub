@@ -16,7 +16,7 @@ svg {
     display: block;
     margin: 50px auto;
     max-width: 100%;
-    transform: rotate(45deg);
+    /* transform: rotate(45deg); */
 }
 
 button {
@@ -74,5 +74,37 @@ button.active {
 #canvas_still {
     margin: 0% 25%;
     display: none;
-    transform: rotate(-135deg);
+    /* transform: rotate(-135deg); */
+}
+
+#ball_still {
+    display: none;
+}
+
+#ring_still {
+    display: none;
+}
+
+#poi_still {
+    display: none;
+}
+
+#staff_still {
+    display: none;
+}
+
+#canvas_ball {
+    display: none;
+}
+
+#canvas_ring {
+    display: none;
+}
+
+#canvas_poi {
+    display: none;
+}
+
+#canvas_staff {
+    display: none;
 }

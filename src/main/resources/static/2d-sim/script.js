@@ -1,4 +1,9 @@
+// import { current, hidding } from './prop.js';
+import { canvasMov, canvasStill } from './moving.js';
+import { current, hidding, stillBallSvg, stillPoiSvg, stillRingSvg, stillStaffSvg } from './prop.js';
 // Use of AI (one of ChatGPT's solution when I was trying to understand testing) to change the variables that are needed on both moving.js and script.js to window.[name] - November 13th.
+// type="module"
+
 
 const club = document.getElementById("clubBody");
 const handle = document.getElementById("clubHandle");
@@ -9,25 +14,76 @@ const slider = document.getElementById("colourSlider");
 const bodyButton = document.getElementById("bodyButton");
 const handleButton = document.getElementById("handleButton");
 
-window.svgStill = document.getElementById("svg_still");
-window.svgMov = document.getElementById("svg_moving");
+// const ballColor = document.getElementById("ball-color");
+
+const svgStill = document.getElementById("svg_still");
+const svgMov = document.getElementById("svg_moving");
 
 let selectedPart = "body";
 let bodyColour = 0;
 let handleColour = 0;
 
+const DEFAULT_3D_BODY = '#808080';
+const DEFAULT_3D_HANDLE = '#ffffff';
+
+let hasCustomBodyColor = false;
+let hasCustomHandleColor = false;
+let hasCustomEffect = false;
+let isSolidColorMode = true;
+
+
 function changeVisibilityColor() {
-    window.svgStill.style.display = "block";
-    window.canvasStill.style.display = "none";
-    window.svgMov.style.display = "block";
-    window.canvasMov.style.display = "none";
-    window.modeName.style.visibility = "hidden";
+    svgStill.style.display = "block";
+    canvasStill.style.display = "none";
+    svgMov.style.display = "block";
+    canvasMov.style.display = "none";
+    modeName.style.visibility = "hidden";
+}
+
+// function toggleColor(current) {
+//     let oppositeMode;
+//     if (current === canvasStill) {
+//             oppositeMode = svgStill;
+//     } else if (current === stillBallSvg) {
+//             oppositeMode = stillBallSvg;
+//     } else if (current === stillRingSvg) {
+//             oppositeMode = stillRingSvg;
+//     } else if (current === stillPoiSvg) {
+//             oppositeMode = stillPoiSvg;
+//     } else {
+//             oppositeMode = current;
+//     }
+//     console.log("this is opposite");
+//     console.log(oppositeMode);
+//     hidding(current, oppositeMode);
+// }
+
+function toggleColor(prop) {
+    let oppositeMode;
+    if (prop === "club") {
+        oppositeMode = svgStill;
+    } else if (prop === "ball") {
+        oppositeMode = stillBallSvg;
+    } else if (prop === "ring") {
+        oppositeMode = stillRingSvg;
+    } else if (prop === "poi") {
+        oppositeMode = stillPoiSvg;
+    } else if (prop === "staff") {
+        oppositeMode = stillStaffSvg;
+    } else {
+        oppositeMode = current;
+    }
+    // console.log("this is opposite");
+    // console.log(oppositeMode);
+    hidding(current, oppositeMode);
 }
 
 bodyButton.addEventListener("click", function () {
     selectedPart = "body";
     slider.value = bodyColour;
-    changeVisibilityColor();
+    // changeVisibilityColor();
+    // hidding(current)
+    // toggleColor(current);
 
     bodyButton.classList.add("active");
     handleButton.classList.remove("active");
@@ -36,20 +92,54 @@ bodyButton.addEventListener("click", function () {
 handleButton.addEventListener("click", function () {
     selectedPart = "handle";
     slider.value = handleColour;
-    changeVisibilityColor();
+    // changeVisibilityColor();
+    // hidding(currentt, )
 
     handleButton.classList.add("active");
     bodyButton.classList.remove("active");
 });
 
 slider.addEventListener("input", function () {
-    changeVisibilityColor();
-    changeColor(club, handle);
-    changeColor(clubMov, handleMov);
 
+    isSolidColorMode = true;
+
+    const prop = document.getElementById("prop-options").value;
+
+    toggleColor(prop);
+
+    if (prop === "club") {
+
+        changeColor(club, handle);
+        changeColor(clubMov, handleMov);
+        changeVisibilityColor();
+
+    } else if (prop === "staff") {
+
+        changeColorStaff(
+            document.getElementById("staff-top"),
+            document.getElementById("staff-bottom"),
+            document.getElementById("staff-handle")
+        );
+
+        toggleColor(current);
+
+    } else {
+
+        changeColorSingle(
+            document.getElementById(`${prop}-color`)
+        );
+
+        toggleColor(current);
+
+    }
 });
 
+// export function changeCurrent(newCurrent) {
+//     current = newCurrent;
+// }
+
 function changeColor(body, handle) {
+    // toggleColor(current);
     let colour = "hsl(" + slider.value + ", 100%, 50%)";
     if (selectedPart === "body") {
         if (body) body.setAttribute("fill", colour);
@@ -60,16 +150,33 @@ function changeColor(body, handle) {
         handleColour = slider.value;
         hasCustomHandleColor = true;
     }
+
 }
 
-let isSolidColorMode = false;
-let hasCustomBodyColor = false;
-let hasCustomHandleColor = false;
+function changeColorSingle(body) {
+    let colour = "hsl(" + slider.value + ", 100%, 50%)";
 
-const DEFAULT_3D_BODY = "#808080";
-const DEFAULT_3D_HANDLE = "#ffffff";
+    if (body) body.setAttribute("fill", colour);
 
-let hasCustomEffect = false;
+    bodyColour = slider.value;
+    hasCustomBodyColor = true;
+}
+
+function changeColorStaff(knob1, knob2, handle) {
+    // toggleColor(current);
+    let colour = "hsl(" + slider.value + ", 100%, 50%)";
+    if (selectedPart === "body") {
+        knob1.setAttribute("fill", colour);
+        knob2.setAttribute("fill", colour);
+        bodyColour = slider.value;
+        hasCustomBodyColor = true;
+    } else {
+        if (handle) handle.setAttribute("fill", colour);
+        handleColour = slider.value;
+        hasCustomHandleColor = true;
+    }
+
+}
 
 const effectSelectEl =
     document.getElementById("options") ||
@@ -79,6 +186,7 @@ const effectSelectEl =
 if (effectSelectEl) {
     effectSelectEl.addEventListener("change", function () {
         hasCustomEffect = true;
+
         if (this.value && this.value !== "none") {
             isSolidColorMode = false;
         }
@@ -86,20 +194,15 @@ if (effectSelectEl) {
 }
 
 const viewEffectBtn = document.getElementById("view-button");
+
 if (viewEffectBtn) {
     viewEffectBtn.addEventListener("click", function () {
         isSolidColorMode = false;
     });
 }
 
-slider.addEventListener("input", function () {
-    isSolidColorMode = true;
-    changeVisibilityColor();
-    changeColor(club, handle);
-    changeColor(clubMov, handleMov);
-});
-
 const resetSimBtn = document.getElementById("reset-simulator");
+
 if (resetSimBtn) {
     resetSimBtn.addEventListener("click", function () {
         hasCustomBodyColor = false;
@@ -157,7 +260,7 @@ function saveStateAndRedirect(event, targetUrl) {
         ? hslToHex(parseFloat(typeof handleColour !== 'undefined' ? handleColour : 0), 100, 50)
         : DEFAULT_3D_HANDLE;
 
-    const productTypeVal = document.getElementById('propTypeSelector')?.value || document.getElementById('productType')?.value || 'club';
+    const productTypeVal = document.getElementById('prop-options')?.value || 'club';
 
     const rawEffect = document.getElementById('options')?.value
         || document.getElementById('effectSelect')?.value
@@ -165,6 +268,7 @@ function saveStateAndRedirect(event, targetUrl) {
         || 'none';
     const finalEffect = (isSolidColorMode || !hasCustomEffect) ? 'none' : rawEffect;
 
+  
     const currentSelection = {
         UID: document.querySelector('input[name="UID"]')?.value || 'new',
         projectname: document.getElementById('projectname')?.value || document.getElementById('projectName')?.value || 'My Project',
@@ -195,10 +299,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const projInput = document.getElementById('projectname') || document.getElementById('projectName');
         if (projInput && data.projectname) projInput.value = data.projectname;
 
-        const productTypeEl = document.getElementById('propTypeSelector') || document.getElementById('productType');
+        const productTypeEl = document.getElementById('prop-options');
         if (productTypeEl && data.productType) {
             productTypeEl.value = data.productType;
-            productTypeEl.dispatchEvent(new Event('change'));
         }
 
         const effectEl = document.getElementById('options') || document.getElementById('effectSelect') || document.getElementById('effect');
@@ -234,10 +337,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         sessionStorage.removeItem('tempSelection');
+        requestAnimationFrame(() => {
+        const propButton = document.getElementById('prop-button');
+        const effectButton = document.getElementById('view-button');
+
+        if (propButton) {
+            propButton.click();
+        }
+
+        if (data.effect && data.effect !== 'none' && effectButton) {
+            effectButton.click();
+        }
+
         console.log("Restored temporary selection successfully in 2D:", data);
+    });
     }
 });
 
 if (typeof bodyButton !== 'undefined' && bodyButton) {
     bodyButton.classList.add("active");
 }
+
+export { bodyButton, handleButton, svgMov, svgStill };
+

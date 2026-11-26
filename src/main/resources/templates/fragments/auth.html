@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(pageTitle, content)">
+<head th:replace="~{fragments/midnight-ui :: head(${pageTitle})}"></head>
+<body class="mc-page mc-login mc-auth">
+    <main class="mc-login-main" id="main">
+        <div class="mc-login-brand">
+            <img th:src="@{/img/midnight/jester.svg}"
+                alt="The Jesters Club logo">
+            <span class="mc-eyebrow">
+                WELCOME TO
+            </span>
+            <h1>The Jesters Club</h1>
+            <p>Design. Synchronize. Perform.</p>
+        </div>
+        <th:block th:replace="${content}"></th:block>
+    </main>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <th:block th:remove="all"></th:block>
+</body>
+</html>
+
+<div th:fragment="field(name, label, type, icon, placeholder, value, required)" class="mc-auth-field">
+    <label th:for="${name}"
+            th:text="${label}">
+    </label>
+    <div class="mc-input-wrap">
+        <i th:attr="data-lucide=${icon}"
+            class="mc-input-icon"></i>
+        <input th:id="${name}"
+                th:name="${name}"
+                th:type="${type}"
+                th:placeholder="${placeholder}"
+                th:value="${value}"
+                th:required="${required}">
+    </div>
+</div>
+
+<div th:fragment="password(name, label, autocomplete)"
+    class="mc-auth-field">
+    <label th:for="${name}" th:text="${label}"></label>
+    <div class="mc-input-wrap mc-password-wrap">
+        <i data-lucide="lock-keyhole"
+            class="mc-input-icon"></i>
+        <input type="password"
+                th:id="${name}"
+                th:name="${name}"
+                th:autocomplete="${autocomplete}"
+                placeholder="Enter your password"
+                required>
+        <button class="mc-password-toggle"
+                type="button"
+                th:attr="data-password-toggle=${name}, aria-controls=${name}"
+                aria-label="Show password"
+                aria-pressed="false">
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
+</div>
+<div th:fragment="notice(type, icon, message)"
+    class="mc-notice"
+    th:classappend="${'mc-notice-' + type}"
+    th:attr="role=${type == 'error' ? 'alert' : 'status'}">
+    <i th:attr="data-lucide=${icon}"></i>
+    <span th:text="${message}"></span>
+</div>
+<div th:fragment="backToLogin"
+    class="mc-auth-back">
+    <a th:href="@{/userlogin}">
+        <i data-lucide="arrow-left"></i>
+        Back to Login
+    </a>
+</div>
