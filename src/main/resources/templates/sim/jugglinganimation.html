@@ -1,47 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <meta charset="UTF-8">
-    <style>
-    @keyframes juggle-ani-1{
-        100% {
-            transform: translateX(40px);
-        }
+  <meta charset="UTF-8">
+  <style>
+    @keyframes juggle-slide {
+      100% { transform: translateX(40px); }
     }
-    @keyframes juggle-ani-2{
-        100%{transform: rotate(-180deg)translateX(40px);
-        }
+    @keyframes juggle-arc {
+      0% { transform: rotate(0deg) translateX(40px); }
+      100% { transform: rotate(-180deg) translateX(40px); }
     }
-.juggle-ball{
-        top: 40px;
-        left: 40px;
-        width: 20px;
-        height: 20px;
-        position: relative;
-}
-.juggle-ball::before,
-.juggle-ball::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: #f03355;
-}
-.juggle-ball::before{
-    box-shadow: -40px 0 #ff6d00;
-    animation: juggle-ani-1 1s infinite linear;
-}
-.juggle-ball::after{
-    transform: rotate(0deg) translateX(40px);
-    animation: juggle-ani-2 1s infinite linear;
-}
-
-    </style>
+    .ball-slide {
+      animation: juggle-slide 1s infinite linear;
+    }
+    .ball-arc {
+      transform-origin: 70px 50px; /* Center point of the arc */
+      animation: juggle-arc 1s infinite linear;
+    }
+  </style>
 </head>
 <body>
-<main>
-    <div class="juggle-ball"></div>
-</main>
- </body>
-    </html>
+  <main>
+    <svg width="200" height="100">
+      <circle class="ball-slide" cx="30" cy="50" r="10" fill="#ff6d00"/>
+      <circle class="ball-slide" cx="70" cy="50" r="10" fill="#f03355"/>
+      <circle class="ball-arc" cx="70" cy="50" r="10" fill="#fa3355"/>
+    </svg>
+  </main>
+</body>
+</html>
