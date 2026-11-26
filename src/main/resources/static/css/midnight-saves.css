@@ -562,3 +562,181 @@
     opacity: .55;
     cursor: wait;
 }
+
+.mc-admin-saves-page .mc-admin-saves-stats {
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+}
+
+.mc-admin-saves-page .mc-admin-saves-table {
+    min-width: 1000px;
+}
+
+.mc-admin-saves-table th:first-child,
+.mc-admin-saves-table td:first-child {
+    width: 125px;
+}
+
+.mc-admin-saves-table td {
+    padding: 15px 16px;
+}
+
+.mc-admin-project-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 105px;
+    height: 95px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse at center,
+            #30304b,
+            #111423 75%
+        );
+    border: 1px solid #504269;
+    border-radius: 9px;
+}
+
+.mc-admin-saves-page
+.mc-admin-project-preview
+.saved-project-preview {
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    text-align: center;
+    font-size: 10px;
+}
+
+.mc-admin-saves-page
+.mc-admin-project-preview
+.saved-project-preview svg {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.mc-admin-synchro-preview {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 8px;
+}
+
+.mc-admin-synchro-preview > .lucide {
+    width: 26px;
+    height: 26px;
+    color: var(--purple);
+    filter: drop-shadow(
+        0 0 7px #c49aff65
+    );
+}
+
+.mc-admin-synchro-preview .mc-synchro-track-art {
+    gap: 4px;
+    padding: 5px;
+}
+
+.mc-admin-synchro-preview
+.mc-synchro-track-art span {
+    height: 5px;
+}
+
+.mc-admin-project-name {
+    display: grid;
+    gap: 5px;
+    min-width: 120px;
+}
+
+.mc-admin-project-name > strong {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.mc-admin-project-name > span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.mc-admin-project-details {
+    min-width: 175px;
+}
+
+.mc-admin-project-detail-content {
+    display: grid;
+    gap: 7px;
+    margin-top: 8px;
+    padding: 10px;
+    background: #101321;
+    border: 1px solid #413650;
+    border-radius: 7px;
+}
+
+.mc-admin-project-detail-content p {
+    margin: 0;
+    padding: 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.mc-admin-project-detail-content strong {
+    color: var(--text);
+    font-weight: 500;
+}
+
+.mc-admin-view-project-form {
+    margin: 0;
+}
+
+.mc-admin-view-project-form .mc-button {
+    min-height: 36px;
+    padding: 8px 11px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mc-admin-view-project-form .lucide {
+    width: 16px;
+    height: 16px;
+}
+
+.mc-admin-saves-access {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+}
+
+.mc-admin-access-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: #142d39;
+    border: 1px solid #397087;
+    border-radius: 10px;
+    color: var(--cyan);
+}
+
+.mc-admin-access-icon .lucide {
+    width: 25px;
+    height: 25px;
+}
+
+.mc-admin-saves-access h3 {
+    margin-bottom: 5px;
+    font-size: 19px;
+}
+
+.mc-admin-saves-access p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+}

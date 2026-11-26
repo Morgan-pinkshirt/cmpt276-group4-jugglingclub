@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSavedProjects();
     initializeProjectImport();
     initializeProjectDeletion();
+    initializeAdminSavedProjects();
 });
 
 function initializeSavedProjects() {
@@ -300,4 +301,186 @@ function refreshSavedProjectIcons() {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+}
+
+function initializeAdminSavedProjects() {
+    const tableBody = document.getElementById(
+        'adminProjectsTableBody'
+    );
+    if (!tableBody) return;
+    const searchInput = document.getElementById(
+        'adminProjectSearch'
+    );
+    const typeFilter = document.getElementById(
+        'adminProjectType'
+    );
+    const ownerFilter = document.getElementById(
+        'adminProjectOwner'
+    );
+    const resetButton = document.getElementById(
+        'resetAdminProjectFilters'
+    );
+    const resultsCount = document.getElementById(
+        'adminProjectResults'
+    );
+    const emptyState = document.getElementById(
+        'adminProjectsEmpty'
+    );
+    const emptyTitle = document.getElementById(
+        'adminProjectsEmptyTitle'
+    );
+    const emptyDescription = document.getElementById(
+        'adminProjectsEmptyDescription'
+    );
+
+    if (!searchInput || !typeFilter ||
+        !ownerFilter || !resetButton ||
+        !resultsCount || !emptyState ||
+        !emptyTitle || !emptyDescription) {
+        return;
+    }
+    const rows = Array.from(
+        tableBody.querySelectorAll(
+            '.mc-admin-project-row'
+        )
+    );
+    const projects = rows.map(row => {
+        const name =
+            row.dataset.projectName || '';
+        const type =
+            row.dataset.projectType || '';
+        const owner =
+            row.dataset.projectOwner || '';
+        const id =
+            row.dataset.projectId || '';
+        const propType =
+            row.querySelector('.saved-project-preview')
+                ?.dataset.productType || '';
+        return {
+            row,
+            name,
+            type,
+            owner,
+            id,
+            searchableText: [
+                name,
+                type,
+                owner,
+                id,
+                propType
+            ].join(' ').toLowerCase()
+        };
+    });
+    const owners = Array.from(
+        new Set(
+            projects
+                .map(project => project.owner)
+                .filter(owner =>
+                    owner.trim().length > 0
+                )
+        )
+    ).sort((a, b) =>
+        a.localeCompare(b, undefined, {
+            sensitivity: 'base'
+        })
+    );
+    setSavedProjectCount(
+        'adminTotalProjects',
+        projects.length
+    );
+    setSavedProjectCount(
+        'adminProductProjects',
+        projects.filter(project =>
+            project.type === 'product'
+        ).length
+    );
+    setSavedProjectCount(
+        'adminSynchroProjects',
+        projects.filter(project =>
+            project.type === 'synchro'
+        ).length
+    );
+    setSavedProjectCount(
+        'adminProjectOwners',
+        owners.length
+    );
+    ownerFilter.replaceChildren(
+        new Option('All Owners', '')
+    );
+    owners.forEach(owner => {
+        const option = document.createElement(
+            'option'
+        );
+        option.value = owner;
+        option.textContent = owner;
+        ownerFilter.appendChild(option);
+    });
+    function applyAdminProjectFilters() {
+        const searchTerms = searchInput.value
+            .trim()
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
+        const selectedType =
+            typeFilter.value;
+        const selectedOwner =
+            ownerFilter.value;
+        let visibleCount = 0;
+        projects.forEach(project => {
+            const matchesSearch =
+                searchTerms.every(term =>
+                    project.searchableText.includes(term)
+                );
+            const matchesType =
+                selectedType === 'all' ||
+                project.type === selectedType;
+            const matchesOwner =
+                selectedOwner === '' ||
+                project.owner === selectedOwner;
+            const visible =
+                matchesSearch &&
+                matchesType &&
+                matchesOwner;
+            project.row.hidden = !visible;
+            if (visible) {
+                visibleCount++;
+            }
+        });
+        emptyState.hidden =
+            visibleCount !== 0;
+        if (projects.length === 0) {
+            emptyTitle.textContent =
+                'No Saved Projects';
+            emptyDescription.textContent =
+                'There are no saved projects across the club yet.';
+        } else {
+            emptyTitle.textContent =
+                'No Matching Projects';
+            emptyDescription.textContent =
+                'Try another search or change your filters.';
+        }
+        resultsCount.textContent =
+            `Showing ${visibleCount} of ${projects.length} projects`;
+    }
+
+    searchInput.addEventListener(
+        'input',
+        applyAdminProjectFilters
+    );
+    typeFilter.addEventListener(
+        'change',
+        applyAdminProjectFilters
+    );
+    ownerFilter.addEventListener(
+        'change',
+        applyAdminProjectFilters
+    );
+    resetButton.addEventListener('click', () => {
+        searchInput.value = '';
+        typeFilter.value = 'all';
+        ownerFilter.value = '';
+        applyAdminProjectFilters();
+        searchInput.focus();
+    });
+    applyAdminProjectFilters();
 }

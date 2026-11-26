@@ -1,84 +1,359 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View saved projects</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/themes/{theme}.css(theme=${theme})}">
+    <title>All Saved Projects | The Jesters Club</title>
+    <link rel="stylesheet" th:href="@{/css/midnight-circus-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-admin.css}">
+    <link rel="stylesheet" th:href="@{/css/midnight-saves.css}">
 </head>
-<body class="member-page view-accounts-page">
-    <header>
-        <h1>The Jester Club</h1>
-        <a class="member-button member-logout-button" href="/logout">Logout</a>
-    </header>
-
-    <div class="member-layout">
-        <nav class="member-sidebar">
-            <a class="member-home" href="/home" aria-label="Home">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" d="M12 2 2 11h3v10h6v-7h2v7h6V11h3L12 2z"/>
-                </svg>
+<body class="mc-page mc-admin-page mc-saves-page mc-admin-saves-page"
+        th:with="isJoker=${session.user.role.name() == 'SUPER_ADMIN'}">
+    <header class="mc-header">
+        <a th:replace="~{fragments/midnight-ui :: brand}"></a>
+        <nav class="mc-admin-nav">
+            <span class="mc-admin-role"
+                    th:classappend="${isJoker ? 'mc-role-joker' : 'mc-role-trickster'}">
+                <i th:attr="data-lucide=${isJoker ? 'crown' : 'shield-check'}"></i>
+                <span th:text="${isJoker ? 'Joker (Super Admin)' : 'Trickster (Admin)'}">
+                    Administrator
+                </span>
+            </span>
+            <a class="mc-button mc-outline" th:href="@{/home}">
+                <i data-lucide="arrow-left"></i>
+                Back to Lobby
             </a>
-
-            <a class="member-settings" href="/settings" aria-label="Settings">
-                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                    <path fill="currentColor" fill-rule="evenodd" d="M9.7 4.5 L10.2 2.1 L13.8 2.1 L14.3 4.5 L15.6 5.1 L17.7 3.7 L20.3 6.3 L18.9 8.4 L19.5 9.7 L21.9 10.2 L21.9 13.8 L19.5 14.3 L18.9 15.6 L20.3 17.7 L17.7 20.3 L15.6 18.9 L14.3 19.5 L13.8 21.9 L10.2 21.9 L9.7 19.5 L8.4 18.9 L6.3 3.7 L3.7 6.3 L5.1 8.4 L4.5 9.7 L2.1 10.2 L2.1 13.8 L4.5 14.3 L5.1 15.6 L3.7 17.7 L6.3 20.3 L15 12a3 3 0 1 0-6 0a3 3 0 1 0 6 0Z"/>
-                </svg>
+            <a class="mc-button mc-outline" th:href="@{/settings}">
+                <i data-lucide="settings"></i>
+                Settings
+            </a>
+            <a class="mc-button mc-outline" th:href="@{/logout}">
+                <i data-lucide="log-out"></i>
+                Sign Out
             </a>
         </nav>
-
-        <main class="view-accounts-main">
-            <section class="view-accounts-panel">
-                <h2>Saved Projects</h2>
-
-                <div style="width: 100%; overflow-x: auto;">
-                    <table class="accounts-table">
-                        <thead>
-                            <tr>
-                                <th>Project Name</th>
-                                <th>Type</th>
-                                <th>Owner</th>
-                                <th>Details</th>
-                                <th>View</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="project : ${projectItems}">
-                                <td th:text="${project.projectName}">Project Name</td>
-                                <td th:text="${project.projectType}">Product</td>
-                                <td th:text="${project.ownerName}">Owner</td>
-                                <td>
-                                    <span th:if="${project.product}" th:text="${project.productType}">Club</span>
-                                    <details th:if="${project.synchro}">
-                                        <summary>Timeline Details</summary>
-                                        <p>Audio: <span th:text="${project.audioFileName}">music.mp3</span></p>
-                                        <p>Duration: <span th:text="${project.durationSeconds}">0</span> seconds</p>
-                                        <p>Moments: <span th:text="${project.momentCount}">0</span></p>
-                                    </details>
-                                </td>
-                                <td>
-                                    <form th:if="${project.product}" th:action="@{/viewproject}" method="post">
-                                        <input type="hidden" name="UID" th:value="${project.id}">
-                                        <button class="member-button" type="submit">view</button>
-                                    </form>
-                                    <span th:if="${project.synchro}">Summary only</span>
-                                </td>
-                            </tr>
-                            <tr th:if="${#lists.isEmpty(projectItems)}">
-                                <td colspan="5">No projects found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+    </header>
+    <main class="mc-admin-main mc-saves-main">
+        <section class="mc-hero mc-admin-hero mc-saves-hero">
+            <div class="mc-hero-copy">
+                <div class="mc-hero-label">
+                    <i data-lucide="sparkles"></i>
+                    <span class="mc-eyebrow">
+                        ADMINISTRATION
+                    </span>
+                    <i data-lucide="sparkles"></i>
                 </div>
-
-                <a class="member-button" href="/home">Back to Home</a>
-            </section>
-        </main>
-    </div>
-
-    <footer>
-        <p>The Jester Club - CMPT 276 Group 4</p>
-    </footer>
+                <h1>All Saved Projects</h1>
+                <p>
+                    Explore creations from across The Jesters Club.
+                </p>
+            </div>
+        </section>
+        <section class="mc-admin-stats mc-admin-saves-stats">
+            <article class="mc-admin-stat mc-stat-total">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="folders"></i>
+                </div>
+                <div>
+                    <strong id="adminTotalProjects"
+                            th:text="${#lists.size(projectItems)}">
+                        0
+                    </strong>
+                    <h2>All Projects</h2>
+                    <p>Saved club creations</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-trickster">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="wand-sparkles"></i>
+                </div>
+                <div>
+                    <strong id="adminProductProjects">0</strong>
+                    <h2>Product Projects</h2>
+                    <p>Custom juggling props</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-joker">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="audio-lines"></i>
+                </div>
+                <div>
+                    <strong id="adminSynchroProjects">0</strong>
+                    <h2>Synchro Projects</h2>
+                    <p>Synchronized performances</p>
+                </div>
+            </article>
+            <article class="mc-admin-stat mc-stat-jester">
+                <div class="mc-admin-stat-icon">
+                    <i data-lucide="users"></i>
+                </div>
+                <div>
+                    <strong id="adminProjectOwners">0</strong>
+                    <h2>Project Owners</h2>
+                    <p>Distinct owner names</p>
+                </div>
+            </article>
+        </section>
+        <section class="mc-admin-panel">
+            <div class="mc-admin-panel-heading">
+                <div>
+                    <h2>
+                        <i data-lucide="folder-open"></i>
+                        Club Projects
+                    </h2>
+                    <p>
+                        Browse saved designs and performances
+                        from all registered accounts.
+                    </p>
+                </div>
+                <a class="mc-button mc-outline" th:href="@{/admin/accounts}">
+                    <i data-lucide="users"></i>
+                    Account Management
+                </a>
+            </div>
+            <div class="mc-admin-toolbar">
+                <div class="mc-admin-search">
+                    <label for="adminProjectSearch">
+                        Search Projects
+                    </label>
+                    <div class="mc-admin-input-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search"
+                                id="adminProjectSearch"
+                                placeholder="Search project, owner or ID..."
+                                autocomplete="off">
+                    </div>
+                </div>
+                <div class="mc-admin-filter">
+                    <label for="adminProjectType">
+                        Project Type
+                    </label>
+                    <select id="adminProjectType">
+                        <option value="all">
+                            All Project Types
+                        </option>
+                        <option value="product">
+                            Product Projects
+                        </option>
+                        <option value="synchro">
+                            Synchronization Projects
+                        </option>
+                    </select>
+                </div>
+                <div class="mc-admin-filter">
+                    <label for="adminProjectOwner">
+                        Project Owner
+                    </label>
+                    <select id="adminProjectOwner">
+                        <option value="">
+                            All Owners
+                        </option>
+                    </select>
+                </div>
+                <button type="button"
+                        class="mc-button mc-outline"
+                        id="resetAdminProjectFilters">
+                    <i data-lucide="rotate-ccw"></i>
+                    Reset
+                </button>
+            </div>
+            <div class="mc-admin-table-wrap">
+                <table class="mc-admin-table mc-admin-saves-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Preview</th>
+                            <th scope="col">Project Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Owner</th>
+                            <th scope="col">Details</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminProjectsTableBody">
+                        <tr th:each="project : ${projectItems}"
+                            class="mc-admin-project-row"
+                            th:attr="data-project-type=${project.product ? 'product' : 'synchro'},
+                                    data-project-name=${project.projectName},
+                                    data-project-owner=${project.ownerName},
+                                    data-project-id=${project.id}">
+                            <td>
+                                <div class="mc-admin-project-preview">
+                                    <div th:if="${project.product}"
+                                        class="saved-project-preview"
+                                        th:attr="data-product-type=${project.productType},
+                                                data-product-color=${project.productColor},
+                                                data-body-color=${project.bodyColor},
+                                                data-brightness=${project.brightness},
+                                                data-saturation=${project.saturation}">
+                                        <span>Preview unavailable</span>
+                                    </div>
+                                    <div th:if="${project.synchro}"
+                                        class="mc-admin-synchro-preview">
+                                        <i data-lucide="audio-lines"></i>
+                                        <div class="mc-synchro-track-art">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="mc-admin-project-name">
+                                    <strong th:text="${project.projectName}">
+                                        Project Name
+                                    </strong>
+                                    <span>
+                                        Project #
+                                        <span th:text="${project.id}">1</span>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:if="${project.product}" class="mc-admin-role mc-role-trickster">
+                                    <i data-lucide="wand-sparkles"></i>
+                                    Product
+                                </span>
+                                <span th:if="${project.synchro}" class="mc-admin-role mc-role-joker">
+                                    <i data-lucide="audio-lines"></i>
+                                    Synchro
+                                </span>
+                            </td>
+                            <td>
+                                <div class="mc-admin-user">
+                                    <span class="mc-admin-avatar">
+                                        <i data-lucide="user-round"></i>
+                                    </span>
+                                    <strong class="mc-admin-username"
+                                            th:text="${project.ownerName}">
+                                        Owner
+                                    </strong>
+                                </div>
+                            </td>
+                            <td>
+                                <details th:if="${project.product}" class="mc-admin-projects mc-admin-project-details">
+                                    <summary>
+                                        <i data-lucide="shapes"></i>
+                                        <span th:text="${#strings.capitalize(project.productType)}">
+                                            Club
+                                        </span>
+                                        <i data-lucide="chevron-down" class="mc-project-chevron"></i>
+                                    </summary>
+                                    <div class="mc-admin-project-detail-content">
+                                        <p>
+                                            <strong>Effect:</strong>
+                                            <span th:text="${#strings.isEmpty(project.effect) ? 'None' : project.effect}">
+                                                None
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <strong>Brightness:</strong>
+                                            <span th:text="${project.brightness}">
+                                                1
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <strong>Saturation:</strong>
+                                            <span th:text="${project.saturation}">
+                                                1
+                                            </span>
+                                        </p>
+                                    </div>
+                                </details>
+                                <details th:if="${project.synchro}" class="mc-admin-projects mc-admin-project-details">
+                                    <summary>
+                                        <i data-lucide="list-music"></i>
+                                        Timeline Details
+                                        <i data-lucide="chevron-down" class="mc-project-chevron"></i>
+                                    </summary>
+                                    <div class="mc-admin-project-detail-content">
+                                        <p>
+                                            <strong>Audio:</strong>
+                                            <span th:text="${#strings.isEmpty(project.audioFileName) ? 'No audio' : project.audioFileName}">
+                                                music.mp3
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <strong>Duration:</strong>
+                                            <span th:text="${project.durationSeconds}">
+                                                0
+                                            </span>
+                                            seconds
+                                        </p>
+                                        <p>
+                                            <strong>Moments:</strong>
+                                            <span th:text="${project.momentCount}">
+                                                0
+                                            </span>
+                                        </p>
+                                    </div>
+                                </details>
+                            </td>
+                            <td>
+                                <form th:if="${project.product}"
+                                        th:action="@{/viewproject}"
+                                        method="post"
+                                        class="mc-admin-view-project-form">
+                                    <input type="hidden"
+                                            name="UID"
+                                            th:value="${project.id}">
+                                    <button type="submit"
+                                            class="mc-button mc-outline">
+                                        <i data-lucide="eye"></i>
+                                        View Project
+                                    </button>
+                                </form>
+                                <span th:if="${project.synchro}" class="mc-admin-view-only">
+                                    <i data-lucide="lock-keyhole"></i>
+                                    Summary Only
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mc-admin-empty"
+                id="adminProjectsEmpty"
+                th:hidden="${not #lists.isEmpty(projectItems)}">
+                <i data-lucide="folder-open"></i>
+                <h3 id="adminProjectsEmptyTitle">
+                    No Projects Found
+                </h3>
+                <p id="adminProjectsEmptyDescription">
+                    There are no saved projects to display.
+                </p>
+            </div>
+            <div class="mc-admin-table-footer">
+                <p id="adminProjectResults" role="status">
+                    Showing
+                    <span th:text="${#lists.size(projectItems)}">0</span>
+                    projects
+                </p>
+                <a th:href="@{/home}">
+                    <i data-lucide="arrow-left"></i>
+                    Back to Lobby
+                </a>
+            </div>
+        </section>
+        <section class="mc-admin-panel mc-admin-saves-access">
+            <div class="mc-admin-access-icon">
+                <i data-lucide="shield-check"></i>
+            </div>
+            <div>
+                <h3>Administrative Access</h3>
+                <p>
+                    Product projects can be opened in the project viewer.
+                    Synchro projects provide timeline summaries.
+                    This dashboard does not provide editing or deletion actions.
+                </p>
+            </div>
+        </section>
+    </main>
+    <footer th:replace="~{fragments/midnight-ui :: footer}"></footer>
+    <th:block th:replace="~{fragments/midnight-ui :: scripts}"></th:block>
+    <script defer th:src="@{/js/saved-project-preview.js}"></script>
+    <script defer th:src="@{/js/midnight-saves.js}"></script>
 </body>
 </html>
+
