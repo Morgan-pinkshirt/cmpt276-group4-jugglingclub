@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="_csrf"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.token}">
+
+    <meta name="_csrf_header"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.headerName}">
+
+    <title>Manage Video Tutorials - The Jesters Club</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/midnight-circus-theme.css}">
+
+    <link rel="stylesheet"
+          th:href="@{/css/video-tutorials.css}">
+
+    <style>
+        .mc-page.tutorial-sidebar-shell {
+            display: flex;
+            flex: 0 0 260px;
+            width: 260px;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .tutorial-sidebar-shell .mc-sidebar {
+            flex: 1;
+            width: 100%;
+        }
+
+        @media (max-width: 1050px) {
+            .mc-page.tutorial-sidebar-shell {
+                flex-basis: 220px;
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .mc-page.tutorial-sidebar-shell {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+
+            .tutorial-sidebar-shell .mc-sidebar-brand {
+                display: none;
+            }
+        }
+    </style>
+
+</head>
+
+<body class="tutorial-page tutorial-management-page"
+      th:attr="data-theme=${theme},
+               data-role=${role},
+               data-can-upload=${canUpload},
+               data-can-delete=${canDelete}">
+
+<header class="tutorial-header">
+
+    <a class="tutorial-brand"
+       th:href="@{/home}">
+        The Jesters Club
+    </a>
+
+    <div class="tutorial-header-actions">
+
+        <span class="tutorial-username"
+              th:text="${username}">
+            Administrator
+        </span>
+
+        <span class="tutorial-role-badge"
+              th:text="${role == 'SUPER_ADMIN'
+                        ? 'Super Admin'
+                        : 'Admin'}">
+            Admin
+        </span>
+
+        <a class="tutorial-home-button"
+           th:href="@{/home}">
+            Back to Home
+        </a>
+
+    </div>
+
+</header>
+
+<div class="tutorial-admin-layout">
+
+    <div class="mc-page tutorial-sidebar-shell"
+         th:with="lobbyRole=${role == 'SUPER_ADMIN'
+                            ? 'super_admin'
+                            : 'admin'}">
+
+        <nav th:replace="~{fragments/lobby :: sidebar(${lobbyRole})}">
+        </nav>
+
+    </div>
+
+    <main class="tutorial-main tutorial-admin-main">
+
+        <section class="tutorial-introduction">
+
+            <div class="tutorial-heading">
+
+                <h1>Manage Video Tutorials</h1>
+
+                <p>
+                    Upload and manage instructional videos
+                    for members of The Jesters Club.
+                </p>
+
+            </div>
+
+            <button type="button"
+                    id="openUploadDialog"
+                    class="tutorial-button tutorial-button-primary"
+                    th:if="${canUpload}">
+
+                <svg width="18"
+                     height="18"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     aria-hidden="true">
+
+                    <path d="M12 5V19M5 12H19"/>
+
+                </svg>
+
+                Add Video
+
+            </button>
+
+        </section>
+
+        <div id="pageMessage"
+             class="tutorial-message"
+             role="status"
+             aria-live="polite"
+             hidden>
+        </div>
+
+        <section class="tutorial-management-summary">
+
+            <div class="tutorial-summary-card">
+
+                <span class="tutorial-summary-label">
+                    Total Videos
+                </span>
+
+                <strong class="tutorial-summary-value"
+                        th:text="${#lists.size(videos)}">
+                    0
+                </strong>
+
+            </div>
+
+            <div class="tutorial-summary-card">
+
+                <span class="tutorial-summary-label">
+                    Supported Format
+                </span>
+
+                <strong class="tutorial-summary-value">
+                    MP4
+                </strong>
+
+            </div>
+
+            <div class="tutorial-summary-card">
+
+                <span class="tutorial-summary-label">
+                    Maximum File Size
+                </span>
+
+                <strong class="tutorial-summary-value"
+                        th:text="|${maxVideoSize / 1048576} MB|">
+                    100 MB
+                </strong>
+
+            </div>
+
+        </section>
+
+        <section class="tutorial-empty"
+                 th:if="${#lists.isEmpty(videos)}">
+
+            <div class="tutorial-empty-icon">
+
+                <svg width="64"
+                     height="64"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.5"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+
+                    <rect x="2"
+                          y="3"
+                          width="20"
+                          height="18"
+                          rx="3"/>
+
+                    <path d="M10 8L16 12L10 16Z"/>
+
+                </svg>
+
+            </div>
+
+            <h2>No Video Tutorials Yet</h2>
+
+            <p>
+                Add your first instructional video
+                to help members get started.
+            </p>
+
+            <button type="button"
+                    class="tutorial-button tutorial-button-primary"
+                    data-open-upload
+                    th:if="${canUpload}">
+
+                Add First Video
+
+            </button>
+
+        </section>
+
+        <section class="tutorial-grid tutorial-management-grid"
+                 th:unless="${#lists.isEmpty(videos)}"
+                 aria-label="Manage available video tutorials">
+
+            <article class="tutorial-card"
+                     th:each="video : ${videos}"
+                     th:attr="data-video-id=${video.id}">
+
+                <div class="tutorial-player">
+
+                    <video class="tutorial-video"
+                           controls
+                           playsinline
+                           preload="none"
+                           controlslist="nodownload"
+                           th:attr="aria-label=${video.title}">
+
+                        <source
+                            th:src="@{/api/tutorials/{id}/stream(id=${video.id})}"
+                            type="video/mp4">
+
+                        Your browser does not support
+                        HTML5 video playback.
+
+                    </video>
+
+                </div>
+
+                <div class="tutorial-card-content">
+
+                    <div class="tutorial-card-heading">
+
+                        <h2 class="tutorial-title"
+                            th:text="${video.title}">
+                            Tutorial Title
+                        </h2>
+
+                        <span class="tutorial-format">
+                            MP4
+                        </span>
+
+                    </div>
+
+                    <p class="tutorial-description"
+                       th:if="${!#strings.isEmpty(video.description)}"
+                       th:text="${video.description}">
+                        Video description.
+                    </p>
+
+                    <dl class="tutorial-metadata">
+
+                        <div class="tutorial-metadata-row">
+
+                            <dt>File Name</dt>
+
+                            <dd th:text="${video.fileName}">
+                                tutorial.mp4
+                            </dd>
+
+                        </div>
+
+                        <div class="tutorial-metadata-row">
+
+                            <dt>File Size</dt>
+
+                            <dd data-file-size
+                                th:attr="data-bytes=${video.fileSize}"
+                                th:text="|${video.fileSize} bytes|">
+                                0 bytes
+                            </dd>
+
+                        </div>
+
+                        <div class="tutorial-metadata-row">
+
+                            <dt>Uploaded By</dt>
+
+                            <dd th:text="|User #${video.uploadedBy}|">
+                                User #1
+                            </dd>
+
+                        </div>
+
+                        <div class="tutorial-metadata-row">
+
+                            <dt>Upload Date</dt>
+
+                            <dd>
+
+                                <time data-upload-date
+                                      th:attr="datetime=${video.createdAt}"
+                                      th:text="${video.createdAt}">
+                                </time>
+
+                            </dd>
+
+                        </div>
+
+                    </dl>
+
+                    <div class="tutorial-card-footer">
+
+                        <span class="tutorial-type">
+                            Video Tutorial
+                        </span>
+
+                        <button type="button"
+                                class="tutorial-button tutorial-button-danger"
+                                th:if="${canDelete}"
+                                data-delete-video
+                                th:attr="data-video-id=${video.id},
+                                         data-video-title=${video.title}">
+
+                            <svg width="16"
+                                 height="16"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.5"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+
+                                <path d="M3 6H21"/>
+
+                                <path d="M8 6V3H16V6"/>
+
+                                <path d="M5 6L6 21H18L19 6"/>
+
+                                <path d="M10 10V17M14 10V17"/>
+
+                            </svg>
+
+                            Delete
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+</div>
+
+<dialog id="uploadDialog"
+        class="tutorial-dialog"
+        aria-labelledby="uploadDialogTitle"
+        th:if="${canUpload}">
+
+    <div class="tutorial-dialog-header">
+
+        <h2 id="uploadDialogTitle">
+            Add Video Tutorial
+        </h2>
+
+        <button type="button"
+                id="closeUploadDialog"
+                class="tutorial-dialog-close"
+                aria-label="Close upload dialog">
+
+            &times;
+
+        </button>
+
+    </div>
+
+    <form id="uploadVideoForm"
+          method="post"
+          enctype="multipart/form-data"
+          th:action="@{/api/tutorials/upload}"
+          th:attr="data-max-size=${maxVideoSize}">
+
+        <input type="hidden"
+               th:if="${_csrf != null}"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}">
+
+        <div class="tutorial-dialog-body">
+
+            <div class="tutorial-form-field">
+
+                <label for="videoTitle">
+                    Video Title
+                    <span class="tutorial-required">*</span>
+                </label>
+
+                <input type="text"
+                       id="videoTitle"
+                       name="title"
+                       maxlength="150"
+                       placeholder="Enter video title"
+                       required>
+
+            </div>
+
+            <div class="tutorial-form-field">
+
+                <label for="videoDescription">
+                    Description
+
+                    <span class="tutorial-optional">
+                        Optional
+                    </span>
+
+                </label>
+
+                <textarea id="videoDescription"
+                          name="description"
+                          maxlength="2000"
+                          rows="4"
+                          placeholder="Enter a brief description"></textarea>
+
+            </div>
+
+            <div class="tutorial-form-field">
+
+                <label for="videoFile">
+                    Video File
+                    <span class="tutorial-required">*</span>
+                </label>
+
+                <label for="videoFile"
+                       class="tutorial-file-picker">
+
+                    <svg width="40"
+                         height="40"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M12 16V3"/>
+
+                        <path d="M7 8L12 3L17 8"/>
+
+                        <path d="M4 16V21H20V16"/>
+
+                    </svg>
+
+                    <strong>Choose MP4 File</strong>
+
+                    <span>
+                        Only .mp4 files are supported.
+                    </span>
+
+                    <span th:text="|Maximum file size: ${maxVideoSize / 1048576} MB|">
+                        Maximum file size: 100 MB
+                    </span>
+
+                </label>
+
+                <input type="file"
+                       id="videoFile"
+                       name="file"
+                       class="tutorial-file-input"
+                       accept=".mp4,video/mp4"
+                       required>
+
+                <div id="selectedFileInfo"
+                     class="tutorial-selected-file"
+                     aria-live="polite"
+                     hidden>
+
+                    <span id="selectedFileName"></span>
+
+                    <span id="selectedFileSize"></span>
+
+                    <button type="button"
+                            id="removeSelectedFile"
+                            class="tutorial-file-remove"
+                            aria-label="Remove selected file">
+
+                        &times;
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div id="uploadError"
+                 class="tutorial-message tutorial-message-error"
+                 role="alert"
+                 hidden>
+            </div>
+
+            <div id="uploadProgress"
+                 class="tutorial-upload-progress"
+                 hidden>
+
+                <div class="tutorial-progress-heading">
+
+                    <span id="uploadProgressLabel">
+                        Uploading video...
+                    </span>
+
+                    <span id="uploadProgressPercentage">
+                        0%
+                    </span>
+
+                </div>
+
+                <progress id="uploadProgressBar"
+                          max="100"
+                          value="0">
+                    0%
+                </progress>
+
+                <p class="tutorial-form-note">
+                    Please keep this page open
+                    until the upload is complete.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="tutorial-dialog-footer">
+
+            <button type="button"
+                    id="cancelUpload"
+                    class="tutorial-button tutorial-button-secondary">
+
+                Cancel
+
+            </button>
+
+            <button type="submit"
+                    id="submitUpload"
+                    class="tutorial-button tutorial-button-primary">
+
+                Upload Video
+
+            </button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+<dialog id="deleteDialog"
+        class="tutorial-dialog tutorial-delete-dialog"
+        aria-labelledby="deleteDialogTitle"
+        th:if="${canDelete}">
+
+    <div class="tutorial-dialog-header">
+
+        <h2 id="deleteDialogTitle">
+            Delete Video Tutorial
+        </h2>
+
+        <button type="button"
+                id="closeDeleteDialog"
+                class="tutorial-dialog-close"
+                aria-label="Close delete dialog">
+
+            &times;
+
+        </button>
+
+    </div>
+
+    <div class="tutorial-dialog-body">
+
+        <div class="tutorial-delete-warning">
+
+            <svg width="42"
+                 height="42"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+
+                <path d="M12 3L22 21H2Z"/>
+
+                <path d="M12 9V14"/>
+
+                <path d="M12 17H12.01"/>
+
+            </svg>
+
+            <p>
+                Are you sure you want to permanently
+                delete this video tutorial?
+            </p>
+
+            <strong id="deleteVideoTitle"></strong>
+
+            <p class="tutorial-form-note">
+                This action cannot be undone.
+            </p>
+
+        </div>
+
+        <div id="deleteError"
+             class="tutorial-message tutorial-message-error"
+             role="alert"
+             hidden>
+        </div>
+
+    </div>
+
+    <div class="tutorial-dialog-footer">
+
+        <button type="button"
+                id="cancelDelete"
+                class="tutorial-button tutorial-button-secondary">
+
+            Cancel
+
+        </button>
+
+        <button type="button"
+                id="confirmDelete"
+                class="tutorial-button tutorial-button-danger">
+
+            Delete Video
+
+        </button>
+
+    </div>
+
+</dialog>
+
+<footer class="tutorial-footer">
+
+    <p>The Jesters Club</p>
+
+</footer>
+
+<th:block th:replace="~{fragments/midnight-ui :: scripts}">
+</th:block>
+
+<script defer
+        th:src="@{/js/video-tutorials.js}">
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const sidebar = document.querySelector(
+            ".tutorial-sidebar-shell .mc-sidebar"
+        );
+
+        if (!sidebar) {
+            return;
+        }
+
+        const lobbyUrl = "/home";
+
+        sidebar.querySelectorAll("a").forEach(link => {
+
+            link.classList.remove("mc-nav-current");
+
+            link.removeAttribute("aria-current");
+
+            const href = link.getAttribute("href");
+
+            if (!href) {
+                return;
+            }
+
+            if (href.startsWith("#")) {
+
+                const target = new URL(
+                    lobbyUrl,
+                    window.location.origin
+                );
+
+                target.hash = href;
+
+                link.href = target.href;
+            }
+
+            const target = new URL(
+                link.href,
+                window.location.origin
+            );
+
+            if (target.pathname === window.location.pathname) {
+
+                link.classList.add("mc-nav-current");
+
+                link.setAttribute(
+                    "aria-current",
+                    "page"
+                );
+            }
+        });
+    });
+</script>
+
+</body>
+
+</html>
+

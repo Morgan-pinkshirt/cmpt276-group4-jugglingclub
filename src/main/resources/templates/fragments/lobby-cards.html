@@ -245,6 +245,17 @@
             'Create admin'
         )}">
         </article>
+
+        <article th:replace="~{fragments/lobby-cards :: card(
+            'Video Tutorials',
+            'Upload, watch and manage instructional videos for members.',
+            'service.webp',
+            'video',
+            'mc-purple',
+            '/admin/tutorials',
+            'Manage tutorials'
+        )}">
+        </article>
     </div>
 </section>
 <section th:fragment="guest"

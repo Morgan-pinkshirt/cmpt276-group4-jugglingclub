@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Video Tutorials - The Jesters Club</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/video-tutorials.css}">
+
+</head>
+
+<body class="tutorial-page"
+      th:attr="data-theme=${theme}">
+
+<header class="tutorial-header">
+
+    <a class="tutorial-brand"
+       th:href="@{/home}">
+        The Jesters Club
+    </a>
+
+    <div class="tutorial-header-actions">
+
+        <span class="tutorial-username"
+              th:text="${username}">
+            Member
+        </span>
+
+        <a class="tutorial-home-button"
+           th:href="@{/home}">
+            Back to Home
+        </a>
+
+    </div>
+
+</header>
+
+<main class="tutorial-main">
+
+    <section class="tutorial-introduction">
+
+        <div class="tutorial-heading">
+
+            <h1>Video Tutorials</h1>
+
+            <p>
+                Learn how to use our editors,
+                customize your juggling props,
+                and create your own performances.
+            </p>
+
+        </div>
+
+        <span class="tutorial-count"
+              th:text="|${#lists.size(videos)} Tutorials|">
+            0 Tutorials
+        </span>
+
+    </section>
+
+    <section class="tutorial-empty"
+             th:if="${#lists.isEmpty(videos)}">
+
+        <div class="tutorial-empty-icon">
+
+            <svg width="64"
+                 height="64"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.5"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+
+                <rect x="2"
+                      y="3"
+                      width="20"
+                      height="18"
+                      rx="3"/>
+
+                <path d="M10 8L16 12L10 16Z"/>
+
+            </svg>
+
+        </div>
+
+        <h2>No Video Tutorials Yet</h2>
+
+        <p>
+            New tutorials will appear here
+            once they are available.
+        </p>
+
+        <a class="tutorial-button tutorial-button-secondary"
+           th:href="@{/home}">
+            Return to Home
+        </a>
+
+    </section>
+
+    <section class="tutorial-grid"
+             th:unless="${#lists.isEmpty(videos)}"
+             aria-label="Available video tutorials">
+
+        <article class="tutorial-card"
+                 th:each="video : ${videos}">
+
+            <div class="tutorial-player">
+
+                <video class="tutorial-video"
+                       controls
+                       playsinline
+                       preload="none"
+                       controlslist="nodownload"
+                       th:attr="aria-label=${video.title}">
+
+                    <source
+                        th:src="@{/api/tutorials/{id}/stream(id=${video.id})}"
+                        type="video/mp4">
+
+                    Your browser does not support
+                    HTML5 video playback.
+
+                </video>
+
+            </div>
+
+            <div class="tutorial-card-content">
+
+                <div class="tutorial-card-heading">
+
+                    <h2 class="tutorial-title"
+                        th:text="${video.title}">
+                        Tutorial Title
+                    </h2>
+
+                    <span class="tutorial-format">
+                        MP4
+                    </span>
+
+                </div>
+
+                <p class="tutorial-description"
+                   th:if="${!#strings.isEmpty(video.description)}"
+                   th:text="${video.description}">
+                    Video description.
+                </p>
+
+                <div class="tutorial-card-footer">
+
+                    <span class="tutorial-type">
+
+                        <svg width="16"
+                             height="16"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+
+                            <rect x="2"
+                                  y="4"
+                                  width="20"
+                                  height="16"
+                                  rx="2"/>
+
+                            <path d="M10 8L16 12L10 16Z"/>
+
+                        </svg>
+
+                        Video Tutorial
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    </section>
+
+    <section class="tutorial-help">
+
+        <h2>Need More Help?</h2>
+
+        <p>
+            You can ask your assistant for additional
+            tips and navigation help at any time.
+        </p>
+
+    </section>
+
+</main>
+
+<footer class="tutorial-footer">
+
+    <p>The Jesters Club</p>
+
+</footer>
+
+<script type="module"
+        th:src="@{/js/guide-pet/guide-pet-loader.js}">
+</script>
+
+</body>
+
+</html>

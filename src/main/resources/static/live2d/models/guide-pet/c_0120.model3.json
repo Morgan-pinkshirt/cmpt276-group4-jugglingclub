@@ -1,0 +1,103 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "c_0120.moc3",
+		"Textures": [
+			"c_0120.2048/texture_00.png",
+			"c_0120.2048/texture_01.png"
+		],
+		
+"Physics": "c_0120.physics3.json",
+"DisplayInfo": "c_0120.cdi3.json",
+
+	"Expressions": [
+		{"Name": "angry", "File": "angry.exp3.json"},
+		{"Name": "blank-eyes", "File": "blank-eyes.exp3.json"},
+		{"Name": "blushing", "File": "blushing.exp3.json"},
+		{"Name": "bow-sticker", "File": "bow-sticker.exp3.json"},
+		{"Name": "bunny-sticker", "File": "bunny-sticker.exp3.json"},
+		{"Name": "cat-paw-animation", "File": "cat-paw-animation.exp3.json"},
+		{"Name": "cat-sticker", "File": "cat-sticker.exp3.json"},
+		{"Name": "closed-eyes-drooling", "File": "closed-eyes-drooling.exp3.json"},
+		{"Name": "crying", "File": "crying.exp3.json"},
+		{"Name": "dark-tablecloth", "File": "dark-tablecloth.exp3.json"},
+		{"Name": "dizzy", "File": "dizzy.exp3.json"},
+		{"Name": "double-peace-sign", "File": "double-peace-sign.exp3.json"},
+		{"Name": "emotion-flowers", "File": "emotion-flowers.exp3.json"},
+		{"Name": "eraser", "File": "eraser.exp3.json"},
+		{"Name": "exclamation-mark", "File": "exclamation-mark.exp3.json"},
+		{"Name": "gloomy", "File": "gloomy.exp3.json"},
+		{"Name": "happy-excited", "File": "happy-excited.exp3.json"},
+		{"Name": "headband", "File": "headband.exp3.json"},
+		{"Name": "heart-eyes", "File": "heart-eyes.exp3.json"},
+		{"Name": "heartbeat", "File": "heartbeat.exp3.json"},
+		{"Name": "love", "File": "love.exp3.json"},
+		{"Name": "mischievous", "File": "mischievous.exp3.json"},
+		{"Name": "monster-energy-color-change", "File": "monster-energy-color-change.exp3.json"},
+		{"Name": "monster-energy", "File": "monster-energy.exp3.json"},
+		{"Name": "omelette-rice", "File": "omelette-rice.exp3.json"},
+		{"Name": "order-button-pressed", "File": "order-button-pressed.exp3.json"},
+		{"Name": "oval-glasses", "File": "oval-glasses.exp3.json"},
+		{"Name": "paintbrush", "File": "paintbrush.exp3.json"},
+		{"Name": "parfait", "File": "parfait.exp3.json"},
+		{"Name": "phone-color-change", "File": "phone-color-change.exp3.json"},
+		{"Name": "question-mark", "File": "question-mark.exp3.json"},
+		{"Name": "retract", "File": "retract.exp3.json"},
+		{"Name": "round-glasses", "File": "round-glasses.exp3.json"},
+		{"Name": "sad", "File": "sad.exp3.json"},
+		{"Name": "side-ponytail", "File": "side-ponytail.exp3.json"},
+		{"Name": "soul-leaving", "File": "soul-leaving.exp3.json"},
+		{"Name": "square-glasses", "File": "square-glasses.exp3.json"},
+		{"Name": "squeeze", "File": "squeeze.exp3.json"},
+		{"Name": "star-eyes", "File": "star-eyes.exp3.json"},
+		{"Name": "sunglasses", "File": "sunglasses.exp3.json"},
+		{"Name": "sweating", "File": "sweating.exp3.json"},
+		{"Name": "tongue-out", "File": "tongue-out.exp3.json"},
+		{"Name": "whale-on-table", "File": "whale-on-table.exp3.json"},
+		{"Name": "whale", "File": "whale.exp3.json"}
+	],
+
+	"Motions": {
+		"Idle": [
+			{"File": "motions/idle.motion3.json"}
+		],
+		"AlternativeIdle": [
+			{"File": "aidale.motion3.json"}
+		],
+		"BlowBubbles": [
+			{"File": "motions/blow-bubbles.motion3.json"}
+		],
+		"Ketchup": [
+			{"File": "motions/ketchup.motion3.json"}
+		],
+		"OpenLid": [
+			{"File": "motions/open-lid.motion3.json"}
+		],
+		"Selfie": [
+			{"File": "motions/selfie.motion3.json"}
+		],
+		"SimpleSelfie": [
+			{"File": "motions/simple-selfie.motion3.json"}
+		],
+		"WaterSpray": [
+			{"File": "motions/water-spray.motion3.json"}
+		]
+	}
+
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

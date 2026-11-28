@@ -25,11 +25,13 @@ public class user implements Serializable {
     private String favplace;
     private String favsubject;
     private String hometown;
-    private String favgame;
+   private String favgame;
+
+    @Column(name = "guide_onboarding_pending")
+    private Boolean guideOnboardingPending;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.MEMBER;
-
     public user() {
     }
 
@@ -138,7 +140,20 @@ public class user implements Serializable {
         return favgame;
     }
 
+    
     public void setFavgame(String favgame) {
         this.favgame = favgame;
     }
+
+    // Check whether first-time onboarding is pending.
+    public boolean isGuideOnboardingPending() {
+        return getRole() == Role.MEMBER
+                && Boolean.TRUE.equals(guideOnboardingPending);
+    }
+
+    // Update the account onboarding status.
+    public void setGuideOnboardingPending(boolean guideOnboardingPending) {
+        this.guideOnboardingPending = guideOnboardingPending;
+    }
 }
+

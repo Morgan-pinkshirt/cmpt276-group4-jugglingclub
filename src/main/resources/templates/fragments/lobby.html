@@ -98,6 +98,12 @@
             'shield-plus',
             'Create Admin'
         )}"></a>
+        <a th:replace="~{fragments/lobby :: navItem(
+            '/admin/tutorials',
+            'video',
+            'Video Tutorials'
+        )}"></a>
+
     </div>
     <div class="mc-nav-group" th:if="${role != 'guest'}">
         <span class="mc-nav-label">

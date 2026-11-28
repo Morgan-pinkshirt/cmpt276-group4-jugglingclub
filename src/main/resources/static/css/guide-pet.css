@@ -1,0 +1,1004 @@
+
+/* Assistant viewport layer */
+.dsc-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    overflow: hidden;
+    pointer-events: none;
+
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+
+    --dsc-background: #ffffff;
+    --dsc-text: #30283d;
+    --dsc-secondary-text: #756a82;
+    --dsc-border: #d8cce8;
+    --dsc-accent: #7651a8;
+    --dsc-accent-hover: #8965ba;
+    --dsc-button-background: #f2edf8;
+    --dsc-button-hover: #e6dcf2;
+    --dsc-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+}
+
+.dsc-layer *,
+.dsc-layer *::before,
+.dsc-layer *::after {
+    box-sizing: border-box;
+}
+
+.dsc-layer[hidden],
+.dsc-layer [hidden] {
+    display: none !important;
+}
+
+
+/* Dark theme */
+.dsc-layer[data-theme="dark"] {
+    --dsc-background: #262626;
+    --dsc-text: #eeeeee;
+    --dsc-secondary-text: #b5b5b5;
+    --dsc-border: #484848;
+    --dsc-accent: #7651a8;
+    --dsc-accent-hover: #8965ba;
+    --dsc-button-background: #363636;
+    --dsc-button-hover: #454545;
+    --dsc-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+
+/* Purple theme */
+.dsc-layer[data-theme="purple"] {
+    --dsc-background: #30243e;
+    --dsc-text: #f3eafa;
+    --dsc-secondary-text: #c5b3d6;
+    --dsc-border: #614b79;
+    --dsc-accent: #8055b7;
+    --dsc-accent-hover: #956acb;
+    --dsc-button-background: #40314f;
+    --dsc-button-hover: #534064;
+    --dsc-shadow: 0 4px 18px rgba(0, 0, 0, 0.30);
+}
+
+
+/* Main assistant container */
+.dsc-container {
+    --dsc-size: 300px;
+
+    --dsc-dock-x: 0px;
+    --dsc-dock-y: 0px;
+
+    --dsc-rotation: 0deg;
+
+    --dsc-visible-depth: 60px;
+    --dsc-peek-distance: 24px;
+    --dsc-peek-x: 0px;
+
+    --dsc-animation-duration: 400ms;
+    --dsc-hover-duration: 250ms;
+    --dsc-resize-duration: 220ms;
+
+    position: absolute;
+
+    right: 20px;
+    bottom: 20px;
+
+    width: var(--dsc-size);
+    height: var(--dsc-size);
+
+    max-width: 100vw;
+    max-height: 100vh;
+
+    background: transparent;
+
+    transform-origin: center center;
+
+    transform:
+        translate(
+            calc(
+                var(--dsc-dock-x) +
+                var(--dsc-peek-x)
+            ),
+            var(--dsc-dock-y)
+        )
+        rotate(
+            var(
+                --dsc-drag-rotation,
+                var(--dsc-rotation)
+            )
+        );
+
+    transition:
+        transform
+        var(--dsc-animation-duration)
+        cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+/* Disable transitions during direct mouse dragging */
+.dsc-container.is-dragging,
+.dsc-container.is-dock-dragging,
+.dsc-container.is-positioning {
+    transition: none !important;
+}
+
+.dsc-container.is-dragging .dsc-panel,
+.dsc-container.is-dock-dragging .dsc-panel {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Live2D rendering area */
+.dsc-model {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    background: transparent;
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+.dsc-canvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    cursor: grab;
+
+    pointer-events: auto;
+    touch-action: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.dsc-container.is-dragging .dsc-canvas,
+.dsc-container.is-dock-dragging .dsc-canvas {
+    cursor: grabbing;
+}
+
+.dsc-canvas:focus-visible {
+    outline: 2px solid var(--dsc-accent);
+    outline-offset: -4px;
+    border-radius: 8px;
+}
+
+
+/* Floating dialogue and menu panel */
+.dsc-panel {
+    position: absolute;
+
+    bottom: calc(100% + 8px);
+    left: 50%;
+
+    width: 280px;
+    max-width: calc(100vw - 24px);
+
+    max-height: var(
+        --dsc-panel-max-height,
+        calc(100vh - 24px)
+    );
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    transform: translateX(
+        calc(
+            -50% +
+            var(--dsc-panel-shift-x, 0px)
+        )
+    );
+
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+
+/* Position the panel below the assistant */
+.dsc-container[data-panel-side="below"] .dsc-panel {
+    bottom: auto;
+    top: calc(100% + 8px);
+}
+
+
+/* Position the panel beside the assistant */
+.dsc-container[data-panel-side="left"] .dsc-panel {
+    left: auto;
+    right: calc(100% + 8px);
+
+    top: 0;
+    bottom: auto;
+
+    transform: none;
+}
+
+.dsc-container[data-panel-side="right"] .dsc-panel {
+    right: auto;
+    left: calc(100% + 8px);
+
+    top: 0;
+    bottom: auto;
+
+    transform: none;
+}
+
+
+/* Dialogue bubble */
+.dsc-dialogue {
+    position: relative;
+
+    width: 100%;
+    padding: 14px 16px;
+
+    background: var(--dsc-background);
+    color: var(--dsc-text);
+
+    border: 1px solid var(--dsc-border);
+    border-radius: 14px;
+
+    box-shadow: var(--dsc-shadow);
+
+    pointer-events: auto;
+
+    animation: dsc-dialogue-enter 180ms ease-out;
+}
+
+.dsc-dialogue::after {
+    content: "";
+
+    position: absolute;
+
+    left: calc(50% - 7px);
+    bottom: -8px;
+
+    width: 14px;
+    height: 14px;
+
+    background: var(--dsc-background);
+
+    border-right: 1px solid var(--dsc-border);
+    border-bottom: 1px solid var(--dsc-border);
+
+    transform: rotate(45deg);
+
+    pointer-events: none;
+}
+
+.dsc-container[data-panel-side="below"]
+.dsc-dialogue::after {
+    top: -8px;
+    bottom: auto;
+
+    transform: rotate(225deg);
+}
+
+.dsc-container[data-panel-side="left"]
+.dsc-dialogue::after {
+    top: 20px;
+    right: -8px;
+
+    left: auto;
+    bottom: auto;
+
+    transform: rotate(-45deg);
+}
+
+.dsc-container[data-panel-side="right"]
+.dsc-dialogue::after {
+    top: 20px;
+    left: -8px;
+
+    bottom: auto;
+
+    transform: rotate(135deg);
+}
+
+.dsc-dialogue-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.dsc-dialogue-name {
+    font-size: 12px;
+    font-weight: 700;
+
+    color: var(--dsc-accent);
+}
+
+.dsc-dialogue-text {
+    margin: 0;
+
+    color: var(--dsc-text);
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+
+    white-space: pre-line;
+
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+.dsc-dialogue-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    flex-shrink: 0;
+
+    padding: 0;
+
+    background: transparent;
+    color: var(--dsc-secondary-text);
+
+    border: none;
+    border-radius: 50%;
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+.dsc-dialogue-close:hover {
+    background: var(--dsc-button-hover);
+    color: var(--dsc-text);
+}
+
+
+/* Interaction menu */
+.dsc-menu {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    min-height: 0;
+
+    max-height: var(
+        --dsc-menu-max-height,
+        320px
+    );
+
+    padding: 10px;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    background: var(--dsc-background);
+    color: var(--dsc-text);
+
+    border: 1px solid var(--dsc-border);
+    border-radius: 12px;
+
+    box-shadow: var(--dsc-shadow);
+
+    pointer-events: auto;
+
+    animation: dsc-dialogue-enter 180ms ease-out;
+}
+
+.dsc-menu-title {
+    padding: 2px 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    color: var(--dsc-secondary-text);
+}
+
+.dsc-menu-divider {
+    width: 100%;
+    height: 1px;
+
+    margin: 3px 0;
+
+    background: var(--dsc-border);
+}
+
+
+/* General interaction buttons */
+.dsc-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    flex-shrink: 0;
+
+    width: 100%;
+    min-height: 34px;
+
+    gap: 8px;
+    padding: 8px 12px;
+
+    background: var(--dsc-button-background);
+    color: var(--dsc-text);
+
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    font: inherit;
+    font-size: 13px;
+
+    text-align: left;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.dsc-button:hover {
+    background: var(--dsc-button-hover);
+    color: var(--dsc-text);
+}
+
+.dsc-button:focus-visible,
+.dsc-dialogue-close:focus-visible {
+    outline: 2px solid var(--dsc-accent);
+    outline-offset: 2px;
+}
+
+.dsc-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dsc-button.is-selected,
+.dsc-button[aria-pressed="true"] {
+    background: var(--dsc-accent);
+    color: #ffffff;
+}
+
+.dsc-button.is-selected:hover,
+.dsc-button[aria-pressed="true"]:hover {
+    background: var(--dsc-accent-hover);
+}
+
+.dsc-button-primary {
+    background: var(--dsc-accent);
+    color: #ffffff;
+}
+
+.dsc-button-primary:hover {
+    background: var(--dsc-accent-hover);
+    color: #ffffff;
+}
+
+.dsc-button-secondary {
+    background: transparent;
+    border-color: var(--dsc-border);
+}
+
+.dsc-button-secondary:hover {
+    background: var(--dsc-button-hover);
+}
+
+.dsc-button-ghost {
+    background: transparent;
+    color: var(--dsc-secondary-text);
+}
+
+.dsc-button-ghost:hover {
+    background: var(--dsc-button-background);
+    color: var(--dsc-text);
+}
+
+
+/* Navigation shortcuts */
+.dsc-navigation {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.dsc-navigation .dsc-button {
+    justify-content: space-between;
+}
+
+.dsc-navigation-arrow {
+    margin-left: auto;
+    color: var(--dsc-secondary-text);
+}
+
+.dsc-navigation .dsc-button-primary
+.dsc-navigation-arrow {
+    color: #ffffff;
+}
+
+
+/* Size selection */
+.dsc-size-options {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 5px;
+}
+
+.dsc-size-options .dsc-button {
+    justify-content: center;
+
+    padding: 7px 4px;
+
+    font-size: 12px;
+    text-align: center;
+}
+
+
+/* Size change animation */
+.dsc-container.is-resizing .dsc-model {
+    animation:
+        dsc-resize-feedback
+        var(--dsc-resize-duration)
+        ease-out;
+}
+
+@keyframes dsc-resize-feedback {
+
+    from {
+        transform: scale(0.97);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+
+/* Resize reaction dialogue */
+.dsc-dialogue.is-resize-reaction {
+    animation: dsc-dialogue-enter 160ms ease-out;
+}
+
+
+/* First-time onboarding */
+.dsc-container.is-onboarding .dsc-panel {
+    width: 340px;
+
+    max-width: calc(100vw - 24px);
+}
+
+.dsc-dialogue.is-onboarding {
+    padding: 16px;
+
+    border-color: var(--dsc-accent);
+}
+
+.dsc-dialogue.is-onboarding
+.dsc-dialogue-text {
+    font-size: 14px;
+    line-height: 1.65;
+
+    max-height: 42vh;
+
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+
+/* Onboarding action buttons */
+.dsc-dialogue-actions {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    margin-top: 14px;
+}
+
+.dsc-dialogue-actions .dsc-button {
+    justify-content: center;
+
+    min-height: 36px;
+
+    text-align: center;
+}
+
+.dsc-dialogue-actions.is-horizontal {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+}
+
+
+/* Onboarding progress */
+.dsc-onboarding-progress {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    margin-top: 12px;
+}
+
+.dsc-onboarding-progress-label {
+    font-size: 11px;
+    font-weight: 500;
+
+    color: var(--dsc-secondary-text);
+}
+
+.dsc-onboarding-progress-track {
+    width: 100%;
+    height: 4px;
+
+    overflow: hidden;
+
+    background: var(--dsc-button-background);
+    border-radius: 4px;
+}
+
+.dsc-onboarding-progress-fill {
+    width: var(--dsc-onboarding-progress, 0%);
+
+    height: 100%;
+
+    background: var(--dsc-accent);
+
+    border-radius: 4px;
+
+    transition: width 200ms ease;
+}
+
+
+/* Video tutorial shortcut */
+.dsc-button-tutorial {
+    justify-content: space-between;
+}
+
+.dsc-button-tutorial::after {
+    content: "\2197";
+
+    margin-left: auto;
+
+    font-size: 14px;
+
+    color: inherit;
+}
+
+
+/* Loading and error messages */
+.dsc-status {
+    position: absolute;
+
+    bottom: 10px;
+    left: 50%;
+
+    width: max-content;
+    max-width: 90%;
+
+    padding: 6px 10px;
+
+    transform: translateX(-50%);
+
+    background: var(--dsc-background);
+    color: var(--dsc-text);
+
+    border: 1px solid var(--dsc-border);
+    border-radius: 8px;
+
+    font-size: 12px;
+    text-align: center;
+
+    pointer-events: none;
+}
+
+.dsc-status.is-error {
+    color: #d65b5b;
+}
+
+.dsc-inline-error {
+    margin: 8px 0 0;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #d65b5b;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* Edge docking */
+.dsc-container.is-docked {
+    cursor: grab;
+}
+
+.dsc-container.is-docked .dsc-panel,
+.dsc-container.is-docked .dsc-status {
+    display: none;
+    pointer-events: none;
+}
+
+.dsc-container.is-docked .dsc-canvas {
+    pointer-events: none;
+    cursor: default;
+}
+
+.dsc-container.is-docked[data-dock-side="left"] {
+    --dsc-rotation: 90deg;
+}
+
+.dsc-container.is-docked[data-dock-side="right"] {
+    --dsc-rotation: -90deg;
+}
+
+
+/* Transparent interactive area over the exposed head */
+.dsc-dock-handle {
+    display: none;
+
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+
+    width: 80%;
+
+    height: calc(
+        var(--dsc-visible-depth) +
+        var(--dsc-peek-distance)
+    );
+
+    padding: 0;
+
+    background: transparent;
+
+    border: none;
+    border-radius: 8px;
+
+    outline: none;
+
+    cursor: grab;
+
+    touch-action: none;
+
+    pointer-events: none;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dsc-container.is-docked .dsc-dock-handle {
+    display: block;
+
+    pointer-events: auto;
+}
+
+.dsc-dock-handle:focus-visible {
+    outline: 2px solid var(--dsc-accent);
+    outline-offset: -2px;
+}
+
+
+/* Hover peek */
+.dsc-container.is-docked.is-peeking {
+    transition-duration: var(--dsc-hover-duration);
+}
+
+.dsc-container.is-docked.is-peeking[data-dock-side="left"] {
+    --dsc-peek-x: var(--dsc-peek-distance);
+}
+
+.dsc-container.is-docked.is-peeking[data-dock-side="right"] {
+    --dsc-peek-x: calc(
+        0px - var(--dsc-peek-distance)
+    );
+}
+
+
+/* Drag the assistant out of the docking edge */
+.dsc-container.is-dock-dragging {
+    --dsc-peek-x: 0px;
+
+    cursor: grabbing;
+}
+
+.dsc-container.is-dock-dragging.is-peeking {
+    --dsc-peek-x: 0px;
+}
+
+.dsc-container.is-dock-dragging .dsc-dock-handle {
+    display: block;
+
+    cursor: grabbing;
+
+    pointer-events: auto;
+}
+
+.dsc-container.is-dock-dragging .dsc-canvas {
+    cursor: grabbing;
+    pointer-events: none;
+}
+
+
+/* Keep the captured pointer active after restoration */
+.dsc-container.is-dragging-from-dock {
+    transition: none !important;
+
+    cursor: grabbing;
+}
+
+.dsc-container.is-dragging-from-dock
+.dsc-dock-handle {
+    display: block;
+
+    cursor: grabbing;
+
+    pointer-events: auto;
+}
+
+.dsc-container.is-dragging-from-dock
+.dsc-canvas {
+    pointer-events: none;
+}
+
+.dsc-container.is-dragging-from-dock
+.dsc-panel {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Return to the docking edge after an incomplete drag */
+.dsc-container.is-dock-returning {
+    --dsc-peek-x: 0px;
+
+    transition:
+        transform
+        var(--dsc-animation-duration)
+        cubic-bezier(0.22, 0.85, 0.35, 1);
+}
+
+
+/* Restore near the current docking position */
+.dsc-container.is-restoring {
+    --dsc-peek-x: 0px;
+
+    transition:
+        transform
+        var(--dsc-animation-duration)
+        cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.dsc-container.is-restoring .dsc-panel {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+/* Dialogue entrance animation */
+@keyframes dsc-dialogue-enter {
+
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Smaller screens */
+@media (max-width: 600px) {
+
+    .dsc-panel {
+        width: 240px;
+
+        max-width: calc(100vw - 20px);
+    }
+
+    .dsc-container.is-onboarding .dsc-panel {
+        width: 300px;
+
+        max-width: calc(100vw - 20px);
+    }
+
+    .dsc-dialogue,
+    .dsc-dialogue.is-onboarding {
+        padding: 12px;
+    }
+
+    .dsc-dialogue-text {
+        font-size: 13px;
+    }
+
+    .dsc-dialogue.is-onboarding
+    .dsc-dialogue-text {
+        font-size: 13px;
+
+        max-height: 38vh;
+    }
+
+    .dsc-menu {
+        padding: 8px;
+    }
+
+    .dsc-button {
+        min-height: 36px;
+    }
+}
+
+
+/* Very small embedded editor windows */
+@media (max-height: 450px) {
+
+    .dsc-dialogue {
+        padding: 10px 12px;
+    }
+
+    .dsc-dialogue-text {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .dsc-dialogue.is-onboarding
+    .dsc-dialogue-text {
+        max-height: 30vh;
+    }
+
+    .dsc-button {
+        min-height: 30px;
+        padding: 6px 8px;
+    }
+
+    .dsc-dialogue-actions {
+        margin-top: 8px;
+        gap: 5px;
+    }
+}
+
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-container,
+    .dsc-button,
+    .dsc-onboarding-progress-fill {
+        transition-duration: 0ms !important;
+    }
+
+    .dsc-dialogue,
+    .dsc-menu,
+    .dsc-container.is-resizing .dsc-model {
+        animation: none !important;
+    }
+}

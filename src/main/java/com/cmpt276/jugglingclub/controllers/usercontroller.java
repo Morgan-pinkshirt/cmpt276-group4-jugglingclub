@@ -180,6 +180,7 @@ public class usercontroller{
         final String hashedPassword = passwordEncoder.encode(password);
         user auser = new user(username, hashedPassword);
         auser.setTheme("purple");
+        auser.setGuideOnboardingPending(true);
         auser.setFavcolor(favcolor.trim());
         auser.setMothername(mothername.trim());
         auser.setFavplace(favplace.trim());
