@@ -16,12 +16,104 @@ let effectSpeed = -0.005;
 const speedSteps = [0.1, 0.25, 0.5, 1, 2, 4];
 let currentSpeedIndex = 3;
 
+// Circular display stage (dish) shown under the product
+const stageTopY = -1.9;   // height of the dish surface
+const stageRadius = 2.4;   // size of the dish
+function createGlowTexture() {
+    const size = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0, 'rgba(255, 90, 90, 0.55)');
+    grad.addColorStop(1, 'rgba(255, 90, 90, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, size, size);
+    return new THREE.CanvasTexture(canvas);
+}
+
+function createDisplayStage() {
+    const R = stageRadius;
+    const stage = new THREE.Group();
+    const stageHeight = 0.08
+
+    // Dark disc, its top surface sits at y = 0 inside the group
+    const base = new THREE.Mesh(
+        new THREE.CylinderGeometry(R, R + stageHeight, stageHeight, 96),
+        new THREE.MeshStandardMaterial({ color: 0x18181d, metalness: 0.3, roughness: 0.45 })
+    );
+    base.position.y = -0.09;
+    stage.add(base);
+
+    // Gold rim around the edge
+    const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(R, 0.04, 16, 128),
+        new THREE.MeshStandardMaterial({ color: 0xc9a24b, metalness: 0.3, roughness: 0.35, emissive: 0x3a2a08 })
+    );
+    rim.rotation.x = Math.PI / 2;
+    stage.add(rim);
+
+    // Concentric rings on the surface
+    [0.75, 0.5, 0.25].forEach((k) => {
+        const r = R * k;
+        const ring = new THREE.Mesh(
+            new THREE.RingGeometry(r - 0.012, r + 0.012, 128),
+            new THREE.MeshBasicMaterial({ color: 0xc9a24b, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+        );
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.003;
+        stage.add(ring);
+    });
+
+    // Soft glow under the dish
+    const glow = new THREE.Mesh(
+        new THREE.PlaneGeometry(R * 3.2, R * 3.2),
+        new THREE.MeshBasicMaterial({
+            map: createGlowTexture(),
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
+        })
+    );
+    glow.rotation.x = -Math.PI / 2;
+    glow.position.y = -0.25;
+    stage.add(glow);
+
+    stage.position.y = stageTopY;
+    return stage;
+}
+
+// Floor under the dish, textured with your own image (simplified for testing)
+function createFloor(imageUrl, opts) {
+    const floorSize = opts.size ?? 16;
+    const repeat = opts.repeat ?? 1;
+    const floorDrop = opts.drop ?? 1.5;
+    const tex = new THREE.TextureLoader().load(
+        imageUrl,
+        () => console.log('floor image loaded:', imageUrl),
+        undefined,
+        () => console.error('floor image FAILED:', imageUrl)
+    );
+
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(repeat, repeat);
+
+    const floor = new THREE.Mesh(
+        new THREE.CircleGeometry(floorSize / 2, 96),
+        new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.4 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = stageTopY - floorDrop;
+    return floor;
+}
+
 // Initialize the 3D scene, camera, renderer, lights, and event listeners
 function init() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.set(0, 1.4, 5);
+    camera.lookAt(0, -0.4, 0);
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -37,6 +129,20 @@ function init() {
     const pointLight = new THREE.DirectionalLight(0xffffff, 1);
     pointLight.position.set(5, 5, 5);
     scene.add(pointLight);
+
+    //customize stage and floor
+    const isSynchroStage = new URLSearchParams(window.location.search).get('embed') === '1';
+
+    const floorImage = isSynchroStage
+        ? '/proDemo/editorImg/floor.jpg'     // floor used inside synchro.html
+        : '/3Dsim/3Dimg/floor.jpg';          // floor used on the 3D page
+
+    const floorOpts = isSynchroStage
+        ? { size: 15.5, repeat: 3, drop: 1.7 }  // synchro stage: smaller floor, smaller pattern
+        : { size: 16, repeat: 6, drop: 2.6 };   // 3D page
+
+    scene.add(createFloor(floorImage, floorOpts));
+    scene.add(createDisplayStage());
 
     // Get initial values from HTML form elements
     const typeElem = document.getElementById('productType');

@@ -273,3 +273,20 @@ html:has(body.embed-1) {
         linear-gradient(rgba(10, 10, 14, 0.86), rgba(10, 10, 14, 0.86)),
         url('/3Dsim/3Dimg/rightpanel.jpg') center / cover no-repeat;
 }
+
+/* ---- Compact left column so it fits the design modal ---- */
+.left-panels {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+/* Bootstrap is loaded after this file and overrides the h3 size, so raise the specificity */
+.left-panels h3,
+.user-panel h3 {
+    font-size: 1rem;
+}
+
+body.embed-edit .ui-panel,
+body.embed-edit .effect-panel {
+    padding: 10px 14px;
+}

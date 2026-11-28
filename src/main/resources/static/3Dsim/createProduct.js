@@ -34,9 +34,9 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor, staffOptions 
         const colorStaff = staffOptions.colorStaff || document.getElementById('staffColor')?.value || hexBodyColor || hexColor || '#cccccc';
         const knobType = staffOptions.knobType || document.getElementById('knobType')?.value || 'ball';
 
-        const staffLength = 3.6;
+        const staffLength = 2.8;
         const staffRadius = 0.08;
-        const halfLen = staffLength / 2; // 1.8
+        const halfLen = staffLength / 2; // 1.4
 
         const knob1Material = new THREE.MeshStandardMaterial({
             color: colorKnob1,
@@ -75,7 +75,7 @@ function createProduct(type, hexColor, hexBodyColor, hexBallColor, staffOptions 
             startY = knob1Y - knobHeight / 2;
             endY = knob2Y + knobHeight / 2;
         } else {
-            const knobRadius = 0.32;
+            const knobRadius = 0.28;
             knob1Geo = new THREE.SphereGeometry(knobRadius, 32, 32);
             knob2Geo = new THREE.SphereGeometry(knobRadius, 32, 32);
             knob1Y = -halfLen - knobRadius * 0.65;
